@@ -1,7 +1,7 @@
 //dice.js
 
 exports.receiveDiceRoll = function(string) {
-    var str = diceRoll(5,6).join;
+    var str = diceRoll(5,6).join(',');
     return 'diceroll! : (' + str + ')';
 //    return 'I received ' + '"' + string + '"';
 };
