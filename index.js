@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 const client = new Discord.Client();
 
- 
+const dice = require('./dice');
 
 client.on('ready', () => {
 
@@ -17,6 +17,7 @@ client.on('message', message => {
     if (message.content === 'ping') {
 
        message.reply('pong');
+       console.log('pong');
 
        }
 
