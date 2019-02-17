@@ -12,7 +12,12 @@ exports.receiveDiceRoll = function(string) {
     var diceStrArray = string.split(COMMENT);
     console.log(diceStrArray);
     var str = checkDiceSentence(diceStrArray[0]);
-    return 'diceroll! :' + str;
+    
+    var returnString = (diceStrArray[2] == null)
+    ? 'diceroll!：' + diceStrArray[0] + ' = ' + str
+    : diceStrArray[2] + '：' + diceStrArray[0] + ' = ' + str;
+    
+    return returnString;
 };
 
 
