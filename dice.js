@@ -18,6 +18,8 @@ exports.receiveDiceRoll = function(string) {
 function checkDiceSentence(string) {
     var result = '';
     if (DICE_ROLL.test(string)) {
+        var splits = string.split(/(d)/);
+        console.log(splits);
         result = diceRoll(5,6).join(',');
     }
     
