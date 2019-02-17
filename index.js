@@ -16,7 +16,7 @@ client.on('message', message => {
 
     if (message.content.search(/^ping /) !== -1) {
 
-       message.reply('pong');
+       message.reply(dice.receiveDiceRoll(messageg.content));
        console.log('pong');
 
        }
