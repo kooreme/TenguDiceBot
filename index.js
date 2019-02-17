@@ -14,7 +14,7 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
-    if (message.content === 'ping') {
+    if (message.content.indexOf('ping') !== -1) {
 
        message.reply('pong');
        console.log('pong');
