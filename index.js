@@ -1,11 +1,27 @@
-const eris = require("eris");
+const Discord = require('discord.js');
 
-// botトークンのIDをTOKEN_IDに入力します
-var bot = new eris("NTQ2NjYxOTcyNDk4ODQxNjAx.D0reoQ.seZtxKmg5aPUHJ5HjysmXjujgcA");
+const client = new Discord.Client();
 
-bot.on("ready", () => {
-    console.log("botの準備が完了しました");
+ 
+
+client.on('ready', () => {
+
+    console.log('I am ready!');
+
 });
 
-// Discordに接続します
-bot.connect();
+ 
+
+client.on('message', message => {
+
+    if (message.content === 'ping') {
+
+       message.reply('pong');
+
+       }
+
+});
+
+// THIS  MUST  BE  THIS  WAY
+
+client.login(process.env.BOT_TOKEN);//BOT_TOKEN is the Client Secret
