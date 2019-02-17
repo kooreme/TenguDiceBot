@@ -17,6 +17,7 @@ client.on('message', message => {
     if (content.search(REACT_REGEXP) !== -1) {
 
         content = content.replace(/ +?/g, ' ');
+        content = content.replace(/\/nd /, '');
         message.reply(dice.receiveDiceRoll(content));
         console.log(content);
 
