@@ -21,12 +21,12 @@ function checkDiceSentence(string) {
     //基本ダイスロール
     if (DICE_ROLL.test(string)) {
         var splits = string.split(/([dp])/);
-        console.log(splits);
+        console.log('checkDiceSentence = ' + splits);
         
         if(!isNaN(splits[2])) {
-            if(splits[3] == null) {
-                splits.push('');
-            }
+//            if(splits[3] == null) {
+//                splits.push('');
+//            }
             var resArray = diceRoll(splits[0],splits[2]);
             
             switch(splits[3]) {
