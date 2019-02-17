@@ -1,5 +1,7 @@
 //dice.js
 
+const DICE_ROLL = /^\d*?d\d+?$/;
+
 /**
 receiveDiceRoll
 引数：String string ※メッセージ反応部はあらかじめ取り除くこと。
@@ -7,10 +9,24 @@ receiveDiceRoll
 ダイスロールメッセージを受信する。
 */
 exports.receiveDiceRoll = function(string) {
-    var str = diceRoll(5,6).join(',');
+    var str = checkDiceSentence(string);
     return 'diceroll! : (' + str + ')';
 //    return 'I received ' + '"' + string + '"';
 };
+
+
+function checkDiceSentence(string) {
+    var result = '';
+    if (DICE_ROLL.test(string)) {
+        result = diceRoll(5,6).join(',');
+    }
+    
+    else {
+        result = 'Error!'
+    }
+    
+    return result;
+}
 
 function diceRoll(sum, diceMen) {
     var result = [];
@@ -19,6 +35,7 @@ function diceRoll(sum, diceMen) {
     }
     return result;
 };
+
 
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);

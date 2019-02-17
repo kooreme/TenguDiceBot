@@ -13,13 +13,14 @@ client.on('ready', () => {
 //メッセージ反応部
 const REACT_REGEXP = /^\/nd /g;
 client.on('message', message => {
+    var content = message.content;
+    if (content.search(REACT_REGEXP) !== -1) {
 
-    if (message.content.search(REACT_REGEXP) !== -1) {
+        content = content.replace(/ +?/g, ' ');
+        message.reply(dice.receiveDiceRoll(content));
+        console.log(content);
 
-       message.reply(dice.receiveDiceRoll(message.content));
-       console.log('pong');
-
-       }
+        }
 
 });
 
