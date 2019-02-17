@@ -1,6 +1,6 @@
 //dice.js
-
-const DICE_ROLL = /^\d*?d\d+?$/;
+const COMMENT = /(#)/;
+const DICE_ROLL = /^\d*?d\d+?/;
 
 /**
 receiveDiceRoll
@@ -9,18 +9,37 @@ receiveDiceRoll
 ダイスロールメッセージを受信する。
 */
 exports.receiveDiceRoll = function(string) {
-    var str = checkDiceSentence(string);
-    return 'diceroll! : (' + str + ')';
+    var diceStrArray = string.split(COMMENT);
+    console.log(diceStrArray);
+    var str = checkDiceSentence(diceStrArray[0]);
+    return 'diceroll! :' + str + ;
 //    return 'I received ' + '"' + string + '"';
 };
 
 
 function checkDiceSentence(string) {
     var result = '';
+    //基本ダイスロール
     if (DICE_ROLL.test(string)) {
-        var splits = string.split(/(d)/);
+        var splits = string.split(/([dp])/);
         console.log(splits);
-        result = diceRoll(splits[0],splits[2]).join(',');
+        
+        if(!isNaN(splits[2])) {
+            if(splits[3] == null) {
+                splits.push('');
+            }
+            var resArray = diceRoll(splits[0],splits[2]);
+            
+            switch(splits[3]) {
+            case 'p' :
+                result = '(' + resArray.join('+') + ') = ' + sum(resArray);
+                break;
+                
+            default :
+                result = '(' + resArray.join(',') + ')';
+                break;
+            }
+        }
     }
     
     else {
@@ -44,4 +63,10 @@ function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+};
+
+function sum(arr) {
+    return arr.reduce(function(prev, current, i, arr) {
+        return prev+current;
+    });
 };
