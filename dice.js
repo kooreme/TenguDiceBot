@@ -22,6 +22,7 @@ function checkDiceSentence(string) {
     }
     
     else {
+        console.log('Error: string = ' + string);
         result = 'Error!'
     }
     
