@@ -10,11 +10,11 @@ client.on('ready', () => {
 
 });
 
- 
-
+//メッセージ反応部
+const REACT_REGEXP = /^\/nd /g;
 client.on('message', message => {
 
-    if (message.content.search(/^ping /) !== -1) {
+    if (message.content.search(REACT_REGEXP) !== -1) {
 
        message.reply(dice.receiveDiceRoll(message.content));
        console.log('pong');

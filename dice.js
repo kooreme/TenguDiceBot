@@ -1,5 +1,11 @@
 //dice.js
 
+/**
+receiveDiceRoll
+引数：String string ※メッセージ反応部はあらかじめ取り除くこと。
+戻り値：String
+ダイスロールメッセージを受信する。
+*/
 exports.receiveDiceRoll = function(string) {
     var str = diceRoll(5,6).join(',');
     return 'diceroll! : (' + str + ')';
