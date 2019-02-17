@@ -20,7 +20,7 @@ function checkDiceSentence(string) {
     if (DICE_ROLL.test(string)) {
         var splits = string.split(/(d)/);
         console.log(splits);
-        result = diceRoll(5,6).join(',');
+        result = diceRoll(splits[0],splits[2]).join(',');
     }
     
     else {
