@@ -32,7 +32,7 @@ var Dice = function(string){
     this.result = ERROR_FLAG;
     return;
   };
-    this.splits = string.split(/([dD]|\<\=|\>\=|\!\=|\<|\>|\=|)/);
+    this.splits = string.split(/([dD]|>=|<=|!=|=|<|>)/);
     console.log('splits = ' + this.splits);
 
     this.diceNum = this.splits[0];
