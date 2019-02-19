@@ -54,6 +54,10 @@ exports.receiveDiceRoll = function(string) {
     returnString = returnString.substring(3, returnString.length);
     returnString = comment + '：' + diceStrArray[0] + ' = ' + returnString + ' = ' + sumall;
 
+    if (returnString.length >= 2000) {
+    	console.log('文字数制限オーバー（2000字）');
+    	returnString = error.replyErrorMessage();
+    }
     console.log(returnString);
 
     return returnString;
