@@ -2,13 +2,10 @@ const util = require('./util.js');
 const Log = require('./log.js');
 
 const DICE_ROLL = /^\d*[dD]\d+/;
-const ERROR_FLAG = 'Error';
 const NUMBER_ONLY = /^\d+?$/;
 
 var Dice = function(string){
   Log.prints('new Dice string : ' + string);
-  //初期化
-  this.ERROR_FLAG = ERROR_FLAG;
   //マイナスがあるかどうかを受け取り、文字を削除する。
   if(string.slice(0,1) == '-') {
     this.isMinus = true;
@@ -30,7 +27,7 @@ var Dice = function(string){
 
   //文字列がndmでない場合はエラーコードを返却。
   if (!DICE_ROLL.test(string)) {
-    this.result = ERROR_FLAG;
+    this.result = util.ERROR_FLAG;
     return;
   };
     this.splits = string.split(/([dD]|>=|<=|!=|=|<|>)/);
@@ -41,7 +38,14 @@ var Dice = function(string){
     this.option = (this.splits[3] != null) ? this.splits[3] : '';
     this.border = (this.splits[4] != null) ? this.splits[4] : '';
 
-    this.result = (isNaN(this.diceNum) || isNaN(this.diceMen)) ? ERROR_FLAG : '';
+    this.result = checkSintax(this.diceNum,this.diceMen);
+//    this.result = (isNaN(this.diceNum) || isNaN(this.diceMen) || this.diceNum > 900 || this.diceMen > 100000) ? util.ERROR_FLAG : '';
+
+
+
+    if (this.result == util.ERROR_FLAG) {
+    	return;
+    }
 
   this.resArray = diceRoll(this.diceNum,this.diceMen);
   this.sum = util.sum(this.resArray);
@@ -92,6 +96,21 @@ function compareBorder(dice) {
 		}
 	}
 	dice.result = '('+ dice.resArray.join(',') +' ：成功数：'+ dice.sum + ')';
+}
+
+function checkSintax (diceNum,diceMen) {
+	if(isNaN(diceNum) || isNaN(diceMen)) {
+		return util.ERROR_FLAG;
+	}
+
+	var keta = String(diceMen).length;
+
+	if (diceNum > 900 || diceMen > 100000 || diceNum *(keta+1) > 1900) {
+		return util.ERROR_FLAG;
+	}
+
+	return '';
+
 }
 
 module.exports = Dice;

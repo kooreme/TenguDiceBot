@@ -40,7 +40,7 @@ exports.receiveDiceRoll = function(string) {
 
     for(var i=0,l=dice.length;i<l;i++){
 
-    	if (dice[i].result == dice[i].ERROR_FLAG) {
+    	if (dice[i].result == util.ERROR_FLAG) {
     		returnString = error.replyErrorMessage();
     		return returnString;
     	}
@@ -72,7 +72,7 @@ exports.receiveDiceRoll = function(string) {
 };
 
 function shortcutTransration(string) {
-	var splits = string.split(/([\+-])/);
+	var splits = string.split(/([\#\+\-])/);
 	Log.prints('shortcutTransration : splits :' + splits);
 	var returnString = '';
 	var shortcutArray = [];
@@ -107,13 +107,16 @@ function shortcutTransration(string) {
 						optionString = '=6';
 						break;
 					default:
-						returnString = ERROR_FLAG;
+						returnString = util.ERROR_FLAG;
 						continue;
 					}
 				}
 
 				else if (/\d+/.test(shortcut[k])) {
 					shortcutArray.push(shortcut[k]+'d6'+optionString);
+				}
+				else if (shortcut[k] != ',' && shortcut[k] != '') {
+					return util.ERROR_FLAG;
 				}
 			}
 		}
@@ -126,6 +129,7 @@ function shortcutTransration(string) {
 	}
 	returnString = shortcutArray.join('+');
 	returnString = returnString.replace('+-+', '-');
+	returnString = returnString.replace('+#+', '#');
 
 	Log.prints('shortcutTransration returnString : ' + returnString);
 	return returnString;

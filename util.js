@@ -1,5 +1,7 @@
 const Log = require('./log.js');
 
+exports.ERROR_FLAG = 'Error';
+
 exports.getRandomIntInclusive = function(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
