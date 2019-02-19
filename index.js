@@ -3,10 +3,11 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 const dice = require('./dice');
+const Log = require('./log.js');
 
 client.on('ready', () => {
 
-    console.log('I am ready!');
+    Log.prints('I am ready!');
 
 });
 
@@ -18,10 +19,9 @@ client.on('message', message => {
     if (content.search(REACT_REGEXP) !== -1) {
 
         content = content.replace(/\/nd /, '');
-        content = content.replace(/\s+/g, '');
 
         message.reply(dice.receiveDiceRoll(content));
-        console.log(content);
+        Log.prints('content : ' + content);
 
         }
 

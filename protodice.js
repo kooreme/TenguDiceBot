@@ -1,11 +1,12 @@
 const util = require('./util.js');
+const Log = require('./log.js');
 
-const DICE_ROLL = /^\d*?[dD]\d+?/;
+const DICE_ROLL = /^\d*[dD]\d+/;
 const ERROR_FLAG = 'Error';
 const NUMBER_ONLY = /^\d+?$/;
 
 var Dice = function(string){
-  console.log(string);
+  Log.prints('new Dice string : ' + string);
   //初期化
   this.ERROR_FLAG = ERROR_FLAG;
   //マイナスがあるかどうかを受け取り、文字を削除する。
@@ -21,7 +22,7 @@ var Dice = function(string){
   }
   //数字だけだった場合はresArrayにその数字をプッシュして終わり。
   if (NUMBER_ONLY.test(string)) {
-    console.log('数字のみ');
+    Log.prints('数字のみ');
     this.resArray = [string];
     this.sum = util.sum(this.resArray);
     return;
@@ -33,7 +34,7 @@ var Dice = function(string){
     return;
   };
     this.splits = string.split(/([dD]|>=|<=|!=|=|<|>)/);
-    console.log('splits = ' + this.splits);
+    Log.prints('splits = ' + this.splits);
 
     this.diceNum = this.splits[0];
     this.diceMen = this.splits[2];
@@ -44,7 +45,7 @@ var Dice = function(string){
 
   this.resArray = diceRoll(this.diceNum,this.diceMen);
   this.sum = util.sum(this.resArray);
-  console.log('sum : ' + this.sum);
+  Log.prints('sum : ' + this.sum);
 
 };
 
@@ -67,7 +68,7 @@ Dice.prototype.toString = function() {
         this.result = '(' + this.resArray.join('+') + ')';
         break;
     }
-    console.log('result = ' + this.result);
+    Log.prints('result = ' + this.result);
     return this.result;
 }
 
@@ -80,7 +81,7 @@ function diceRoll(diceNum, diceMen) {
 };
 
 function compareBorder(dice) {
-	console.log('case:' + dice.option);
+	Log.prints('case:' + dice.option);
 	dice.sum = 0;
 	for (var i=0,l=dice.resArray.length;i<l;i++) {
 		if(eval(parseInt(dice.resArray[i]) + dice.option + dice.border)) {

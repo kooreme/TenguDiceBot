@@ -1,3 +1,5 @@
+const Log = require('./log.js');
+
 exports.getRandomIntInclusive = function(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -5,9 +7,9 @@ exports.getRandomIntInclusive = function(min, max) {
 };
 
 exports.sum = function(arr) {
-	console.log('arr : ' + arr);
+	Log.prints('arr : ' + arr);
     return arr.reduce(function(prev, current, i, arr) {
-    	console.log('prev : ' +prev+ ' current : ' +current);
+    	Log.prints('prev : ' +prev+ ' current : ' +current);
         return prev+current;
     });
 };
