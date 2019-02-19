@@ -56,7 +56,7 @@ exports.receiveDiceRoll = function(string) {
 
     if (returnString.length >= 2000) {
     	console.log('文字数制限オーバー（2000字）');
-    	returnString = error.replyErrorMessage();
+    	returnString = error.replyErrorMessage() + '\n（2000文字制限オーバーです。分割してください）';
     }
     console.log(returnString);
 
