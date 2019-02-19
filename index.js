@@ -12,8 +12,9 @@ client.on('ready', () => {
 
 //メッセージ反応部
 const REACT_REGEXP = /^\/nd /g;
+
 client.on('message', message => {
-    var content = message.content;
+    let content = message.content;
     if (content.search(REACT_REGEXP) !== -1) {
 
         content = content.replace(/\/nd /, '');

@@ -1,10 +1,11 @@
 //dice.js
-const COMMENT = /(#)/;
-const DICE_ROLL = /^\d*?d\d+?/;
+const COMMENT = /#/;
+const DICE_DIVIDE = /\+/g;
+const MINUS = /-(\d)/g;
 
 const error = require('./errormessage.js');
 const util = require('./util.js');
-const ERROR_FLAG = 'Error';
+const Dice = require('./protodice.js');
 /**
 receiveDiceRoll
 引数：String string ※メッセージ反応部はあらかじめ取り除くこと。
@@ -12,19 +13,49 @@ receiveDiceRoll
 ダイスロールメッセージを受信する。
 */
 exports.receiveDiceRoll = function(string) {
-    var diceStrArray = string.split(COMMENT);
-    console.log(diceStrArray);
-    var str = checkDiceSentence(diceStrArray[0]);
+    let returnString = '';
 
-    var returnString = '';
-    if (str != ERROR_FLAG) {
-    	returnString = (diceStrArray[2] == null)
-    	? 'diceroll!：' + diceStrArray[0] + ' = ' + str
-    			: diceStrArray[2] + '：' + diceStrArray[0] + ' = ' + str;
+	//コメントとダイスロール文字列を分離
+    const diceStrArray = string.split(COMMENT);
+    const comment = diceStrArray[1] == null ? 'diceroll' : diceStrArray[1];
+    console.log(diceStrArray);
+
+    const calcDiceStr = diceStrArray[0].replace(MINUS,'+-$1');
+
+    const diceStr = calcDiceStr.split(DICE_DIVIDE);
+    console.log(diceStr);
+
+    const dice = [];
+    diceStr.forEach(function(element) {
+    	dice.push(new Dice(element));
+    });
+
+    for(var i=0,l=dice.length;i<l;i++){
+
+    	if (dice[i].result == dice[i].ERROR_FLAG) {
+    		returnString = error.replyErrorMessage();
+    		return returnString;
+    	}
     }
-    else {
-    	returnString = error.replyErrorMessage();
-    }
+
+    var sumall = 0;
+    dice.forEach(function(element){
+    	if (element.isMinus) {
+    		returnString = returnString + ' - ' + element.toString();
+    		sumall -= parseInt(element.sum,10);
+    	} else {
+    		returnString = returnString + ' + ' + element.toString();
+    		sumall += parseInt(element.sum,10);
+    	}
+    	console.log('element.sum : ' + element.sum);
+    	console.log('sumall : ' + sumall);
+    });
+
+    returnString = returnString.substring(3, returnString.length);
+    returnString = comment + '：' + diceStrArray[0] + ' = ' + returnString + ' = ' + sumall;
+
+    console.log(returnString);
+
     return returnString;
 };
 
@@ -62,12 +93,6 @@ function checkDiceSentence(string) {
     return result;
 }
 
-function diceRoll(number, diceMen) {
-    var result = [];
-    for(i = 0;i < number;i++) {
-        result.push(util.getRandomIntInclusive(1,diceMen));
-    }
-    return result;
-};
+
 
 

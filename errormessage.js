@@ -1,6 +1,6 @@
-var util = require('./util.js');
+const util = require('./util.js');
 
-var errorMessage = [
+const errorMessage = [
 ':japanese_goblin: 「……ニンジャが山の上でカタナを高々と掲げると、そこに雷が落ちて……四方八方にほとばしり……まばゆい……稲妻と雹がエジプト全土を襲った。……カタナを掲げるニンジャの……笑い声が……響き渡った……」',
 ':japanese_goblin: 「神々の使者、ヤクザ天狗参上……！」',
 ':japanese_goblin: 「……聖戦を止めることはできぬ……」',
