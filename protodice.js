@@ -90,7 +90,7 @@ function compareBorder(dice) {
 			dice.resArray[i] = '~~' + dice.resArray[i] + '~~' ;
 		}
 	}
-	dice.result = '('+ dice.resArray.join(',') +')';
+	dice.result = '('+ dice.resArray.join(',') +' ：成功数：'+ dice.sum + ')';
 }
 
 module.exports = Dice;
