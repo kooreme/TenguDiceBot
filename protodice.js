@@ -53,14 +53,15 @@ Dice.prototype.toString = function() {
     switch(this.option) {
 
     //不等号オプションが入っていたら、成功数などをカウントする。
+    case '=' :
+    	this.option = '==';
     case '>=' :
     case '>' :
-    case '=' :
     case '<' :
     case '<=' :
     case '!=' :
-        this.result = '(' + this.resArray.join(',') + ')';
-        break;
+    	compareBorder(this);
+    	break;
 
     default :
         this.result = '(' + this.resArray.join('+') + ')';
@@ -77,5 +78,19 @@ function diceRoll(diceNum, diceMen) {
     }
     return result;
 };
+
+function compareBorder(dice) {
+	console.log('case:' + dice.option);
+	dice.sum = 0;
+	for (var i=0,l=dice.resArray.length;i<l;i++) {
+		if(eval(parseInt(dice.resArray[i]) + dice.option + dice.border)) {
+			dice.sum ++;
+		}
+		else {
+			dice.resArray[i] = '~~' + dice.resArray[i] + '~~' ;
+		}
+	}
+	dice.result = '('+ dice.resArray.join(',') +')';
+}
 
 module.exports = Dice;
