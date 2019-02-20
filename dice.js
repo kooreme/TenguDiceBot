@@ -23,6 +23,7 @@ exports.receiveDiceRoll = function(string) {
     //ショートカットコマンドを翻訳する
     string = shortcutTransration(string);
 
+    let comment = '';
 	//コメントとダイスロール文字列を分離
     const searchComment = string.search(COMMENT);
     if (searchComment > 0) {
