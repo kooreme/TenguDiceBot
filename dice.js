@@ -3,12 +3,18 @@ const COMMENT = /#/;
 const DICE_DIVIDE = /\+/g;
 const MINUS = /(\d)-/g;
 const DICE_ROLL = /^\d*[dD]\d+/;
-const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i
+const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i;
+const WASSHOI = /^wasshoi\d+$/i;
 
+const wasshoi = require('./wasshoi.js');
 const error = require('./errormessage.js');
 const util = require('./util.js');
 const Dice = require('./protodice.js');
 const Log = require('./log.js');
+
+const STRING_WASSHOI = 'wasshoi';
+const SPACE_PLUS_SPACE = ' + ';
+
 /**
 receiveDiceRoll
 引数：String string ※メッセージ反応部はあらかじめ取り除くこと。
@@ -16,11 +22,22 @@ receiveDiceRoll
 ダイスロールメッセージを受信する。
 */
 exports.receiveDiceRoll = function(string) {
-    let returnString = '';
     //スペースを除去
     string = string.replace(/\s+/g, '');
 
-    //ショートカットコマンドを翻訳する
+    if (WASSHOI.test(string)) {
+    	return wasshoi.wasshoiDiceRoll(string.substring(STRING_WASSHOI.length));
+    }
+
+    //通常ダイスロール
+    return normalDiceRoll(string);
+
+};
+
+function normalDiceRoll(string) {
+    let returnString = '';
+
+	//ショートカットコマンドを翻訳する
     string = shortcutTransration(string);
 
     let comment = '';
@@ -71,7 +88,8 @@ exports.receiveDiceRoll = function(string) {
     	Log.prints('sumall : ' + sumall);
     });
 
-    returnString = returnString.substring(3, returnString.length);
+    //先頭3文字（' + '）を除去
+    returnString = returnString.substring(SPACE_PLUS_SPACE.length, returnString.length);
     returnString = comment + '：`' + diceStrArray[0] + '` = ' + returnString + ' = ' + sumall;
 
     if (returnString.length >= 2000) {
@@ -81,7 +99,7 @@ exports.receiveDiceRoll = function(string) {
     Log.prints('returnString : ' + returnString);
 
     return returnString;
-};
+}
 
 /**
  * shortcutTransration
@@ -175,4 +193,5 @@ function diceRoll (dice){
     	});
     }
 }
+
 
