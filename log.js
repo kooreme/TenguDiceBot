@@ -3,7 +3,7 @@
  * ログ制御
  */
 
-const LOG = true;
+const LOG = process.env.DEBUG || true;
 exports.prints = function(string) {
 	if(LOG) {
 		console.log(string);

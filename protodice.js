@@ -39,9 +39,6 @@ var Dice = function(string){
     this.border = (this.splits[4] != null) ? this.splits[4] : '';
 
     this.result = checkSintax(this.diceNum,this.diceMen);
-//    this.result = (isNaN(this.diceNum) || isNaN(this.diceMen) || this.diceNum > 900 || this.diceMen > 100000) ? util.ERROR_FLAG : '';
-
-
 
     if (this.result == util.ERROR_FLAG) {
     	return;
@@ -105,7 +102,7 @@ function checkSintax (diceNum,diceMen) {
 
 	var keta = String(diceMen).length;
 
-	if (diceNum > 900 || diceMen > 100000 || diceNum *(keta+1) > 1900) {
+	if (0 >= diceNum || 0>= diceMen || diceNum > 900 || diceMen > 100000 || diceNum *(keta+1) > 1900) {
 		return util.ERROR_FLAG;
 	}
 
