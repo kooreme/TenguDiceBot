@@ -38,15 +38,14 @@ var Dice = function(string){
     this.option = (this.splits[3] != null) ? this.splits[3] : '';
     this.border = (this.splits[4] != null) ? this.splits[4] : '';
 
-    this.result = checkSintax(this.diceNum,this.diceMen);
 
-    if (this.result == util.ERROR_FLAG) {
+    if (!util.checkSintax(this.diceNum,this.diceMen)) {
+        this.result = util.ERROR_FLAG;
     	return;
     }
+  this.result = '';
 
-  this.resArray = diceRoll(this.diceNum,this.diceMen);
-  this.sum = util.sum(this.resArray);
-  Log.prints('sum : ' + this.sum);
+  this.resArray = [];
 
 };
 
@@ -73,12 +72,17 @@ Dice.prototype.toString = function() {
     return this.result;
 }
 
-function diceRoll(diceNum, diceMen) {
-    var result = [];
-    for(i = 0;i < diceNum;i++) {
-        result.push(util.getRandomIntInclusive(1,diceMen));
+Dice.prototype.diceRoll = function() {
+	//数字だけだった場合はダイスロールしない。
+	if (this.resArray.length != 0) {
+		return;
+	}
+    for(i = 0;i < this.diceNum;i++) {
+        this.resArray.push(util.getRandomIntInclusive(1,this.diceMen));
     }
-    return result;
+    this.sum = util.sum(this.resArray);
+    Log.prints('sum : ' + this.sum);
+
 };
 
 function compareBorder(dice) {
@@ -95,19 +99,5 @@ function compareBorder(dice) {
 	dice.result = '('+ dice.resArray.join(',') +' ：成功数：'+ dice.sum + ')';
 }
 
-function checkSintax (diceNum,diceMen) {
-	if(isNaN(diceNum) || isNaN(diceMen)) {
-		return util.ERROR_FLAG;
-	}
-
-	var keta = String(diceMen).length;
-
-	if (0 >= diceNum || 0>= diceMen || diceNum > 900 || diceMen > 100000 || diceNum *(keta+1) > 1900) {
-		return util.ERROR_FLAG;
-	}
-
-	return '';
-
-}
 
 module.exports = Dice;

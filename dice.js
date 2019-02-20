@@ -1,7 +1,7 @@
 //dice.js
 const COMMENT = /#/;
 const DICE_DIVIDE = /\+/g;
-const MINUS = /-(\d)/g;
+const MINUS = /(\d)-/g;
 const DICE_ROLL = /^\d*[dD]\d+/;
 const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i
 
@@ -24,11 +24,16 @@ exports.receiveDiceRoll = function(string) {
     string = shortcutTransration(string);
 
 	//コメントとダイスロール文字列を分離
+    const searchComment = string.search(COMMENT);
+    if (searchComment > 0) {
+    	comment = string.substring(searchComment+1);
+    	string = string.substring(0,searchComment);
+    }
     const diceStrArray = string.split(COMMENT);
-    const comment = diceStrArray[1] == null ? 'diceroll' : diceStrArray[1];
+//    const comment = diceStrArray[1] == null ? 'diceroll' : diceStrArray[1];
     Log.prints('diceStrArray : ' + diceStrArray);
 
-    const calcDiceStr = diceStrArray[0].replace(MINUS,'+-$1');
+    const calcDiceStr = diceStrArray[0].replace(MINUS,'$1+-');
 
     const diceStr = calcDiceStr.split(DICE_DIVIDE);
     Log.prints('diceStr : ' + diceStr);
@@ -44,6 +49,12 @@ exports.receiveDiceRoll = function(string) {
     		returnString = error.replyErrorMessage();
     		return returnString;
     	}
+    }
+
+    //ダイスロール
+    if(diceRoll(dice)== false) {
+		returnString = error.replyErrorMessage();
+		return returnString;
     }
 
     var sumall = 0;
@@ -71,6 +82,10 @@ exports.receiveDiceRoll = function(string) {
     return returnString;
 };
 
+/**
+ * shortcutTransration
+ * ショートカット記法を翻訳し、文字列を返す。
+ * */
 function shortcutTransration(string) {
 	var splits = string.split(/([\#\+\-])/);
 	Log.prints('shortcutTransration : splits :' + splits);
@@ -128,12 +143,35 @@ function shortcutTransration(string) {
 		}
 	}
 	returnString = shortcutArray.join('+');
-	returnString = returnString.replace('+-+', '-');
-	returnString = returnString.replace('+#+', '#');
+	returnString = returnString.replace(/\+-\+/g, '-');
+	returnString = returnString.replace(/\+#\+/g, '#');
 
 	Log.prints('shortcutTransration returnString : ' + returnString);
 	return returnString;
 }
 
-
+/**
+ * diceRoll
+ * 全ダイスの数、面をチェックし、問題なければ全ダイスロールを行う。
+ * */
+function diceRoll (dice){
+    var sumDiceMen = [];
+    var sumDiceNum = 0;
+    dice.forEach(function(element){
+    	sumDiceMen.push((element.diceMen == null) ? 0 : Number(element.diceMen));
+    	sumDiceNum += (element.diceNum == null) ? 0 : Number(element.diceNum);
+    });
+    Log.prints('sumDiceMen = ' + sumDiceMen +'sumDiceMen.max = ' + Math.max.apply(null, sumDiceMen) + ', sumDiceNum = ' + sumDiceNum);
+    if (!util.checkSintax(sumDiceNum,Math.max.apply(null, sumDiceMen))) {
+    	Log.prints('sintaxError');
+		return false;
+    }
+    else {
+    	dice.forEach(function(element){
+    		element.diceRoll();
+    		Log.prints('diceRoll done.');
+    		return true;
+    	});
+    }
+}
 
