@@ -79,12 +79,12 @@ function shortcutTransration(string) {
 	for(var i=0,l=splits.length;i<l;i++) {
 		var optionString = '';
 		if (SHORT_CUT_COMMAND.test(splits[i])) {
-			var shortcut = splits[i].split(/([\d*])/);
+			var shortcut = splits[i].split(/([kenhu,])/);
 
 			for(var k=0,m=shortcut.length;k<m;k++) {
 				Log.prints('shortcutTransration shortcut[' + k + '] : ' + shortcut[k]);
 
-				if(k == 0 && /[kenhu]/i.test(shortcut[k])) {
+				if(k == 1 && /[kenhu]/i.test(shortcut[k])) {
 					switch(shortcut[k]) {
 					case 'k' :
 					case 'K' :
