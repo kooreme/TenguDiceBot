@@ -5,12 +5,14 @@ const MINUS = /-/g;
 const DICE_ROLL = /^\d*[dD]\d+/;
 const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i;
 const WASSHOI = /^wasshoi\d+$/i;
+const HELP = /^help$/;
 
 const wasshoi = require('./wasshoi.js');
 const error = require('./errormessage.js');
 const util = require('./util.js');
 const Dice = require('./protodice.js');
 const Log = require('./log.js');
+const Help = require('./help.js');
 
 const STRING_WASSHOI = 'wasshoi';
 const SPACE_PLUS_SPACE = ' + ';
@@ -24,6 +26,10 @@ receiveDiceRoll
 exports.receiveDiceRoll = function(string) {
     //スペースを除去
     string = string.replace(/\s+/g, '');
+
+    if (HELP.test(string)) {
+    	return Help.help;
+    }
 
     if (WASSHOI.test(string)) {
     	return wasshoi.wasshoiDiceRoll(string.substring(STRING_WASSHOI.length));
