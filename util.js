@@ -1,6 +1,7 @@
 const Log = require('./log.js');
 
 exports.ERROR_FLAG = 'Error';
+exports.EVERY_APPENDIX = /(\[.*\]$)/;
 
 /**
  * 最小～最大（最大含む）の整数をランダムに返す。

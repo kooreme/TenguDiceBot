@@ -1,7 +1,7 @@
 //dice.js
 const COMMENT = /#/;
 const DICE_DIVIDE = /\+/g;
-const MINUS = /(\d)-/g;
+const MINUS = /-/g;
 const DICE_ROLL = /^\d*[dD]\d+/;
 const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i;
 const WASSHOI = /^wasshoi\d+$/i;
@@ -51,7 +51,7 @@ function normalDiceRoll(string) {
 //    const comment = diceStrArray[1] == null ? 'diceroll' : diceStrArray[1];
     Log.prints('diceStrArray : ' + diceStrArray);
 
-    const calcDiceStr = diceStrArray[0].replace(MINUS,'$1+-');
+    const calcDiceStr = diceStrArray[0].replace(MINUS,'+-');
 
     const diceStr = calcDiceStr.split(DICE_DIVIDE);
     Log.prints('diceStr : ' + diceStr);
@@ -106,63 +106,92 @@ function normalDiceRoll(string) {
  * ショートカット記法を翻訳し、文字列を返す。
  * */
 function shortcutTransration(string) {
-	var splits = string.split(/([\#\+\-])/);
-	Log.prints('shortcutTransration : splits :' + splits);
 	var returnString = '';
-	var shortcutArray = [];
-	for(var i=0,l=splits.length;i<l;i++) {
-		var optionString = '';
-		if (SHORT_CUT_COMMAND.test(splits[i])) {
-			var shortcut = splits[i].split(/([kenhu,])/);
+	var returnStringArray = [];
 
-			for(var k=0,m=shortcut.length;k<m;k++) {
-				Log.prints('shortcutTransration shortcut[' + k + '] : ' + shortcut[k]);
+	var searchComment = string.search(COMMENT);
+    if (searchComment > 0) {
+    	var comment = string.substring(searchComment);
+    	var string = string.substring(0,searchComment);
+    }
 
-				if(k == 1 && /[kenhu]/i.test(shortcut[k])) {
-					switch(shortcut[k]) {
-					case 'k' :
-					case 'K' :
-						optionString = '>=2';
-						break;
-					case 'e' :
-					case 'E' :
-						optionString = '>=3';
-						break;
-					case 'n' :
-					case 'N' :
-						optionString = '>=4';
-						break;
-					case 'h' :
-					case 'H' :
-						optionString = '>=5';
-						break;
-					case 'u' :
-					case 'U' :
-						optionString = '=6';
-						break;
-					default:
-						returnString = util.ERROR_FLAG;
+	string = string.replace(MINUS,'+-');
+	var stringArray = string.split('+');
+	Log.prints('shortcutTransration stringArray : ' + stringArray);
+
+	for (var index=0,strlen=stringArray.length;index<strlen;index++) {
+		Log.prints('shortcutTransration : stringArray[' + index + '] : ' + stringArray[index]);
+		var appendixSearch = stringArray[index].search(util.EVERY_APPENDIX);
+		if (appendixSearch >= 0) {
+			var appendix = stringArray[index].substring(appendixSearch);
+			stringArray[index] = stringArray[index].substring(0,appendixSearch);
+			Log.prints('shortcutTransration : appendix :' + appendix + ' , stringArray[' + index + '] : ' + stringArray[index]);
+		}
+		var splits = stringArray[index].split(/([\+\-])/);
+		Log.prints('shortcutTransration : splits :' + splits);
+
+		var shortcutArray = [];
+		for(var i=0,l=splits.length;i<l;i++) {
+			var optionString = '';
+			if (SHORT_CUT_COMMAND.test(splits[i])) {
+				var shortcut = splits[i].split(/([kenhu,])/);
+
+				for(var k=0,m=shortcut.length;k<m;k++) {
+					Log.prints('shortcutTransration shortcut[' + k + '] : ' + shortcut[k]);
+
+					if(k == 1 && /[kenhu]/i.test(shortcut[k])) {
+						switch(shortcut[k]) {
+						case 'k' :
+						case 'K' :
+							optionString = '>=2';
+							break;
+						case 'e' :
+						case 'E' :
+							optionString = '>=3';
+							break;
+						case 'n' :
+						case 'N' :
+							optionString = '>=4';
+							break;
+						case 'h' :
+						case 'H' :
+							optionString = '>=5';
+							break;
+						case 'u' :
+						case 'U' :
+							optionString = '=6';
+							break;
+						default:
+							returnString = util.ERROR_FLAG;
 						continue;
+						}
+					}
+
+					else if (/\d+/.test(shortcut[k])) {
+						var temp = shortcut[k]+'d6'+optionString;
+						temp += (appendix != null) ? appendix : '';
+						shortcutArray.push(temp);
+					}
+					else if (shortcut[k] != ',' && shortcut[k] != '') {
+						return util.ERROR_FLAG;
 					}
 				}
-
-				else if (/\d+/.test(shortcut[k])) {
-					shortcutArray.push(shortcut[k]+'d6'+optionString);
-				}
-				else if (shortcut[k] != ',' && shortcut[k] != '') {
-					return util.ERROR_FLAG;
-				}
+			}
+			else if (splits[i] == '+') {
+				continue;
+			}
+			else {
+				shortcutArray.push(splits[i]);
 			}
 		}
-		else if (splits[i] == '+') {
-			continue;
-		}
-		else {
-			shortcutArray.push(splits[i]);
-		}
+		returnStringArray.push(shortcutArray.join('+'));
 	}
-	returnString = shortcutArray.join('+');
+	returnString = returnStringArray.join('+');
+	returnString += (comment != null) ? comment : '';
+	Log.prints('shortcutTransration returnString : ' + returnString);
+
 	returnString = returnString.replace(/\+-\+/g, '-');
+	returnString = returnString.replace(/\+-/g, '-');
 	returnString = returnString.replace(/\+#\+/g, '#');
 
 	Log.prints('shortcutTransration returnString : ' + returnString);
