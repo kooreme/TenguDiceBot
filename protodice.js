@@ -1,7 +1,7 @@
 const util = require('./util.js');
 const Log = require('./log.js');
 
-const DICE_ROLL = /^\d*[dD]\d+/;
+const DICE_ROLL = /^\d+[dD]\d+(?:(?:[<>!]{1}=?|=){1}\d+)?$/;
 const NUMBER_ONLY = /^\d+?$/;
 const CHECK_APPENDIX_SINTAX = /(?:<=|<|=|>|>=|!=)\d+\[.+\]$/;
 
@@ -50,7 +50,7 @@ var Dice = function(string){
     return;
   }
 
-  //文字列がndmでない場合はエラーコードを返却。
+  //文字列がndm(>=k)でない場合はエラーコードを返却。
   if (!DICE_ROLL.test(string)) {
     this.result = util.ERROR_FLAG;
     return;
