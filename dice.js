@@ -181,7 +181,9 @@ function shortcutTransration(string) {
 				continue;
 			}
 			else {
-				shortcutArray.push(splits[i]);
+				var temp = splits[i];
+				temp += (appendix != null) ? appendix : '';
+				shortcutArray.push(temp);
 			}
 		}
 		returnStringArray.push(shortcutArray.join('+'));
