@@ -43,7 +43,7 @@ var Dice = function(string){
     string = '1' + string;
 	}
 	//dの後ろに数字がついていない場合は６面ダイスとする。
-	if (/^\d[dD]\d/.test(string) == false) {
+	if (/^\d+[dD]\d/.test(string) == false) {
 		string = string.replace('d','d6');
 	}
 
