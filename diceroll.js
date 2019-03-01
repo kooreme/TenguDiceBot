@@ -54,7 +54,6 @@ function normalDiceRoll(string) {
     	string = string.substring(0,searchComment);
     }
     const diceStrArray = string.split(COMMENT);
-//    const comment = diceStrArray[1] == null ? 'diceroll' : diceStrArray[1];
     Log.prints('diceStrArray : ' + diceStrArray);
 
     const calcDiceStr = diceStrArray[0].replace(MINUS,'+-');
@@ -64,16 +63,13 @@ function normalDiceRoll(string) {
 
     const dice = [];
     diceStr.forEach(function(element) {
-    	dice.push(new Dice(element));
-    });
-
-    for(var i=0,l=dice.length;i<l;i++){
-
-    	if (dice[i].result == util.ERROR_FLAG) {
+		let newdice = new Dice(element);
+		if (newdice.result == util.ERROR_FLAG) {
     		returnString = error.replyErrorMessage();
     		return returnString;
     	}
-    }
+    	dice.push(newdice);
+    });
 
     //ダイスロール
     if(diceRoll(dice)== false) {
@@ -81,30 +77,11 @@ function normalDiceRoll(string) {
 		return returnString;
     }
 
-    var sumall = 0;
-    dice.forEach(function(element){
-    	if (element.isMinus) {
-    		returnString = returnString + ' - ' + element.toString();
-    		sumall -= parseInt(element.sum,10);
-    	} else {
-    		returnString = returnString + ' + ' + element.toString();
-    		sumall += parseInt(element.sum,10);
-    	}
-    	Log.prints('element.sum : ' + element.sum);
-    	Log.prints('sumall : ' + sumall);
-    });
+	returnString = createOutput(dice,comment);
+	Log.prints('returnString : ' + returnString);
 
-    //先頭3文字（' + '）を除去
-    returnString = returnString.substring(SPACE_PLUS_SPACE.length, returnString.length);
-    returnString = comment + '：`' + diceStrArray[0] + '` = ' + returnString + ' = ' + sumall;
+	return returnString;
 
-    if (returnString.length >= 2000) {
-    	Log.prints('文字数制限オーバー（2000字）');
-    	returnString = error.replyErrorMessage() + '\n（2000文字制限オーバーです。分割してください）';
-    }
-    Log.prints('returnString : ' + returnString);
-
-    return returnString;
 }
 
 /**
@@ -231,4 +208,36 @@ function diceRoll (dice){
     }
 }
 
+function createOutput(dice,comment) {
+	let str = '';
+	let sumall = 0;
+	let diceStr = '';
+    dice.forEach(function(element){
+    	if (element.isMinus) {
+    		str = str + ' - ' + element.toString();
+			sumall -= parseInt(element.sum,10);
+			diceStr = diceStr + '-' + element.string;
+    	} else {
+    		str = str + ' + ' + element.toString();
+			sumall += parseInt(element.sum,10);
+			diceStr = diceStr + '+' + element.string;
+    	}
+    	Log.prints('element.sum : ' + element.sum);
+    	Log.prints('sumall : ' + sumall);
+    });
+
+    //先頭3文字（' + '）を除去
+	str = str.substring(SPACE_PLUS_SPACE.length, str.length);
+	diceStr = diceStr.substring('+'.length, diceStr.length);
+ 
+	str = comment + '：`' + diceStr + '` = ' + str + ' = ' + sumall;
+
+    if (str.length >= 2000) {
+    	Log.prints('文字数制限オーバー（2000字）');
+    	str = error.replyErrorMessage() + '\n（2000文字制限オーバーです。分割してください）';
+    }
+
+    return str;
+
+}
 

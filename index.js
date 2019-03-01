@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 const client = new Discord.Client();
 
-const dice = require('./dice');
+const dice = require('./diceroll');
 const Log = require('./log.js');
 
 client.on('ready', () => {

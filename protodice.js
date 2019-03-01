@@ -41,7 +41,12 @@ var Dice = function(string){
   //最初の文字がdから始まった場合は1dmへ変更する。
   if (string.slice(0,1) == 'd') {
     string = '1' + string;
-  }
+	}
+	//dの後ろに数字がついていない場合は６面ダイスとする。
+	if (/^\d[dD]\d/.test(string) == false) {
+		string = string.replace('d','d6');
+	}
+
   //数字だけだった場合はresArrayにその数字をプッシュして終わり。
   if (NUMBER_ONLY.test(string)) {
     Log.prints('数字のみ');
@@ -68,7 +73,8 @@ var Dice = function(string){
         this.result = util.ERROR_FLAG;
     	return;
     }
-  this.result = '';
+	this.result = '';
+	this.string = string;
 
   this.resArray = [];
 
@@ -222,6 +228,9 @@ function appTransration(string) {
 	case 's':
 	case 's6':
 		string = '=6/サツバツ！';
+		break;
+	case 'c':
+		string = '=4/コッポ判定';
 		break;
 	default :
 		break;
