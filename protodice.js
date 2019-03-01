@@ -47,6 +47,9 @@ var Dice = function(string){
 		string = string.replace('d','d6');
 	}
 
+	//解釈済みの文字列はここで決定
+	this.string = string;
+
   //数字だけだった場合はresArrayにその数字をプッシュして終わり。
   if (NUMBER_ONLY.test(string)) {
     Log.prints('数字のみ');
@@ -74,7 +77,6 @@ var Dice = function(string){
     	return;
     }
 	this.result = '';
-	this.string = string;
 
   this.resArray = [];
 
