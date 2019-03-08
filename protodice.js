@@ -49,6 +49,12 @@ var Dice = function(string){
 
 	//解釈済みの文字列はここで決定
 	this.string = string;
+	if(this.appendixArray != null) {
+		this.appendixArray.forEach(function(element) {
+			this.string += '[' + element.string + ']';
+			Log.prints('******' + this.string);
+			},this);
+	}
 
   //数字だけだった場合はresArrayにその数字をプッシュして終わり。
   if (NUMBER_ONLY.test(string)) {
@@ -183,6 +189,7 @@ var Appendix = function (string){
 	if (checkAppendix(this) == false) {
 		throw util.ERROR_FLAG;
 	}
+	this.string = string;
 
 
 };
@@ -210,7 +217,7 @@ function createAppendix(string) {
 
 	var appendixArray = [];
 	temp.forEach(function(element){
-		element = appTransration(element);
+		element = appTransration(element.toLowerCase());
 		appendixArray.push(new Appendix(element));
 	});
 	Log.prints('createAppendix appendixArray : 「' + appendixArray + '」');
@@ -233,6 +240,9 @@ function appTransration(string) {
 		break;
 	case 'c':
 		string = '=4/コッポ判定';
+		break;
+	case 'l':
+		string = '=6/LAN直結出目6数'
 		break;
 	default :
 		break;
