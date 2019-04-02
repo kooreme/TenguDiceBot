@@ -131,6 +131,7 @@ function compareBorder(dice) {
 	Log.prints('case:' + dice.option);
 	dice.sum = 0;
 	var normalSum = 0;
+	Log.prints('compareBorder() dice.resArray : ' + dice.resArray);
 	for (var i=0,l=dice.resArray.length;i<l;i++) {
 		if(eval(parseInt(dice.resArray[i]) + dice.option + dice.border)) {
 			normalSum ++;

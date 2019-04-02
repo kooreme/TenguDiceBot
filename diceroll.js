@@ -1,21 +1,17 @@
 //dice.js
 const COMMENT = /#/;
-const DICE_DIVIDE = /\+/g;
 const MINUS = /-/g;
-const DICE_ROLL = /^\d*[dD]\d+/;
 const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i;
 const WASSHOI = /^wasshoi\d+$/i;
 const HELP = /^help$/;
 
 const wasshoi = require('./wasshoi.js');
-const error = require('./errormessage.js');
 const util = require('./util.js');
-const Dice = require('./protodice.js');
 const Log = require('./log.js');
 const Help = require('./help.js');
 
 const STRING_WASSHOI = 'wasshoi';
-const SPACE_PLUS_SPACE = ' + ';
+
 
 /**
 receiveDiceRoll
@@ -41,46 +37,21 @@ exports.receiveDiceRoll = function(string) {
 };
 
 function normalDiceRoll(string) {
-    let returnString = '';
+		//ショートカットコマンドを翻訳する
+		let diceinfo = {};
+		string = shortcutTransration(string);
+		diceinfo = util.normalDiceRoll(string);
 
-	//ショートカットコマンドを翻訳する
-    string = shortcutTransration(string);
+		if (diceinfo.dice.length == 0) {
+			Log.prints('no dice error');
+			return diceinfo.comment;
+		}
 
-    let comment = '';
-	//コメントとダイスロール文字列を分離
-    const searchComment = string.search(COMMENT);
-    if (searchComment > 0) {
-    	comment = string.substring(searchComment+1);
-    	string = string.substring(0,searchComment);
-    }
-    const diceStrArray = string.split(COMMENT);
-    Log.prints('diceStrArray : ' + diceStrArray);
+		Log.prints('diceinfo : ' + diceinfo);
+		returnString = util.createOutput(diceinfo.dice,diceinfo.comment);
+		Log.prints('returnString : ' + returnString);
 
-    const calcDiceStr = diceStrArray[0].replace(MINUS,'+-');
-
-    const diceStr = calcDiceStr.split(DICE_DIVIDE);
-    Log.prints('diceStr : ' + diceStr);
-
-    const dice = [];
-    diceStr.forEach(function(element) {
-		let newdice = new Dice(element);
-		if (newdice.result == util.ERROR_FLAG) {
-    		returnString = error.replyErrorMessage();
-    		return returnString;
-    	}
-    	dice.push(newdice);
-    });
-
-    //ダイスロール
-    if(diceRoll(dice)== false) {
-		returnString = error.replyErrorMessage();
 		return returnString;
-    }
-
-	returnString = createOutput(dice,comment);
-	Log.prints('returnString : ' + returnString);
-
-	return returnString;
 
 }
 
@@ -183,61 +154,5 @@ function shortcutTransration(string) {
 	return returnString;
 }
 
-/**
- * diceRoll
- * 全ダイスの数、面をチェックし、問題なければ全ダイスロールを行う。
- * */
-function diceRoll (dice){
-    var sumDiceMen = [];
-    var sumDiceNum = 0;
-    dice.forEach(function(element){
-    	sumDiceMen.push((element.diceMen == null) ? 0 : Number(element.diceMen));
-    	sumDiceNum += (element.diceNum == null) ? 0 : Number(element.diceNum);
-    });
-    Log.prints('sumDiceMen = ' + sumDiceMen +'sumDiceMen.max = ' + Math.max.apply(null, sumDiceMen) + ', sumDiceNum = ' + sumDiceNum);
-    if (!util.checkSintax(sumDiceNum,Math.max.apply(null, sumDiceMen))) {
-    	Log.prints('sintaxError');
-		return false;
-    }
-    else {
-    	dice.forEach(function(element){
-    		element.diceRoll();
-    		Log.prints('diceRoll done.');
-    		return true;
-    	});
-    }
-}
 
-function createOutput(dice,comment) {
-	let str = '';
-	let sumall = 0;
-	let diceStr = '';
-    dice.forEach(function(element){
-    	if (element.isMinus) {
-    		str = str + ' - ' + element.toString();
-			sumall -= parseInt(element.sum,10);
-			diceStr = diceStr + '-' + element.string;
-    	} else {
-    		str = str + ' + ' + element.toString();
-			sumall += parseInt(element.sum,10);
-			diceStr = diceStr + '+' + element.string;
-    	}
-    	Log.prints('element.sum : ' + element.sum);
-    	Log.prints('sumall : ' + sumall);
-    });
-
-    //先頭3文字（' + '）を除去
-	str = str.substring(SPACE_PLUS_SPACE.length, str.length);
-	diceStr = diceStr.substring('+'.length, diceStr.length);
- 
-	str = comment + '：`' + diceStr + '` = ' + str + ' = ' + sumall;
-
-    if (str.length >= 2000) {
-    	Log.prints('文字数制限オーバー（2000字）');
-    	str = error.replyErrorMessage() + '\n（2000文字制限オーバーです。分割してください）';
-    }
-
-    return str;
-
-}
 
