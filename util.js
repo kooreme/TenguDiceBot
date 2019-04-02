@@ -143,3 +143,12 @@ exports.normalDiceRoll = function (string) {
 	return {dice: dice, comment: comment};
 
 }
+
+exports.sort = function(resArray) {
+	resArray.sort(function(a,b){
+        if( a < b ) return -1;
+        if( a > b ) return 1;
+        return 0;
+	});
+	return resArray;
+}

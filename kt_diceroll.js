@@ -49,7 +49,17 @@ function checkTable(string) {
     let diceroll = '';
     switch(string) {
         //ダイス不要の表
-        case '犬小屋':
+        case '犬小屋' :
+        case '耳長たちの村' :
+        case '山小屋' :
+        case '聖なる神殿' :
+        case '闇ギルド' :
+        case '雪国の小屋' :
+        case '魔王の力を封じた神殿' :
+        case '滅びた石の小屋' :
+        case '滅びた小さな村' :
+        case 'アンデッドの群れ' :
+        case '盗賊の群れ' :
             diceroll = '1d1';   //本来いらないが、エラーと分けるのがクッソめんどいのでダイス自体は振らせる。
             break;
 
@@ -79,6 +89,13 @@ function checkTable(string) {
         case '偵察表' :
             diceroll = '1d6';
             break;
+        //2D6表
+        case '施設表':
+        //D66表
+        case '世界の旅表' :
+            diceroll = '2d6';
+            break;
+        
         default:
             break;
     }
@@ -99,8 +116,18 @@ function checkTable(string) {
 function addTableOutput(diceinfo) {
     switch(diceinfo.comment) {
     //ダイスロール不要の表（説明用）
-    case '犬小屋':
-        return '\n\n'  + datatable.d1Table[diceinfo.comment];
+    case '犬小屋' :
+    case '耳長たちの村' :
+    case '山小屋' :
+    case '聖なる神殿' :
+    case '闇ギルド' :
+    case '雪国の小屋' :
+    case '魔王の力を封じた神殿' :
+    case '滅びた石の小屋' :
+    case '滅びた小さな村' :
+    case 'アンデッドの群れ' :
+    case '盗賊の群れ' :
+        return '\n\n'  + datatable.tableD1[diceinfo.comment];
     
     //D6を振る表
     case '進行ルート表' :
@@ -127,9 +154,22 @@ function addTableOutput(diceinfo) {
     case 'ドロップアイテム表' :
     case '偵察表' :
         Log.prints('addTableOutput diceinfo.dice.sum :' +  diceinfo.dice[0].sum );
-        return '\n\n'  + datatable.d6Table[diceinfo.comment][Number(diceinfo.dice[0].sum) - 1];
+        return '\n\n' + datatable.tableD6[diceinfo.comment][Number(diceinfo.dice[0].sum) - 1];
+    
+    //2D6表
+    case '施設表':
+        Log.prints('addTableOutput diceinfo.dice.sum :' +  diceinfo.dice[0].sum );
+        return '\n\n' + datatable.table2D6[diceinfo.comment][Number(diceinfo.dice[0].sum) - 2];
+
+    //D66表
+    case '世界の旅表' :
+        Log.prints('addTableOutput diceinfo.dice[0].resArray[0]&resArray[1] :' +  diceinfo.dice[0].resArray[0] + ',' +  diceinfo.dice[0].resArray[1]);
+        const array = util.sort(diceinfo.dice[0].resArray);
+        const d66 = Number(String(array[0]) + String(array[1]));
+        Log.prints('addTableOutput d66 :' +  d66);
+        return '\n\n' + datatable.tableD66[diceinfo.comment][d66];
+        
     default:
         return '';
     }
-}
-
+};
