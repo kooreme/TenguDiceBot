@@ -87,12 +87,27 @@ function checkTable(string) {
         case '上位防具付与表' :
         case 'ドロップアイテム表' :
         case '偵察表' :
+        case '闇の竜追撃表' :
             diceroll = '1d6';
             break;
+
         //2D6表
-        case '施設表':
+        case '施設表' :
+        case '村遭遇表' :
+        case 'ダンジョン遭遇表' :
+        case '牢獄遭遇表' :
+        case 'ランダムNPC特徴表' :
+        case '武器付与効果表' :
+        case '防具付与効果表' :
+        case '聖武具ドロップ表' :
         //D66表
         case '世界の旅表' :
+        case 'モンスター特徴表' :
+        case '武器ドロップ表' :
+        case '防具ドロップ表' :
+        case '食品ドロップ表' :
+        case '巻物ドロップ表' :
+        case 'その他ドロップ表' :
             diceroll = '2d6';
             break;
         
@@ -153,16 +168,30 @@ function addTableOutput(diceinfo) {
     case '上位防具付与表' :
     case 'ドロップアイテム表' :
     case '偵察表' :
+    case '闇の竜追撃表' :
         Log.prints('addTableOutput diceinfo.dice.sum :' +  diceinfo.dice[0].sum );
         return '\n\n' + datatable.tableD6[diceinfo.comment][Number(diceinfo.dice[0].sum) - 1];
     
     //2D6表
-    case '施設表':
+    case '施設表' :
+    case '村遭遇表' :
+    case 'ダンジョン遭遇表' :
+    case '牢獄遭遇表' :
+    case 'ランダムNPC特徴表' :
+    case '武器付与効果表' :
+    case '防具付与効果表' :
+    case '聖武具ドロップ表' :  
         Log.prints('addTableOutput diceinfo.dice.sum :' +  diceinfo.dice[0].sum );
         return '\n\n' + datatable.table2D6[diceinfo.comment][Number(diceinfo.dice[0].sum) - 2];
 
     //D66表
     case '世界の旅表' :
+    case 'モンスター特徴表' :
+    case '武器ドロップ表' :
+    case '防具ドロップ表' :
+    case '食品ドロップ表' :
+    case '巻物ドロップ表' :
+    case 'その他ドロップ表' :
         Log.prints('addTableOutput diceinfo.dice[0].resArray[0]&resArray[1] :' +  diceinfo.dice[0].resArray[0] + ',' +  diceinfo.dice[0].resArray[1]);
         const array = util.sort(diceinfo.dice[0].resArray);
         const d66 = Number(String(array[0]) + String(array[1]));
