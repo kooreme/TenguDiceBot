@@ -14,34 +14,40 @@ client.on('ready', () => {
 });
 
 //メッセージ反応部
-const REACT_REGEXP = /^\/nd /g;
-const REACT_REGEXP_KATAMICHI = /^\/kd /g;
-const REACT_REGEXP_KTQUEST = /^\/ktq /g;
-
+const REACT_REGEXP = /^\/nd /;
+const REACT_REGEXP_KATAMICHI = /^\/kd /;
+const REACT_REGEXP_KTQUEST = /^\/ktq /;
+const REACT_REGEXP_KTDJ = /^\/kdj /;
 
 client.on('message', message => {
     let content = message.content;
     if (content.search(REACT_REGEXP) !== -1) {
 
-        content = content.replace(/\/nd /, '');
+        content = content.replace(REACT_REGEXP, '');
 
         message.reply(dice.receiveDiceRoll(content));
         Log.prints('content : ' + content);
 
         }
     else if (content.search(REACT_REGEXP_KATAMICHI) !== -1) {
-        content = content.replace(/\/kd /, '');
+        content = content.replace(REACT_REGEXP_KATAMICHI, '');
 
         message.reply(kt_dice.receiveDiceRoll(content));
         Log.prints('content : ' + content);
     }
     else if (content.search(REACT_REGEXP_KTQUEST) !== -1) {
-        content = content.replace(/\/ktq /, '');
+        content = content.replace(REACT_REGEXP_KTQUEST, '');
 
         message.reply(kt_quest.receiveQuest(content));
         Log.prints('content : ' + content);
     }
+    else if (content.search(REACT_REGEXP_KTDJ) !== -1) {
+        content = content.replace(REACT_REGEXP_KTDJ, '');
 
+        message.channel.send('!stop');
+        Log.prints('content : ' + content);
+        message.channel.send('!play ' + content + '.mp3');
+    }
 });
 
 // THIS  MUST  BE  THIS  WAY
