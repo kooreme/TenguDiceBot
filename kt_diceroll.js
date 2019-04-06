@@ -1,4 +1,4 @@
-
+const error = require('./errormessage')
 const util = require('./util.js');
 const Log = require('./log.js');
 const datatable = require('./kt_datatable');
@@ -23,6 +23,14 @@ exports.receiveDiceRoll = function(string) {
     return normalDiceRoll(checkTable(string));
 
 };
+
+exports.receiveFixedMessage = function(string) {
+    const stringArray = string.split('#');
+    
+    Log.prints(stringArray);
+    return FixedOutputMessage(stringArray) ;
+
+}
 
 function normalDiceRoll(string) {
     let diceinfo = {};
@@ -201,4 +209,73 @@ function addTableOutput(diceinfo) {
     default:
         return '';
     }
+
+};
+
+function FixedOutputMessage(array){
+    switch (array[0]){
+        //D6を振る表
+    case '進行ルート表' :
+    case '魔王追撃表' :
+    case 'ファンブル表' :
+    case '逃走判定表' :
+    case 'ランダムイベント表' :
+    case 'ダンジョン表A' :
+    case 'ダンジョン表B' :
+    case '野外遭遇表' :
+    case '草原野外モンスター表' :
+    case '遺跡群野外モンスター表' :
+    case '荒野野外モンスター表' :
+    case '山岳野外モンスター表' :
+    case '砂漠野外モンスター表' :
+    case '雪原野外モンスター表' :
+    case '火山野外モンスター表' :
+    case '浸食地帯野外モンスター表' :
+    case '希少動物表' :
+    case '会話テーマ表' :
+    case 'ランダム宝石表' :
+    case '上位武器付与表' :
+    case '上位防具付与表' :
+    case 'ドロップアイテム表' :
+    case '偵察表' :
+    case '闇の竜追撃表' :
+        if (array[1] == null || isNaN(array[1]) || array[1] < 1 || array[1] > 6) {
+            return error.replyErrorMessage();
+        }
+        str = datatable.tableD6[array[0]][array[1] - 1];
+        return str == null ? error.replyErrorMessage() : '\n\n' + str;
+    
+    //2D6表
+    case '施設表' :
+    case '村遭遇表' :
+    case 'ダンジョン遭遇表' :
+    case '牢獄遭遇表' :
+    case 'ランダムNPC特徴表' :
+    case '武器付与効果表' :
+    case '防具付与効果表' :
+    case '聖武具ドロップ表' :  
+        if (array[1] == null || isNaN(array[1]) || array[1] < 2 || array[1] > 12) {
+            return error.replyErrorMessage();
+        }
+        str = datatable.table2D6[array[0]][array[1] - 2];
+        return str == null ? error.replyErrorMessage() : '\n\n' + str;
+
+    //D66表
+    case '世界の旅表' :
+    case 'モンスター特徴表' :
+    case '武器ドロップ表' :
+    case '防具ドロップ表' :
+    case '食品ドロップ表' :
+    case '巻物ドロップ表' :
+    case 'その他ドロップ表' :
+        if (array[1] == null || isNaN(array[1] || array[1] in datatable.tableD66[array[0]])) {
+            return error.replyErrorMessage();
+        }
+        str = datatable.tableD66[array[0]][array[1]]
+        return str == null ? error.replyErrorMessage() : '\n\n' + str;
+        
+    default:
+        return error.replyErrorMessage();;
+    }
+
 };

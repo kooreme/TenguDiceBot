@@ -17,7 +17,7 @@ client.on('ready', () => {
 const REACT_REGEXP = /^\/nd /;
 const REACT_REGEXP_KATAMICHI = /^\/kd /;
 const REACT_REGEXP_KTQUEST = /^\/ktq /;
-const REACT_REGEXP_KTDJ = /^\/kdj /;
+const REACT_REGEXP_KTFIX = /^\/kdf /;
 
 client.on('message', message => {
     let content = message.content;
@@ -41,12 +41,11 @@ client.on('message', message => {
         message.reply(kt_quest.receiveQuest(content));
         Log.prints('content : ' + content);
     }
-    else if (content.search(REACT_REGEXP_KTDJ) !== -1) {
-        content = content.replace(REACT_REGEXP_KTDJ, '');
+    else if (content.search(REACT_REGEXP_KTFIX) !== -1) {
+        content = content.replace(REACT_REGEXP_KTFIX, '');
 
-        message.channel.send('!stop');
+        message.reply(kt_dice.receiveFixedMessage(content));
         Log.prints('content : ' + content);
-        message.channel.send('!play ' + content + '.mp3');
     }
 });
 
