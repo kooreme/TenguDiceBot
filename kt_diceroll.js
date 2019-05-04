@@ -91,8 +91,8 @@ function checkTable(string) {
         case '希少動物表' :
         case '会話テーマ表' :
         case 'ランダム宝石表' :
-        case '上位武器付与表' :
-        case '上位防具付与表' :
+        case '上位武器付与効果表' :
+        case '上位防具付与効果表' :
         case 'ドロップアイテム表' :
         case '偵察表' :
         case '闇の竜追撃表' :
@@ -172,8 +172,8 @@ function addTableOutput(diceinfo) {
     case '希少動物表' :
     case '会話テーマ表' :
     case 'ランダム宝石表' :
-    case '上位武器付与表' :
-    case '上位防具付与表' :
+    case '上位武器付与効果表' :
+    case '上位防具付与効果表' :
     case 'ドロップアイテム表' :
     case '偵察表' :
     case '闇の竜追撃表' :
@@ -234,8 +234,8 @@ function FixedOutputMessage(array){
     case '希少動物表' :
     case '会話テーマ表' :
     case 'ランダム宝石表' :
-    case '上位武器付与表' :
-    case '上位防具付与表' :
+    case '上位武器付与効果表' :
+    case '上位防具付与効果表' :
     case 'ドロップアイテム表' :
     case '偵察表' :
     case '闇の竜追撃表' :
