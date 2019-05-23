@@ -40,7 +40,7 @@ exports.checkSintax = function (diceNum,diceMen) {
 		return false;
 	}
 	var keta = String(diceMen).length;
-	if (0 >= diceNum || 0>= diceMen || diceNum > 900 || diceMen > 100000 || diceNum *(keta+1) > 1900) {
+	if (0 > diceNum || 0 > diceMen || diceNum > 900 || diceMen > 100000 || diceNum *(keta+1) > 1900) {
 		return false;
 	}
 
