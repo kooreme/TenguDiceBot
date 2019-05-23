@@ -89,6 +89,9 @@ var Dice = function(string){
 };
 
 Dice.prototype.toString = function() {
+		if (this.result == util.ERROR_FLAG) {
+			return util.ERROR_FLAG;
+		}
 
     switch(this.option) {
 

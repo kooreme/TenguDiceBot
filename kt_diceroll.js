@@ -34,9 +34,13 @@ exports.receiveFixedMessage = function(string) {
 
 function normalDiceRoll(string) {
     let diceinfo = {};
-
-    string = checkTable(string);
-    diceinfo = util.normalDiceRoll(checkTable(string));
+    
+    let dicestring = checkTable(string);
+   
+    diceinfo = util.normalDiceRoll(dicestring);
+    if (diceinfo == null) {
+        return error.replyErrorMessage();
+    }
 
     if (diceinfo.dice.length == 0) {
         Log.prints('no dice error');
@@ -54,80 +58,11 @@ function normalDiceRoll(string) {
 
 function checkTable(string) {
     let returnString = '';
-    let diceroll = '';
-    switch(string) {
-        //ダイス不要の表
-        case '犬小屋' :
-        case '耳長たちの村' :
-        case '山小屋' :
-        case '聖なる神殿' :
-        case '闇ギルド' :
-        case '雪国の小屋' :
-        case '魔王の力を封じた神殿' :
-        case '滅びた石の小屋' :
-        case '滅びた小さな村' :
-        case 'アンデッドの群れ' :
-        case '盗賊の群れ' :
-            diceroll = '1d1';   //本来いらないが、エラーと分けるのがクッソめんどいのでダイス自体は振らせる。
-            break;
+    const checkDataTable = datatable.dataTable[string];
+    Log.prints('checkDataTable =' + checkDataTable);
 
-        //D6ダイス表
-        case '進行ルート表' :
-        case '魔王追撃表' :
-        case 'ファンブル表' :
-        case '逃走判定表' :
-        case 'ランダムイベント表' :
-        case 'ダンジョン表A' :
-        case 'ダンジョン表B' :
-        case '野外遭遇表' :
-        case '草原野外モンスター表' :
-        case '遺跡群野外モンスター表' :
-        case '荒野野外モンスター表' :
-        case '山岳野外モンスター表' :
-        case '砂漠野外モンスター表' :
-        case '雪原野外モンスター表' :
-        case '火山野外モンスター表' :
-        case '浸食地帯野外モンスター表' :
-        case '希少動物表' :
-        case '会話テーマ表' :
-        case 'ランダム宝石表' :
-        case '上位武器付与効果表' :
-        case '上位防具付与効果表' :
-        case 'ドロップアイテム表' :
-        case '偵察表' :
-        case '闇の竜追撃表' :
-            diceroll = '1d6';
-            break;
-
-        //2D6表
-        case '施設表' :
-        case '村遭遇表' :
-        case 'ダンジョン遭遇表' :
-        case '牢獄遭遇表' :
-        case 'ランダムNPC特徴表' :
-        case '武器付与効果表' :
-        case '防具付与効果表' :
-        case '聖武具ドロップ表' :
-        //D66表
-        case '世界の旅表' :
-        case 'モンスター特徴表' :
-        case '武器ドロップ表' :
-        case '防具ドロップ表' :
-        case '食品ドロップ表' :
-        case '巻物ドロップ表' :
-        case 'その他ドロップ表' :
-            diceroll = '2d6';
-            break;
-        
-        default:
-            break;
-    }
-
-    if (diceroll !== '') {
-        diceroll += '#' + string;
-
-        returnString = diceroll;
-
+    if (checkDataTable) {
+        returnString = checkDataTable.dice + '#' + string;
     }
     else {
         returnString = string;
@@ -137,145 +72,36 @@ function checkTable(string) {
 };
 
 function addTableOutput(diceinfo) {
-    switch(diceinfo.comment) {
-    //ダイスロール不要の表（説明用）
-    case '犬小屋' :
-    case '耳長たちの村' :
-    case '山小屋' :
-    case '聖なる神殿' :
-    case '闇ギルド' :
-    case '雪国の小屋' :
-    case '魔王の力を封じた神殿' :
-    case '滅びた石の小屋' :
-    case '滅びた小さな村' :
-    case 'アンデッドの群れ' :
-    case '盗賊の群れ' :
-        return '\n\n'  + datatable.tableD1[diceinfo.comment];
-    
-    //D6を振る表
-    case '進行ルート表' :
-    case '魔王追撃表' :
-    case 'ファンブル表' :
-    case '逃走判定表' :
-    case 'ランダムイベント表' :
-    case 'ダンジョン表A' :
-    case 'ダンジョン表B' :
-    case '野外遭遇表' :
-    case '草原野外モンスター表' :
-    case '遺跡群野外モンスター表' :
-    case '荒野野外モンスター表' :
-    case '山岳野外モンスター表' :
-    case '砂漠野外モンスター表' :
-    case '雪原野外モンスター表' :
-    case '火山野外モンスター表' :
-    case '浸食地帯野外モンスター表' :
-    case '希少動物表' :
-    case '会話テーマ表' :
-    case 'ランダム宝石表' :
-    case '上位武器付与効果表' :
-    case '上位防具付与効果表' :
-    case 'ドロップアイテム表' :
-    case '偵察表' :
-    case '闇の竜追撃表' :
-        Log.prints('addTableOutput diceinfo.dice.sum :' +  diceinfo.dice[0].sum );
-        return '\n\n' + datatable.tableD6[diceinfo.comment][Number(diceinfo.dice[0].sum) - 1];
-    
-    //2D6表
-    case '施設表' :
-    case '村遭遇表' :
-    case 'ダンジョン遭遇表' :
-    case '牢獄遭遇表' :
-    case 'ランダムNPC特徴表' :
-    case '武器付与効果表' :
-    case '防具付与効果表' :
-    case '聖武具ドロップ表' :  
-        Log.prints('addTableOutput diceinfo.dice.sum :' +  diceinfo.dice[0].sum );
-        return '\n\n' + datatable.table2D6[diceinfo.comment][Number(diceinfo.dice[0].sum) - 2];
+    let returnString = '';
+    const checkDataTable = datatable.dataTable[diceinfo.comment];
 
-    //D66表
-    case '世界の旅表' :
-    case 'モンスター特徴表' :
-    case '武器ドロップ表' :
-    case '防具ドロップ表' :
-    case '食品ドロップ表' :
-    case '巻物ドロップ表' :
-    case 'その他ドロップ表' :
-        Log.prints('addTableOutput diceinfo.dice[0].resArray[0]&resArray[1] :' +  diceinfo.dice[0].resArray[0] + ',' +  diceinfo.dice[0].resArray[1]);
-        const array = util.sort(diceinfo.dice[0].resArray);
-        const d66 = Number(String(array[0]) + String(array[1]));
-        Log.prints('addTableOutput d66 :' +  d66);
-        return '\n\n' + datatable.tableD66[diceinfo.comment][d66];
-        
-    default:
-        return '';
+    if (checkDataTable) {
+        if (checkDataTable.d66Option) {
+            Log.prints('addTableOutput diceinfo.dice[0].resArray[0]&resArray[1] :' +  diceinfo.dice[0].resArray[0] + ',' +  diceinfo.dice[0].resArray[1]);
+            const array = util.sort(diceinfo.dice[0].resArray);
+            const d66 = Number(String(array[0]) + String(array[1]));
+            Log.prints('addTableOutput d66 :' +  d66);
+            returnString += '\n\n' + datatable.dataTable[diceinfo.comment].data[d66];
+        }
+        else {
+            returnString += '\n\n'  + datatable.dataTable[diceinfo.comment].data[Number(diceinfo.dice[0].sum)];
+        }
     }
 
+    return returnString;
 };
 
 function FixedOutputMessage(array){
-    switch (array[0]){
-        //D6を振る表
-    case '進行ルート表' :
-    case '魔王追撃表' :
-    case 'ファンブル表' :
-    case '逃走判定表' :
-    case 'ランダムイベント表' :
-    case 'ダンジョン表A' :
-    case 'ダンジョン表B' :
-    case '野外遭遇表' :
-    case '草原野外モンスター表' :
-    case '遺跡群野外モンスター表' :
-    case '荒野野外モンスター表' :
-    case '山岳野外モンスター表' :
-    case '砂漠野外モンスター表' :
-    case '雪原野外モンスター表' :
-    case '火山野外モンスター表' :
-    case '浸食地帯野外モンスター表' :
-    case '希少動物表' :
-    case '会話テーマ表' :
-    case 'ランダム宝石表' :
-    case '上位武器付与効果表' :
-    case '上位防具付与効果表' :
-    case 'ドロップアイテム表' :
-    case '偵察表' :
-    case '闇の竜追撃表' :
-        if (array[1] == null || isNaN(array[1]) || array[1] < 1 || array[1] > 6) {
-            return error.replyErrorMessage();
-        }
-        str = datatable.tableD6[array[0]][array[1] - 1];
-        return str == null ? error.replyErrorMessage() : '\n\n' + str;
-    
-    //2D6表
-    case '施設表' :
-    case '村遭遇表' :
-    case 'ダンジョン遭遇表' :
-    case '牢獄遭遇表' :
-    case 'ランダムNPC特徴表' :
-    case '武器付与効果表' :
-    case '防具付与効果表' :
-    case '聖武具ドロップ表' :  
-        if (array[1] == null || isNaN(array[1]) || array[1] < 2 || array[1] > 12) {
-            return error.replyErrorMessage();
-        }
-        str = datatable.table2D6[array[0]][array[1] - 2];
-        return str == null ? error.replyErrorMessage() : '\n\n' + str;
+    let returnString = '';
+    const checkDataTable = datatable.dataTable[array[0]];
 
-    //D66表
-    case '世界の旅表' :
-    case 'モンスター特徴表' :
-    case '武器ドロップ表' :
-    case '防具ドロップ表' :
-    case '食品ドロップ表' :
-    case '巻物ドロップ表' :
-    case 'その他ドロップ表' :
-        if (array[1] == null || isNaN(array[1] || array[1] in datatable.tableD66[array[0]])) {
-            return error.replyErrorMessage();
-        }
-        str = datatable.tableD66[array[0]][array[1]]
-        return str == null ? error.replyErrorMessage() : '\n\n' + str;
-        
-    default:
-        return error.replyErrorMessage();;
+    if (checkDataTable && array[1] != null && (!isNaN(array[1])) && checkDataTable.data[array[1]] != null) {
+        returnString = '\n\n' + checkDataTable.data[array[1]];
     }
+    else {
+        returnString = error.replyErrorMessage();
+    }
+
+    return returnString;
 
 };

@@ -53,24 +53,31 @@ exports.checkSintax = function (diceNum,diceMen) {
  * 全ダイスの数、面をチェックし、問題なければ全ダイスロールを行う。
  * */
 exports.diceRoll = function(dice){
+	if (dice == null) {
+		Log.prints('Null Dice String');
+		throw new Error('Null Dice String');
+	}
     var sumDiceMen = [];
     var sumDiceNum = 0;
     dice.forEach(function(element){
+		if (element == null) {
+			Log.prints('Null Element String');
+			throw new Error('Null Element String');
+		}
     	sumDiceMen.push((element.diceMen == null) ? 0 : Number(element.diceMen));
     	sumDiceNum += (element.diceNum == null) ? 0 : Number(element.diceNum);
     });
     Log.prints('sumDiceMen = ' + sumDiceMen +'sumDiceMen.max = ' + Math.max.apply(null, sumDiceMen) + ', sumDiceNum = ' + sumDiceNum);
     if (!exports.checkSintax(sumDiceNum,Math.max.apply(null, sumDiceMen))) {
     	Log.prints('sintaxError');
-		return false;
+		throw new Error('sintaxError');
     }
     else {
     	dice.forEach(function(element){
     		element.diceRoll();
     		Log.prints('diceRoll done.');
-    		return true;
     	});
-    }
+	}
 };
 
 exports.createOutput = function(dice,comment) {
@@ -128,21 +135,25 @@ exports.normalDiceRoll = function (string) {
     diceStr.forEach(function(element) {
 		let newdice = new Dice(element);
 		if (newdice.result == exports.ERROR_FLAG) {
-    		returnString = error.replyErrorMessage();
-    		return {dice : [], comment : returnString};
-    	}
-    	dice.push(newdice);
-    });
+			Log.prints('Error Dice!');
+    		dice.push (null);
+		}
+		else {
+			dice.push(newdice);
+		}
+	});
+	Log.printsDir(dice);
 
-    //ダイスロール
-    if(exports.diceRoll(dice)== false) {
-		returnString = error.replyErrorMessage();
-		return {dice : [], comment : returnString};
-    }
-
-	return {dice: dice, comment: comment};
-
+	//ダイスロール
+	try {
+	    exports.diceRoll(dice);
+		return {dice: dice, comment: comment};
+	}
+	catch (e) {
+		return null;
+	}
 }
+
 
 exports.sort = function(resArray) {
 	resArray.sort(function(a,b){

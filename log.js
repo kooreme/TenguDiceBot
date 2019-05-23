@@ -10,3 +10,10 @@ exports.prints = function(string) {
 		console.log(string);
 	}
 }
+exports.printsDir = function(string) {
+	//	console.log('LOG = ' + LOG);
+		if(LOG != 0) {
+			console.dir(string);
+		}
+	}
+	

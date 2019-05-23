@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 
 const client = new Discord.Client();
 
-const dice = require('./diceroll');
+const dice = require('./nd_diceroll');
 const kt_dice = require('./kt_diceroll');
 const kt_quest = require('./ktq_quest');
 const Log = require('./log.js');
