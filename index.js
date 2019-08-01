@@ -14,16 +14,16 @@ client.on('ready', () => {
 });
 
 //メッセージ反応部
-const REACT_REGEXP = /^\/nd /;
+const REACT_REGEXP_NINJA = /^\/nd /;
 const REACT_REGEXP_KATAMICHI = /^\/kd /;
 const REACT_REGEXP_KTQUEST = /^\/ktq /;
 const REACT_REGEXP_KTFIX = /^\/kdf /;
 
 client.on('message', message => {
     let content = message.content;
-    if (content.search(REACT_REGEXP) !== -1) {
+    if (content.search(REACT_REGEXP_NINJA) !== -1) {
 
-        content = content.replace(REACT_REGEXP, '');
+        content = content.replace(REACT_REGEXP_NINJA, '');
 
         message.reply(dice.receiveDiceRoll(content));
         Log.prints('content : ' + content);
