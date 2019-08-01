@@ -198,4 +198,25 @@ function addTableOutput(diceinfo) {
     return returnString;
 };
 
+exports.receiveFixedMessage = function(string) {
+    const stringArray = string.split('#');
+    
+    Log.prints(stringArray);
+    return FixedOutputMessage(stringArray) ;
 
+}
+
+function FixedOutputMessage(array){
+    let returnString = '';
+    const checkDataTable = datatable.dataTable[array[0]];
+
+    if (checkDataTable && array[1] != null && (!isNaN(array[1])) && checkDataTable.data[array[1]] != null) {
+        returnString = '\n\n' + checkDataTable.data[array[1]];
+    }
+    else {
+        returnString = error.replyErrorMessage();
+    }
+
+    return returnString;
+
+};

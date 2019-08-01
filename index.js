@@ -15,6 +15,7 @@ client.on('ready', () => {
 
 //メッセージ反応部
 const REACT_REGEXP_NINJA = /^\/nd /;
+const REACT_REGEXP_NINJAFIX = /^\/ndf /;
 const REACT_REGEXP_KATAMICHI = /^\/kd /;
 const REACT_REGEXP_KTQUEST = /^\/ktq /;
 const REACT_REGEXP_KTFIX = /^\/kdf /;
@@ -28,7 +29,15 @@ client.on('message', message => {
         message.reply(dice.receiveDiceRoll(content));
         Log.prints('content : ' + content);
 
-        }
+    }
+    else if (content.search(REACT_REGEXP_NINJAFIX) !== -1) {
+
+        content = content.replace(REACT_REGEXP_NINJAFIX, '');
+    
+        message.reply(dice.receiveFixedMessage(content));
+        Log.prints('content : ' + content);
+
+    }
     else if (content.search(REACT_REGEXP_KATAMICHI) !== -1) {
         content = content.replace(REACT_REGEXP_KATAMICHI, '');
 
