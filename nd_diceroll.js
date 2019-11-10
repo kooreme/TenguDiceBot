@@ -59,6 +59,7 @@ function normalDiceRoll(string) {
 	Log.prints('returnString : ' + returnString);
 
 	returnString += addTableOutput(diceinfo);
+	Log.prints('returnString : ' + returnString);
 
 	return returnString;
 
@@ -180,22 +181,28 @@ function checkTable(string) {
 
 function addTableOutput(diceinfo) {
     let returnString = '';
-    const checkDataTable = datatable.dataTable[diceinfo.comment];
+	const checkDataTable = datatable.dataTable[diceinfo.comment];
+	let addString = '';
+	let tebleString = '';
 
     if (checkDataTable) {
         if (checkDataTable.d66Option) {
             Log.prints('addTableOutput diceinfo.dice[0].resArray[0]&resArray[1] :' +  diceinfo.dice[0].resArray[0] + ',' +  diceinfo.dice[0].resArray[1]);
             const array = util.sort(diceinfo.dice[0].resArray);
             const d66 = Number(String(array[0]) + String(array[1]));
-            Log.prints('addTableOutput d66 :' +  d66);
-            returnString += '\n\n' + datatable.dataTable[diceinfo.comment].data[d66];
+			Log.prints('addTableOutput d66 :' +  d66);
+			tableString = datatable.dataTable[diceinfo.comment].data[d66];
         }
         else {
-            returnString += '\n\n'  + datatable.dataTable[diceinfo.comment].data[Number(diceinfo.dice[0].sum)];
+			tableString = datatable.dataTable[diceinfo.comment].data[Number(diceinfo.dice[0].sum)];
+			
         }
-    }
+	}
+	Log.prints('addTableOutput tableString :' +  tableString);
+	if(tableString) addString += '\n\n'  + tableString;
+	Log.prints('addTableOutput addString :' +  addString);
 
-    return returnString;
+    return returnString + addString;
 };
 
 exports.receiveFixedMessage = function(string) {
