@@ -39,6 +39,7 @@ exports.receiveDiceRoll = function (string) {
 };
 
 function normalDiceRoll(string) {
+	let returnString = '';
 	//コマンド表が無いか確認する。
 	string = checkTable(string);
 	//ショートカットコマンドを翻訳する
@@ -76,7 +77,7 @@ function shortcutTransration(string) {
 	var searchComment = string.search(COMMENT);
 	if (searchComment > 0) {
 		var comment = string.substring(searchComment);
-		var string = string.substring(0, searchComment);
+		string = string.substring(0, searchComment);
 	}
 
 	string = string.replace(MINUS, '+-');
@@ -91,7 +92,7 @@ function shortcutTransration(string) {
 			stringArray[index] = stringArray[index].substring(0, appendixSearch);
 			Log.prints('shortcutTransration : appendix :' + appendix + ' , stringArray[' + index + '] : ' + stringArray[index]);
 		}
-		var splits = stringArray[index].split(/([\+\-])/);
+		var splits = stringArray[index].split(/([+-])/);
 		Log.prints('shortcutTransration : splits :' + splits);
 
 		var shortcutArray = [];
@@ -132,7 +133,7 @@ function shortcutTransration(string) {
 					}
 
 					else if (/\d+/.test(shortcut[k])) {
-						var temp = shortcut[k] + 'd6' + optionString;
+						let temp = shortcut[k] + 'd6' + optionString;
 						temp += (appendix != null) ? appendix : '';
 						shortcutArray.push(temp);
 					}
@@ -145,7 +146,7 @@ function shortcutTransration(string) {
 				continue;
 			}
 			else {
-				var temp = splits[i];
+				let temp = splits[i];
 				temp += (appendix != null) ? appendix : '';
 				shortcutArray.push(temp);
 			}
@@ -177,13 +178,13 @@ function checkTable(string) {
     }
     return returnString;
 
-};
+}
 
 function addTableOutput(diceinfo) {
     let returnString = '';
 	const checkDataTable = datatable.dataTable[diceinfo.comment];
 	let addString = '';
-	let tebleString = '';
+	let tableString = '';
 
     if (checkDataTable) {
         if (checkDataTable.d66Option) {
@@ -203,14 +204,13 @@ function addTableOutput(diceinfo) {
 	Log.prints('addTableOutput addString :' +  addString);
 
     return returnString + addString;
-};
+}
 
 exports.receiveFixedMessage = function(string) {
     const stringArray = string.split('#');
     
     Log.prints(stringArray);
     return FixedOutputMessage(stringArray) ;
-
 }
 
 function FixedOutputMessage(array){
@@ -223,7 +223,5 @@ function FixedOutputMessage(array){
     else {
         returnString = error.replyErrorMessage();
     }
-
     return returnString;
-
-};
+}
