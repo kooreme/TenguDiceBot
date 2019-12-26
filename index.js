@@ -60,7 +60,7 @@ client.on('message', message => {
     }
     else if (content.search(REACT_REGEXP_TEST) !== -1) {
         content = content.replace(REACT_REGEXP_TEST,'');
-        message.reply(sqlTest.replyMessage(content));
+        message.reply(sqlTest.replyMessage(message,content));
     }
 });
 

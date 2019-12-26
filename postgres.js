@@ -10,8 +10,6 @@ const pgPool = new Pool({
     max: 20,
 });
 
-let instance 
-
 exports.connect = function() {
     pgPool.connect();
 }
