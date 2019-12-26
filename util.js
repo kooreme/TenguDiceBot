@@ -25,8 +25,8 @@ exports.getRandomIntInclusive = function(min, max) {
  * */
 exports.sum = function(arr) {
 	Log.prints('arr : ' + arr);
-    return arr.reduce(function(prev, current, i, arr) {
-    	Log.prints('prev : ' +prev+ ' current : ' +current);
+    return arr.reduce(function(prev, current) {
+	Log.prints('prev : ' +prev+ ' current : ' +current);
         return prev+current;
     });
 };
@@ -64,19 +64,19 @@ exports.diceRoll = function(dice){
 			Log.prints('Null Element String');
 			throw new Error('Null Element String');
 		}
-    	sumDiceMen.push((element.diceMen == null) ? 0 : Number(element.diceMen));
-    	sumDiceNum += (element.diceNum == null) ? 0 : Number(element.diceNum);
+	sumDiceMen.push((element.diceMen == null) ? 0 : Number(element.diceMen));
+	sumDiceNum += (element.diceNum == null) ? 0 : Number(element.diceNum);
     });
     Log.prints('sumDiceMen = ' + sumDiceMen +'sumDiceMen.max = ' + Math.max.apply(null, sumDiceMen) + ', sumDiceNum = ' + sumDiceNum);
     if (!exports.checkSintax(sumDiceNum,Math.max.apply(null, sumDiceMen))) {
-    	Log.prints('sintaxError');
+	Log.prints('sintaxError');
 		throw new Error('sintaxError');
     }
     else {
-    	dice.forEach(function(element){
-    		element.diceRoll();
-    		Log.prints('diceRoll done.');
-    	});
+		dice.forEach(function(element){
+		element.diceRoll();
+			Log.prints('diceRoll done.');
+		});
 	}
 };
 
@@ -85,17 +85,17 @@ exports.createOutput = function(dice,comment) {
 	let sumall = 0;
 	let diceStr = '';
     dice.forEach(function(element){
-    	if (element.isMinus) {
-    		str = str + ' - ' + element.toString();
+		if (element.isMinus) {
+			str = str + ' - ' + element.toString();
 			sumall -= parseInt(element.sum,10);
 			diceStr = diceStr + '-' + element.string;
-    	} else {
-    		str = str + ' + ' + element.toString();
+		} else {
+			str = str + ' + ' + element.toString();
 			sumall += parseInt(element.sum,10);
 			diceStr = diceStr + '+' + element.string;
-    	}
-    	Log.prints('element.sum : ' + element.sum);
-    	Log.prints('sumall : ' + sumall);
+		}
+		Log.prints('element.sum : ' + element.sum);
+		Log.prints('sumall : ' + sumall);
     });
 
     //先頭3文字（' + '）を除去
@@ -105,8 +105,8 @@ exports.createOutput = function(dice,comment) {
 	str = comment + '：`' + diceStr + '` = ' + str + ' = ' + sumall;
 
     if (str.length >= 2000) {
-    	Log.prints('文字数制限オーバー（2000字）');
-    	str = error.replyErrorMessage() + '\n（2000文字制限オーバーです。分割してください）';
+		Log.prints('文字数制限オーバー（2000字）');
+		str = error.replyErrorMessage() + '\n（2000文字制限オーバーです。分割してください）';
     }
 
     return str;
@@ -114,14 +114,13 @@ exports.createOutput = function(dice,comment) {
 };
 
 exports.normalDiceRoll = function (string) {
-    let returnString = '';
 
     let comment = '';
 	//コメントとダイスロール文字列を分離
     const searchComment = string.search(COMMENT);
     if (searchComment > 0) {
-    	comment = string.substring(searchComment+1);
-    	string = string.substring(0,searchComment);
+		comment = string.substring(searchComment+1);
+		string = string.substring(0,searchComment);
     }
     const diceStrArray = string.split(COMMENT);
     Log.prints('diceStrArray : ' + diceStrArray);
@@ -136,7 +135,7 @@ exports.normalDiceRoll = function (string) {
 		let newdice = new Dice(element);
 		if (newdice.result == exports.ERROR_FLAG) {
 			Log.prints('Error Dice!');
-    		dice.push (null);
+			dice.push (null);
 		}
 		else {
 			dice.push(newdice);
@@ -146,7 +145,7 @@ exports.normalDiceRoll = function (string) {
 
 	//ダイスロール
 	try {
-	    exports.diceRoll(dice);
+		exports.diceRoll(dice);
 		return {dice: dice, comment: comment};
 	}
 	catch (e) {

@@ -5,12 +5,12 @@ const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i;
 const WASSHOI = /^wasshoi\d+$/i;
 const HELP = /^help$/;
 
-const wasshoi = require('./wasshoi.js');
 const util = require('./util.js');
 const Log = require('./log.js');
 const Help = require('./help.js');
 const error = require('./errormessage');
 const datatable = require('./nd_datatable');
+const wasshoi = require('./wasshoi.js');
 
 const STRING_WASSHOI = 'wasshoi';
 

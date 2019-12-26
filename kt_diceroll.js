@@ -48,7 +48,7 @@ function normalDiceRoll(string) {
     }
 
     Log.prints('diceinfo : ' + diceinfo);
-    returnString = util.createOutput(diceinfo.dice,diceinfo.comment);
+    let returnString = util.createOutput(diceinfo.dice,diceinfo.comment);
 
     returnString += addTableOutput(diceinfo);
     Log.prints('returnString : ' + returnString);
@@ -69,7 +69,7 @@ function checkTable(string) {
     }
     return returnString;
 
-};
+}
 
 function addTableOutput(diceinfo) {
     let returnString = '';
@@ -89,7 +89,7 @@ function addTableOutput(diceinfo) {
     }
 
     return returnString;
-};
+}
 
 function FixedOutputMessage(array){
     let returnString = '';
@@ -104,4 +104,4 @@ function FixedOutputMessage(array){
 
     return returnString;
 
-};
+}

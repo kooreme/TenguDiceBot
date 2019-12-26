@@ -60,4 +60,5 @@ client.on('message', message => {
 
 // THIS  MUST  BE  THIS  WAY
 
+// eslint-disable-next-line no-undef
 client.login(process.env.BOT_TOKEN);//BOT_TOKEN is the Client Secret

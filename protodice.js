@@ -7,40 +7,40 @@ const CHECK_APPENDIX_SINTAX = /(?:<=|<|=|>|>=|!=)\d+\[.+\]$/;
 
 
 var Dice = function(string){
-  Log.prints('new Dice string : 「' + string + '」');
+	Log.prints('new Dice string : 「' + string + '」');
 
-  if (util.EVERY_APPENDIX.test(string)) {
-	  Log.prints('Appendix exists.');
-	  if (!CHECK_APPENDIX_SINTAX.test(string)) {
-		  Log.prints('Dice : Appendix sintax error!');
-		  this.result = util.ERROR_FLAG;
-		  return;
-	  }
-	  else {
-		  var strArray = string.split(util.EVERY_APPENDIX);
-		  string = strArray[0];
-		  Log.prints('Dice.strArray : 「' + strArray + '」');
-		  try {
-			  this.appendixArray = createAppendix(strArray[1]);
-		  } catch(e) {
-		      this.result = util.ERROR_FLAG;
-		      return;
-		  }
-	  }
-  }
-  else {
-	  Log.prints('Appendix NOT exists.');
-  }
+	if (util.EVERY_APPENDIX.test(string)) {
+		Log.prints('Appendix exists.');
+		if (!CHECK_APPENDIX_SINTAX.test(string)) {
+			Log.prints('Dice : Appendix sintax error!');
+			this.result = util.ERROR_FLAG;
+			return;
+		}
+		else {
+			var strArray = string.split(util.EVERY_APPENDIX);
+			string = strArray[0];
+			Log.prints('Dice.strArray : 「' + strArray + '」');
+			try {
+				this.appendixArray = createAppendix(strArray[1]);
+			} catch(e) {
+				this.result = util.ERROR_FLAG;
+				return;
+			}
+		}
+	}
+	else {
+		Log.prints('Appendix NOT exists.');
+	}
 
-  //マイナスがあるかどうかを受け取り、文字を削除する。
-  if(string.slice(0,1) == '-') {
-    this.isMinus = true;
-    string = string.substring(1, string.length);
-  }
+	//マイナスがあるかどうかを受け取り、文字を削除する。
+	if(string.slice(0,1) == '-') {
+		this.isMinus = true;
+		string = string.substring(1, string.length);
+	}
 
-  //最初の文字がdから始まった場合は1dmへ変更する。
-  if (string.slice(0,1) == 'd') {
-    string = '1' + string;
+	//最初の文字がdから始まった場合は1dmへ変更する。
+	if (string.slice(0,1) == 'd') {
+		string = '1' + string;
 	}
 	//dの後ろに数字がついていない場合は６面ダイスとする。
 	if (/^\d+[dD]\d/.test(string) == false) {
@@ -56,21 +56,21 @@ var Dice = function(string){
 			},this);
 	}
 
-  //数字だけだった場合はresArrayにその数字をプッシュして終わり。
-  if (NUMBER_ONLY.test(string)) {
-    Log.prints('数字のみ');
-    this.resArray = [string];
-    this.sum = util.sum(this.resArray);
-    return;
-  }
+	//数字だけだった場合はresArrayにその数字をプッシュして終わり。
+	if (NUMBER_ONLY.test(string)) {
+		Log.prints('数字のみ');
+		this.resArray = [string];
+		this.sum = util.sum(this.resArray);
+		return;
+	}
 
-  //文字列がndm(>=k)でない場合はエラーコードを返却。
-  if (!DICE_ROLL.test(string)) {
-    this.result = util.ERROR_FLAG;
-    return;
-  };
-    this.splits = string.split(/([dD]|>=|<=|!=|=|<|>)/);
-    Log.prints('splits = ' + this.splits + '」');
+	//文字列がndm(>=k)でない場合はエラーコードを返却。
+	if (!DICE_ROLL.test(string)) {
+		this.result = util.ERROR_FLAG;
+		return;
+	}
+	this.splits = string.split(/([dD]|>=|<=|!=|=|<|>)/);
+	Log.prints('splits = ' + this.splits + '」');
 
     this.diceNum = this.splits[0];
     this.diceMen = this.splits[2];
@@ -80,12 +80,10 @@ var Dice = function(string){
 
     if (!util.checkSintax(this.diceNum,this.diceMen) || isNaN(this.border)) {
         this.result = util.ERROR_FLAG;
-    	return;
-    }
+		return;
+	}
 	this.result = '';
-
-  this.resArray = [];
-
+	this.resArray = [];
 };
 
 Dice.prototype.toString = function() {
@@ -97,14 +95,15 @@ Dice.prototype.toString = function() {
 
     //不等号オプションが入っていたら、成功数などをカウントする。
     case '=' :
-    	this.option = '==';
+		this.option = '==';
+    // eslint-disable-next-line no-fallthrough
     case '>=' :
     case '>' :
     case '<' :
     case '<=' :
     case '!=' :
-    	compareBorder(this);
-    	break;
+		compareBorder(this);
+		break;
 
     default :
         this.result = '(' + this.resArray.join('+') + ')';
@@ -119,7 +118,7 @@ Dice.prototype.diceRoll = function() {
 	if (this.resArray.length != 0) {
 		return;
 	}
-    for(i = 0;i < this.diceNum;i++) {
+    for(let i = 0;i < this.diceNum;i++) {
         this.resArray.push(util.getRandomIntInclusive(1,this.diceMen));
     }
     this.sum = util.sum(this.resArray);
@@ -176,11 +175,11 @@ function compareBorder(dice) {
 var Appendix = function (string){
 	const searchComment = string.search(/\//);
     if (searchComment > 0) {
-    	this.comment = string.substring(searchComment+1);
-    	string = string.substring(0,searchComment);
+		this.comment = string.substring(searchComment+1);
+		string = string.substring(0,searchComment);
     }
     else {
-    	this.comment = '追加カウント';
+		this.comment = '追加カウント';
     }
     var strArray = string.split(/([<>!]=?|=|\*)/);
 

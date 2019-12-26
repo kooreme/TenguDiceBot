@@ -1,4 +1,4 @@
-const Log = require('./log.js');
+//const Log = require('./log.js');
 const datatable = require('./kt_datatable');
 const error = require('./errormessage.js');
 
