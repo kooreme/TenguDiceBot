@@ -1,5 +1,5 @@
 
 
-exports.replyMessage = function(string) {
-    
+exports.replyMessage = function(message,string) {
+
 };
