@@ -166,12 +166,25 @@ function shortcutTransration(string) {
 }
 
 function checkTable(string) {
-    let returnString = '';
+	let returnString = '';
+	let diceKind = '';
+	if (/,/.test(string)) {
+		let temp = string.split(',');
+		if (datatable.dataTable[temp[0]]){
+			diceKind = temp[1];
+			string = temp[0];
+		}
+	}
     const checkDataTable = datatable.dataTable[string];
     Log.prints('checkDataTable =' + checkDataTable);
 
     if (checkDataTable) {
-        returnString = checkDataTable.dice + '#' + string;
+		if (diceKind) {
+			returnString = checkDataTable.returnDice(diceKind) + '#' + string;
+		}
+		else {
+			returnString = checkDataTable.returnDice() + '#' + string;
+		}
     }
     else {
         returnString = string;
@@ -195,7 +208,11 @@ function addTableOutput(diceinfo) {
 			tableString = datatable.dataTable[diceinfo.comment].data[d66];
         }
         else {
-			tableString = datatable.dataTable[diceinfo.comment].data[Number(diceinfo.dice[0].sum)];
+			let sum = 0;
+			diceinfo.dice.forEach(element => {
+				sum += Number(element.sum);
+			});
+			tableString = datatable.dataTable[diceinfo.comment].data[sum];
 			
         }
 	}
