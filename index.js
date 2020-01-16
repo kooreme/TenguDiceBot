@@ -9,7 +9,7 @@ const Log = require('./log.js');
 
 client.on('ready', () => {
 
-    Log.prints('I am ready!');
+    Log.prints('I am ready!',true);
 
 });
 

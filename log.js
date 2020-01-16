@@ -5,15 +5,16 @@
 
 // eslint-disable-next-line no-undef
 const LOG = process.env.DEBUG || 1;
-exports.prints = function(string) {
+//boolにtrueを入れないと表示されない。表示したいものだけtrueにすること。
+exports.prints = function(string,bool = false) {
 //	console.log('LOG = ' + LOG);
-	if(LOG != 0) {
+	if(LOG != 0 && bool) {
 		console.log(string);
 	}
 }
-exports.printsDir = function(string) {
+exports.printsDir = function(string,bool = false) {
 	//	console.log('LOG = ' + LOG);
-		if(LOG != 0) {
+		if(LOG != 0 && bool) {
 			console.dir(string);
 		}
 	}

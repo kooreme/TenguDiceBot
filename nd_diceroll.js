@@ -168,6 +168,9 @@ function shortcutTransration(string) {
 function checkTable(string) {
 	let returnString = '';
 	let diceKind = '';
+	Log.prints("before spellCheck : " + string);
+	string = spellCheck(string);
+	Log.prints("after spellCheck : " + string);
 	if (/,/.test(string)) {
 		let temp = string.split(',');
 		if (datatable.dataTable[temp[0]]){
@@ -191,6 +194,15 @@ function checkTable(string) {
     }
     return returnString;
 
+}
+
+function spellCheck(string) {
+	if (/#/.test(string)) {
+		return string.replace(/[！!表・](?=.*?#)/g , '');
+	}
+	else {
+		return string.replace(/[！!表・]/g , '');
+	}
 }
 
 function addTableOutput(diceinfo) {
