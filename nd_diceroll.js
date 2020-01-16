@@ -178,7 +178,7 @@ function checkTable(string) {
 			string = temp[0];
 		}
 	}
-    const checkDataTable = datatable.dataTable[string];
+    const checkDataTable = datatable.dataTable[string.toLowerCase()];
     Log.prints('checkDataTable =' + checkDataTable);
 
     if (checkDataTable) {
@@ -207,7 +207,7 @@ function spellCheck(string) {
 
 function addTableOutput(diceinfo) {
     let returnString = '';
-	const checkDataTable = datatable.dataTable[diceinfo.comment];
+	const checkDataTable = datatable.dataTable[diceinfo.comment.toLowerCase()];
 	let addString = '';
 	let tableString = '';
 
@@ -217,15 +217,14 @@ function addTableOutput(diceinfo) {
             const array = util.sort(diceinfo.dice[0].resArray);
             const d66 = Number(String(array[0]) + String(array[1]));
 			Log.prints('addTableOutput d66 :' +  d66);
-			tableString = datatable.dataTable[diceinfo.comment].data[d66];
+			tableString = checkDataTable.data[d66];
         }
         else {
 			let sum = 0;
 			diceinfo.dice.forEach(element => {
 				sum += Number(element.sum);
 			});
-			tableString = datatable.dataTable[diceinfo.comment].data[sum];
-			
+			tableString = checkDataTable.data[sum];
         }
 	}
 	Log.prints('addTableOutput tableString :' +  tableString);

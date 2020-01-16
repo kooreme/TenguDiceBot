@@ -15,7 +15,7 @@ exports.dataTable = {
         },
         returnDice : sharedReturnDice,
     },
-    Wasshoiエントリー : {
+    wasshoiエントリー : {
         dice : '1d6',
         data : {
             1:'**高所からの回転着地！タタミ四枚の距離で睨み合った！**：標的ニンジャから３または４マス離れた任意の場所に【殺】コマを置くこと。',
