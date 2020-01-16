@@ -238,7 +238,8 @@ function addTableOutput(diceinfo) {
 exports.receiveFixedMessage = function(string) {
     const stringArray = string.split('#');
     
-    Log.prints(stringArray);
+	stringArray[0] = spellCheck(stringArray[0]);
+	Log.prints(stringArray);
     return FixedOutputMessage(stringArray) ;
 }
 
