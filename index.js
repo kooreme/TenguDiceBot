@@ -6,11 +6,9 @@ const dice = require('./nd_diceroll');
 const kt_dice = require('./kt_diceroll');
 const kt_quest = require('./ktq_quest');
 const Log = require('./log.js');
-const PG = require('./postgres.js');
-const sqlTest = require('./sqltest.js');
+const Record = require('./record.js');
 
 client.on('ready', () => {
-    PG.connect();
     Log.prints('I am ready!',true);
 });
 
@@ -20,7 +18,7 @@ const REACT_REGEXP_NINJAFIX = /^\/ndf /;
 const REACT_REGEXP_KATAMICHI = /^\/kd /;
 const REACT_REGEXP_KTQUEST = /^\/ktq /;
 const REACT_REGEXP_KTFIX = /^\/kdf /;
-const REACT_REGEXP_TEST = /^\/test /;
+const REACT_REGEXP_TEST = /^\/tb /;
 
 client.on('message', message => {
     let content = message.content;
@@ -60,7 +58,11 @@ client.on('message', message => {
     }
     else if (content.search(REACT_REGEXP_TEST) !== -1) {
         content = content.replace(REACT_REGEXP_TEST,'');
-        message.reply(sqlTest.replyMessage(message,content));
+        Log.printsDir(message);
+        Log.prints(message.channel.id);
+        Record.receiveResponce(message,content).then(result => {
+            message.reply(result);
+        });
     }
 });
 
