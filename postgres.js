@@ -1,4 +1,5 @@
 const Log = require('./log.js');
+const Error = require('./error.js');
 /* eslint-disable no-undef */
 const { Pool } = require('pg');
 
@@ -60,9 +61,11 @@ exports.saveRecord = async function ({channel_id,user_id=null,money=0,item = nul
         if (item != null) item_record += SEPARATOR + item;
       }
       else {
-        if (item_record.indexOf(item) == -1) {
+        let rec_split;
+        if (item_record) rec_split = item_record.split(SEPARATOR);
+        if (!rec_split || checkRecSplit(rec_split,item) == false) {
           Log.prints('The Item has not found in the record.',true);
-          throw e = 'そのアイテムの記録はありません。';
+          throw new Error.NoItemError('そのアイテムの記録はありません。');
         }
         item_record = item_record.replace(item, '');
       }
@@ -81,7 +84,8 @@ exports.saveRecord = async function ({channel_id,user_id=null,money=0,item = nul
   } catch (e) {
     await client.query('ROLLBACK');
     Log.printsDir(e,true);
-    return typeof e == 'string' ? e : null;
+    if (e instanceof Error.NoItemError) return e;
+    else return typeof e == 'string' ? e : null;
   } finally {
     client.release();
     Log.prints('client released.',true);
@@ -129,4 +133,15 @@ exports.getRecord = async function(channel_id) {
     Log.prints('client released.',true);
   }
   return record.rows[0];
+}
+
+function checkRecSplit(recArray, item) {
+  let flag = false;
+  recArray.forEach(elm => {
+    if (elm == item) {
+      flag = true;
+      return;
+    }
+  });
+  return flag;
 }

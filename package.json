@@ -6,10 +6,16 @@
   "dependencies": {
     "async": "^3.1.1",
     "discord.js": "^11.5.1",
+    "extensible-custom-error": "0.0.7",
     "pg": "^7.15.1",
     "request": "2.81.0"
   },
-  "keywords": ["NinjaSlayer", "Njslyr", "NinjaSlayer TRPG", "njrpg"],
+  "keywords": [
+    "NinjaSlayer",
+    "Njslyr",
+    "NinjaSlayer TRPG",
+    "njrpg"
+  ],
   "author": "kooreme",
   "license": "ISC",
   "devDependencies": {

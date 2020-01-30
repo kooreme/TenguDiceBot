@@ -1,6 +1,7 @@
 const error = require('./errormessage.js');
 const Log = require('./log.js');
 const PG = require('./postgres.js');
+const expt = require('./error.js');
 
 const SEPARATOR = /、/g;
 
@@ -76,6 +77,8 @@ async function recordMoney(message,array) {
 async function recordItem(message,array) {
     if (!array[1]) return error.replyErrorMessage();
     const result = await PG.saveRecord({channel_id : message.channel.id, item : array[1], isItemAdd : array[2]});
+    if (result instanceof expt.NoItemError) return 'そのアイテムの記録はありません。';
+    
     return result == null ? error.replyErrorMessage() :
     'アイテムを更新しました。現万札：**' + result.sum_money + '**  アイテム：' + (result.item_record ? '**' + result.item_record + '**' : 'なし');
 }
