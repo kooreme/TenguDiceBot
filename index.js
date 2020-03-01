@@ -18,7 +18,7 @@ const REACT_REGEXP_NINJAFIX = /^\/ndf /;
 const REACT_REGEXP_KATAMICHI = /^\/kd /;
 const REACT_REGEXP_KTQUEST = /^\/ktq /;
 const REACT_REGEXP_KTFIX = /^\/kdf /;
-const REACT_REGEXP_TEST = /^\/tb /;
+const REACT_REGEXP_TENGUBANK = /^\/tb /;
 
 client.on('message', message => {
     let content = message.content;
@@ -56,8 +56,8 @@ client.on('message', message => {
         message.reply(kt_dice.receiveFixedMessage(content));
         Log.prints('content : ' + content);
     }
-    else if (content.search(REACT_REGEXP_TEST) !== -1) {
-        content = content.replace(REACT_REGEXP_TEST,'');
+    else if (content.search(REACT_REGEXP_TENGUBANK) !== -1) {
+        content = content.replace(REACT_REGEXP_TENGUBANK,'');
         Log.printsDir(message);
         Log.prints(message.channel.id);
         Record.receiveResponce(message,content).then(result => {

@@ -16,6 +16,7 @@ const pgPool = new Pool({
 
 async function connect() {
   return await pgPool.connect();
+  
 }
 
 exports.saveRecord = async function ({channel_id,user_id=null,money=0,item = null, isItemAdd = true} = {}) {
@@ -25,6 +26,7 @@ exports.saveRecord = async function ({channel_id,user_id=null,money=0,item = nul
   Log.printsDir(client);
   if (client == null) return null;
   let record = null;
+  let error = null;
   try {
     await client.query('BEGIN');
     record = await client.query('SELECT * FROM "public".bank_record WHERE channel_id = $1', [channel_id]);
@@ -70,7 +72,15 @@ exports.saveRecord = async function ({channel_id,user_id=null,money=0,item = nul
         item_record = item_record.replace(item, '');
       }
       //アイテムレコードの先頭が','だったら消去
-      if (item_record.substring(0,1) == SEPARATOR) item_record = item_record.substring(1);
+      if (item_record.substring(0,1) == SEPARATOR) {
+        item_record = item_record.substring(1);
+      }
+      //アイテムレコード文字列中にセパレータが連続していたら一つにまとめる
+      item_record = item_record.replace(new RegExp(SEPARATOR + SEPARATOR,'g'),SEPARATOR);
+      //末尾がセパレータだったら消去
+      if(item_record.substring(item_record.length - 1) == SEPARATOR) {
+        item_record = item_record.substring(0,item_record.length-1);
+      }
       
       Log.prints('After: item_record = "' + item_record + '", Type : ' + typeof item_record,true);
       
@@ -84,13 +94,12 @@ exports.saveRecord = async function ({channel_id,user_id=null,money=0,item = nul
   } catch (e) {
     await client.query('ROLLBACK');
     Log.printsDir(e,true);
-    if (e instanceof Error.NoItemError) return e;
-    else return typeof e == 'string' ? e : null;
+    error = e;
   } finally {
     client.release();
     Log.prints('client released.',true);
   }
-  return record.rows[0];
+  return error ? error : record.rows[0];
 }
 
 exports.delete = async function(channel_id) {

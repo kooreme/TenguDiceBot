@@ -18,7 +18,6 @@ exports.receiveResponce = async function (message, content) {
     let returnString = '';
     switch(splitRequestArray[0]) {
         case 'm' :
-            Log.prints('case m',true);
             returnString = await recordMoney(message,splitRequestArray);
             break;
         case 'i' :
