@@ -28,7 +28,7 @@ exports.check = function(array) {
     if (!array[1]) return 'テーブル名が空です。テーブル名を指定してください。'
     if (!array[2]) return 'ダイスのショートカット名が空です。ダイスのショートカット名を記載してください。'
     if (!array[3]) return 'ダイス文字列が空です。ダイス文字列を記載してください。'
-    if (!/^\d+[dD]\d+$/.test(array[3])) return 'ダイス文字列に誤りがあります。ndmの表記でダイス文字列を定義してください。'
+    if (!/^(?:\d+|\d+[dD]\d+)(?:[+-](?:\d+|\d+[dD]\d+))*$/.test(array[3])) return 'ダイス文字列に誤りがあります。正しい表記でダイス文字列を定義してください。'
     if (util.checkInvalidChar(spell.spellCheck(array[1]))) return 'テーブル名に半角英数字、特殊記号は使用できません。また、テーブル名は全角4文字以上を指定してください。';
     if (util.checkInvalidChar(array[2])) return 'ダイスのショートカット名に使用できない文字があります。",\',`などの文字とスペースは使用できません。'
     if (array[4] && !util.checkFlagString(array[4])) return 'フラグに使用できない文字があります。t または f を指定するか、何も指定しないでください。'
