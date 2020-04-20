@@ -3,10 +3,12 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 
 const dice = require('./nd_diceroll');
-const kt_dice = require('./kt_diceroll');
-const kt_quest = require('./ktq_quest');
+//const kt_dice = require('./kt_diceroll');
+//const kt_quest = require('./ktq_quest');
 const Log = require('./log.js');
 const Record = require('./record.js');
+const CTCommand = require('./ctcommand');
+require('./db.js');
 
 client.on('ready', () => {
     Log.prints('I am ready!',true);
@@ -15,47 +17,55 @@ client.on('ready', () => {
 //メッセージ反応部
 const REACT_REGEXP_NINJA = /^\/nd /;
 const REACT_REGEXP_NINJAFIX = /^\/ndf /;
-const REACT_REGEXP_KATAMICHI = /^\/kd /;
-const REACT_REGEXP_KTQUEST = /^\/ktq /;
-const REACT_REGEXP_KTFIX = /^\/kdf /;
+//const REACT_REGEXP_KATAMICHI = /^\/kd /;
+//const REACT_REGEXP_KTQUEST = /^\/ktq /;
+//const REACT_REGEXP_KTFIX = /^\/kdf /;
 const REACT_REGEXP_TENGUBANK = /^\/tb /;
+const REACT_REGEXP_CREATETABLE = /^\/ct /;
 
 client.on('message', message => {
     let content = message.content;
+    //NJSLYR用ダイスロール
     if (content.search(REACT_REGEXP_NINJA) !== -1) {
 
         content = content.replace(REACT_REGEXP_NINJA, '');
-
-        message.reply(dice.receiveDiceRoll(content));
+        const NDDice = new dice.NDDiceRoll(content,message);
+        message.reply(NDDice.receiveDiceRoll());
         Log.prints('content : ' + content);
 
     }
+    //NJSLYRの表参照
     else if (content.search(REACT_REGEXP_NINJAFIX) !== -1) {
 
         content = content.replace(REACT_REGEXP_NINJAFIX, '');
-    
-        message.reply(dice.receiveFixedMessage(content));
+        const NDDice = new dice.NDDiceRoll(content,message);
+        message.reply(NDDice.receiveFixedMessage());
         Log.prints('content : ' + content);
 
     }
-    else if (content.search(REACT_REGEXP_KATAMICHI) !== -1) {
+    //片道用ダイスロール
+/*    else if (content.search(REACT_REGEXP_KATAMICHI) !== -1) {
         content = content.replace(REACT_REGEXP_KATAMICHI, '');
-
-        message.reply(kt_dice.receiveDiceRoll(content));
+        const KTDice = new kt_dice.KTDiceRoll(content);
+        message.reply(KTDice.receiveDiceRoll(content));
         Log.prints('content : ' + content);
     }
+    //片道クエスト参照
     else if (content.search(REACT_REGEXP_KTQUEST) !== -1) {
         content = content.replace(REACT_REGEXP_KTQUEST, '');
 
         message.reply(kt_quest.receiveQuest(content));
         Log.prints('content : ' + content);
     }
+    //片道表参照
     else if (content.search(REACT_REGEXP_KTFIX) !== -1) {
         content = content.replace(REACT_REGEXP_KTFIX, '');
 
         message.reply(kt_dice.receiveFixedMessage(content));
         Log.prints('content : ' + content);
     }
+*/
+    //天狗銀行
     else if (content.search(REACT_REGEXP_TENGUBANK) !== -1) {
         content = content.replace(REACT_REGEXP_TENGUBANK,'');
         Log.printsDir(message);
@@ -63,6 +73,19 @@ client.on('message', message => {
         Record.receiveResponce(message,content).then(result => {
             message.reply(result);
         });
+    }
+    //専用表作成
+    else if (content.search(REACT_REGEXP_CREATETABLE) !== -1) {
+        content = content.replace(REACT_REGEXP_CREATETABLE,'');
+        
+        const reply = CTCommand.run(message,content);
+        //通常はリプライ
+        if(typeof reply == 'string') message.reply(reply);
+        //文字数が多く、１回で表示しきれない場合は複数回に分け、sendする。
+        //checktablelist,checktabledataがこれになりそう。
+        else reply.forEach((elm) => message.channel.send(elm));
+
+
     }
 });
 

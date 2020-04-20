@@ -59,8 +59,8 @@ const errorMessage = [
 ':japanese_goblin: 「どうなるか、わかっているな。」'
 ];
 
-exports.replyErrorMessage = function(){
-	return errorMessage[util.getRandomIntInclusive(0,errorMessage.length - 1)];
+exports.replyErrorMessage = function(addStr = ''){
+	return errorMessage[util.getRandomIntInclusive(0,errorMessage.length - 1)] + (addStr != '' ? ('\n' + addStr) : '');
 }
 
 
