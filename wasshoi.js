@@ -1,5 +1,5 @@
 //const util = require('./util.js');
-const Dice = require('./protodice.js');
+const Dice = require('./dice.js');
 const Log = require('./log.js');
 
 const WasshoiMessage = '\n\n:japanese_goblin: 「今だ、ニンジャスレイヤー＝サン！」\n\n**「Wasshoi!」**';
