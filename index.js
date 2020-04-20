@@ -70,3 +70,38 @@ client.on('message', message => {
 
 // eslint-disable-next-line no-undef
 client.login(process.env.BOT_TOKEN);//BOT_TOKEN is the Client Secret
+
+//定期実行設定
+const cron = require('node-cron');
+const fs = require('fs');
+
+cron.schedule('45 41 3,15 * * *', () => {
+    fs.copyFile('./.data/db.json', './.data/db.json.bak-' + getSaveTimeFormat(), (err) => {
+        if (err) {
+            console.log(err.stack);
+        }
+        else {
+            console.log('Done.');
+        }
+    });
+    const dirPath = './.data/';
+    fs.readdir(dirPath, function(err, files){
+        if (err) throw err;
+        var fileList = files.filter(function(file){
+            return fs.statSync(dirPath + file).isFile() && /\.bak/.test(file);
+        })
+        console.log(fileList);
+        if (fileList.length > 3) {
+            fs.unlinkSync(dirPath + fileList[0]);
+        }
+    });
+});
+function getSaveTimeFormat() {
+    const date = new Date();
+    return String(date.getFullYear()) +
+    String((date.getMonth()+ 1) >= 10 ? date.getMonth()+1 : '0' + (date.getMonth()+1)) +
+    String(date.getDate() >= 10 ? date.getDate() : '0' + date.getDate()) + 
+    String(date.getHours() >= 10 ? date.getHours() : '0' + date.getHours()) + 
+    String(date.getMinutes() >= 10 ? date.getMinutes() : '0' + date.getMinutes()) + 
+    String(date.getSeconds() >= 10 ? date.getSeconds() : '0' + date.getSeconds());
+}
