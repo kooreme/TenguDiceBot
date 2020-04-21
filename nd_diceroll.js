@@ -44,6 +44,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		this.string = this.checkTable(this.string, this.message);
 		//ショートカットコマンドを翻訳する
 		let diceinfo = {};
+		Log.prints(this.string);
 		this.string = this.shortcutTransration(this.string);
 		//スーパークラスのダイスロールで実際にダイスを振る。
 		diceinfo = super.normalDiceRoll(this.string);
@@ -200,28 +201,29 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 	checkTable(string,message) {
 		let returnString = '';
 		let diceKind = '';
-		Log.prints("before spellCheck : " + string);
-		string = this.spellCheck(string);
-		Log.prints("after spellCheck : " + string);
-		if (/,/.test(string)) {
-			let temp = string.split(',');	
+		let tempString = string;
+		Log.prints("before spellCheck : " + tempString);
+		tempString = this.spellCheck(tempString);
+		Log.prints("after spellCheck : " + tempString);
+		if (/,/.test(tempString)) {
+			let temp = tempString.split(',');	
 			diceKind = temp[1];
-			string = temp[0];
+			tempString = temp[0];
 		}
 		//データベースからの取得。private -> public -> defaultの順で検索。
-		let checkDataTable = DB.db.getUserTable(message.channel.id, string.toLowerCase());
-		if (!checkDataTable) checkDataTable = DB.db.getUserTable(null, string.toLowerCase());
-		if (!checkDataTable) checkDataTable = DB.db.getDefaultTable(DB.db.ND_DATATABLE, string.toLowerCase());
+		let checkDataTable = DB.db.getUserTable(message.channel.id, tempString.toLowerCase());
+		if (!checkDataTable) checkDataTable = DB.db.getUserTable(null, tempString.toLowerCase());
+		if (!checkDataTable) checkDataTable = DB.db.getDefaultTable(DB.db.ND_DATATABLE, tempString.toLowerCase());
 		Log.prints('checkDataTable =' + checkDataTable);
 	
 		if (checkDataTable) {
 			if (diceKind) {
-				returnString = checkDataTable.dice[diceKind.toLowerCase()] + '#' + string;
+				returnString = checkDataTable.dice[diceKind.toLowerCase()] + '#' + tempString;
 			}
 			else {
 				let returnDice = checkDataTable.dice;
-				if(typeof returnDice == 'string') returnString = returnDice + '#' + string;
-				else returnString = returnDice['a'] + '#' + string;
+				if(typeof returnDice == 'string') returnString = returnDice + '#' + tempString;
+				else returnString = returnDice['a'] + '#' + tempString;
 			}
 		}
 		else {

@@ -9,7 +9,7 @@ const WasshoiMessage = '\n\n:japanese_goblin: 「今だ、ニンジャスレイ�
  */
 exports.wasshoiDiceRoll = function(dkk) {
 	Log.prints('wasshoiDiceRoll : string :' + dkk);
-	var dice = new Dice('2d6');
+	var dice = new Dice.Dice('2d6');
 	dice.diceRoll();
 
 	var returnString = 'Wasshoi!判定! = ' + dice.toString() + ' = ' + dice.sum + '<=' + dkk + '  判定';

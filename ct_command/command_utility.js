@@ -1,5 +1,11 @@
 exports.checkInvalidChar = function(str) {
-    return (/[0-9a-zA-Z#[\]()'`",.\\/\b\f\n\r\t\x20\u3000]/.test(str) && str.length >= 4);
+    const test = /[0-9a-zA-Z#[\]()'`",.\\/\b\f\n\r\t\x20\u3000]/.test(str);
+    if (test || str.length < 4) return true;
+    else return false;
+}
+exports.checkInvalidCharForDice = function(str) {
+    if (/[#[\]()'`",.\\/\b\f\n\r\t\x20\u3000]/.test(str)) return true;
+    else return false;
 }
 
 exports.checkFlagString = function(str) {
