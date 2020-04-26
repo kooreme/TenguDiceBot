@@ -4,7 +4,7 @@ const error = require('./errormessage');
 const Log = require('./log');
 const util = require('./util.js');
 const Dice = require('./dice.js');
-const DB = require('./db');
+const DB = require('./db_wrapper');
 
 const SPACE_PLUS_SPACE = ' + ';
 const DICE_DIVIDE = /\+/g;
@@ -113,8 +113,8 @@ class DiceRoll {
 	async _getTableData(tableName) {
 		//default -> private -> publicで検索。
 		let checkDataTable = this.datatable.dataTable[tableName];
-		if (!checkDataTable) checkDataTable = await DB.DB.getUserTable(this.message.channel.id, tableName);
-		if (!checkDataTable) checkDataTable = await DB.DB.getUserTable(null, tableName);
+		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(this.message.channel.id, tableName);
+		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(null, tableName);
 		return checkDataTable;
 	}
 	
