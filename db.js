@@ -4,7 +4,7 @@ if (global.process.env.FIREBASE_PKEY) {
     admin.initializeApp({
         credential: admin.credential.cert({
             projectId : global.process.env.FIREBASE_PROJECT_ID,
-            privateKey :global. process.env.FIREBASE_PKEY,
+            privateKey :global. process.env.FIREBASE_PKEY.replace(/\\n/g, '\n'),
             clientEmail : global.process.env.FIREBASE_CLIENT_EMAIL,
         }),
         databaseURL: "https://tengu-dicebot.firebaseio.com"
