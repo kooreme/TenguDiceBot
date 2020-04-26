@@ -1,14 +1,12 @@
-const DB = require('../db.js');
+const DB = require('../db_wrapper.js');
 const util = require('./command_utility');
 const spell = require('../util');
 const Log = require('../log');
-exports.run = function (message, data) {
+exports.run = async function (message, data) {
     let db = DB.db;
 
-    //チャンネル検索
-    if (!db.findChannel(data.flag ? null : message.channel.id)) return { result: false, message: 'テーブルがありません。' };
     //テーブル検索
-    let table = db.getUserTable(data.flag ? null : message.channel.id, data.tableName);
+    let table = await db.getUserTable(data.flag ? null : message.channel.id, data.tableName);
     if (!table) return { result: false, message: 'テーブルがありません。' };
 
     //テーブルデータ表示
@@ -22,7 +20,7 @@ exports.check = function (array) {
     if (!array[1]) return 'テーブル名が空です。テーブル名を指定してください。'
     if (util.checkInvalidChar(spell.spellCheck(array[1]))) return 'テーブル名に半角英数字、特殊記号は使用できません。また、テーブル名は全角4文字以上を指定してください。';
     if (array[2] && !util.checkFlagString(array[2])) return 'フラグに使用できない文字があります。t または f を指定するか、何も指定しないでください。'
-    return;
+    return null;
 }
 exports.adjust = function (array) {
     const object = {};
@@ -60,7 +58,7 @@ function createTableDataString(tableName,table) {
         else {
             tmpStr += str;
         }
-        if (i == keys.length-1) {
+        if (i === keys.length-1) {
             dataMessage.push('```' + tmpStr + '```');
         }
     }

@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-eq-null */
 exports.dataTable = {
     サツバツ : {
         dice : '1d6',
@@ -134,7 +136,7 @@ exports.dataTable = {
             12:'test12',
         },
         returnDice : function(str = null) {
-            if (str === null) {
+            if (str == null) {
                 return this.dice['a'];
             }
             str = str.toLowerCase();

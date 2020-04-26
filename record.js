@@ -1,7 +1,8 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-eq-null */
 const error = require('./errormessage.js');
 const Log = require('./log.js');
-const PG = require('./postgres.js');
-const expt = require('./error.js');
+const TB = require('./tb_db_wrapper.js');
 
 const SEPARATOR = /、/g;
 
@@ -68,27 +69,27 @@ function splitRequest(content) {
 
 async function recordMoney(message,array) {
     if (!array[1]) return error.replyErrorMessage();
-    const result = await PG.saveRecord({channel_id : message.channel.id, money : array[1]});
+    const result = await TB.TB.saveRecord({channel_id : message.channel.id, money : array[1]});
     return result == null ? error.replyErrorMessage() :
     '万札を更新しました。現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record + '**' : 'なし');
 }
 
 async function recordItem(message,array) {
     if (!array[1]) return error.replyErrorMessage();
-    const result = await PG.saveRecord({channel_id : message.channel.id, item : array[1], isItemAdd : array[2]});
-    if (result instanceof expt.NoItemError) return 'そのアイテムの記録はありません。';
+    const result = await TB.TB.saveRecord({channel_id : message.channel.id, item : array[1], isItemAdd : array[2]});
+    if (!result) return 'そのアイテムの記録はありません。';
     
     return result == null ? error.replyErrorMessage() :
     'アイテムを更新しました。現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record + '**' : 'なし');
 }
 
 async function deleteRecord(message) {
-    const result = await PG.delete(message.channel.id);
-    return !result ? error.replyErrorMessage() : result;
+    const result = await TB.TB.delete(message.channel.id);
+    return result;
 }
 
 async function getRecordResult(message) {
-    const result = await PG.getRecord(message.channel.id);
+    const result = await TB.TB.getRecord(message.channel.id);
     if (!result) return 'このチャンネル内の記録が見つかりません。'; 
     
     if (result.money_record) result.money_record = result.money_record.replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');
@@ -96,7 +97,7 @@ async function getRecordResult(message) {
     let returnString = '結果…… 現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record +'**' : 'なし');
     if(result.money_record) returnString += '\n' + '入出金記録：**' + result.money_record + ' = ' + change893(result.sum_money) + '**';
 
-    const deleted = await PG.delete(message.channel.id);
+    const deleted = await TB.TB.delete(message.channel.id);
     if (!deleted) returnString = error.replyErrorMessage();
     else returnString += '\n\n' + deleted;
 
@@ -104,7 +105,7 @@ async function getRecordResult(message) {
 }
 
 async function getRecord(message) {
-    const result = await PG.getRecord(message.channel.id);
+    const result = await TB.TB.getRecord(message.channel.id);
     if (!result) return 'このチャンネル内の記録が見つかりません。'; 
     
     if (result.money_record) result.money_record = result.money_record.replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');
@@ -117,7 +118,7 @@ async function getRecord(message) {
 }
 
 function change893(money) {
-    if (String(money).indexOf('893') != -1) {
+    if (String(money).indexOf('893') !== -1) {
         money = ':japanese_goblin:  ' + money + '  :japanese_goblin:';
     }
     return money;

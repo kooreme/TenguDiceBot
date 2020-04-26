@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-eq-null */
 //dice.js
 const COMMENT = /#/;
 const MINUS = /-/g;
@@ -12,7 +14,7 @@ const DiceRoll = require('./diceroll');
 const Log = require('./log');
 const util = require('./util');
 const error = require('./errormessage');
-const DB = require('./db');
+const DB = require('./db_wrapper');
 
 const STRING_WASSHOI = 'wasshoi';
 
@@ -27,7 +29,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 	戻り値：String
 	ダイスロールメッセージを受信する。
 	*/
-	receiveDiceRoll() {
+	async receiveDiceRoll() {
 		if (HELP.test(this.string)) {
 			return Help.help;
 		}
@@ -35,24 +37,24 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 			return wasshoi.wasshoiDiceRoll(this.string.substring(STRING_WASSHOI.length));
 		}
 		//通常ダイスロール
-		return super.receiveDiceRoll();
+		return await this.NormalDiceRoll();
 	}
 
-	normalDiceRoll() {
+	async NormalDiceRoll() {
 		let returnString = '';
 		//コマンド表が無いか確認する。
-		this.string = this.checkTable(this.string, this.message);
+		this.string = await this.checkTable(this.string, this.message);
 		//ショートカットコマンドを翻訳する
 		let diceinfo = {};
 		Log.prints(this.string);
 		this.string = this.shortcutTransration(this.string);
 		//スーパークラスのダイスロールで実際にダイスを振る。
-		diceinfo = super.normalDiceRoll(this.string);
+		diceinfo = super.diceroll(this.string);
 		if (diceinfo == null) {
 			return error.replyErrorMessage();
 		}
 
-		if (diceinfo.dice.length == 0) {
+		if (diceinfo.dice.length === 0) {
 			Log.prints('no dice error');
 			return diceinfo.comment;
 		}
@@ -61,19 +63,17 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		returnString = this.createOutput(diceinfo.dice, diceinfo.comment);
 		Log.prints('returnString : ' + returnString);
 
-		returnString += this.addTableOutput(diceinfo, this.message);
+		returnString += this.addTableOutput(diceinfo);
 		Log.prints('returnString : ' + returnString);
 
 		return returnString;
 
 	}
 
-	addTableOutput(diceinfo, message) {
+	addTableOutput(diceinfo) {
 		let returnString = '';
-		//データベースからの取得。private -> public -> defaultの順で検索。
-		let checkDataTable = DB.db.getUserTable(message.channel.id, diceinfo.comment.toLowerCase());
-		if (!checkDataTable) checkDataTable = DB.db.getUserTable(null, diceinfo.comment.toLowerCase());
-		if (!checkDataTable) checkDataTable = DB.db.getDefaultTable(DB.db.ND_DATATABLE, diceinfo.comment.toLowerCase());
+		//前処理でテーブルを取得できていたら、ここで使用する。なければundefinedで進む。
+		let checkDataTable = this.tableData;
 		let addString = '';
 		let tableString = '';
 
@@ -137,7 +137,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 					for (var k = 0, m = shortcut.length; k < m; k++) {
 						Log.prints('shortcutTransration shortcut[' + k + '] : ' + shortcut[k]);
 
-						if (k == 1 && /[kenhu]/i.test(shortcut[k])) {
+						if (k === 1 && /[kenhu]/i.test(shortcut[k])) {
 							switch (shortcut[k]) {
 								case 'k':
 								case 'K':
@@ -170,12 +170,12 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 							temp += (appendix != null) ? appendix : '';
 							shortcutArray.push(temp);
 						}
-						else if (shortcut[k] != ',' && shortcut[k] != '') {
+						else if (shortcut[k] !== ',' && shortcut[k] !== '') {
 							return util.ERROR_FLAG;
 						}
 					}
 				}
-				else if (splits[i] == '+') {
+				else if (splits[i] === '+') {
 					continue;
 				}
 				else {
@@ -198,7 +198,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		return returnString;
 	}
 
-	checkTable(string,message) {
+	async checkTable(string) {
 		let returnString = '';
 		let diceKind = '';
 		let tempString = string;
@@ -210,11 +210,13 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 			diceKind = temp[1];
 			tempString = temp[0];
 		}
-		//データベースからの取得。private -> public -> defaultの順で検索。
-		let checkDataTable = DB.db.getUserTable(message.channel.id, tempString.toLowerCase());
-		if (!checkDataTable) checkDataTable = DB.db.getUserTable(null, tempString.toLowerCase());
-		if (!checkDataTable) checkDataTable = DB.db.getDefaultTable(DB.db.ND_DATATABLE, tempString.toLowerCase());
-		Log.prints('checkDataTable =' + checkDataTable);
+		let checkDataTable;
+		//テーブル名は半角英数禁止のため、最初の文字が半角英数ならテーブル検索は不要。
+		//検索スキップにより、パフォーマンスを向上させる。
+		if (!/^[a-zA-Z\d]/.test(tempString)) {
+			checkDataTable = await this._getTableData(tempString);
+		}
+		Log.prints('checkDataTable =' + checkDataTable);	
 	
 		if (checkDataTable) {
 			if (diceKind) {
@@ -222,15 +224,25 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 			}
 			else {
 				let returnDice = checkDataTable.dice;
-				if(typeof returnDice == 'string') returnString = returnDice + '#' + tempString;
+				if(typeof returnDice === 'string') returnString = returnDice + '#' + tempString;
 				else returnString = returnDice['a'] + '#' + tempString;
 			}
+			//ここでデータテーブルを記録し、後の処理で使用する。
+			this.tableData = checkDataTable;
 		}
 		else {
 			returnString = string;
 		}
 		return returnString;
 	
+	}
+
+	async _getTableData(tableName) {
+		//default -> private -> publicで検索。
+		let checkDataTable = this.datatable.dataTable[tableName];
+		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(this.message.channel.id, tableName);
+		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(null, tableName);
+		return checkDataTable;
 	}
 }
 

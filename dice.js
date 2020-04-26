@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-eq-null */
 const util = require('./util.js');
 const Log = require('./log.js');
 
@@ -34,21 +36,23 @@ class Dice {
 		}
 
 		//マイナスがあるかどうかを受け取り、文字を削除する。
-		if (string.slice(0, 1) == '-') {
+		if (string.slice(0, 1) === '-') {
 			this.isMinus = true;
 			string = string.substring(1, string.length);
 		}
 
 		//最初の文字がdから始まった場合は1dmへ変更する。
-		if (string.slice(0, 1) == 'd') {
+		if (string.slice(0, 1) === 'd') {
 			string = '1' + string;
 		}
 		//dの後ろに数字がついていない場合は６面ダイスとする。
-		if (/^\d+[dD]\d/.test(string) == false) {
+		if (/^\d+[dD]\d/.test(string) === false) {
 			string = string.replace('d', 'd6');
 		}
 
 		//解釈済みの文字列はここで決定
+		Log.prints('Dice.appendixArray : 「' + this.appendixArray + '」************************');
+
 		this.trancedString = string;
 		if (this.appendixArray != null) {
 			this.appendixArray.forEach(function (element) {
@@ -88,7 +92,7 @@ class Dice {
 	}
 
 	toString() {
-		if (this.result == util.ERROR_FLAG) {
+		if (this.result === util.ERROR_FLAG) {
 			return util.ERROR_FLAG;
 		}
 
@@ -117,7 +121,7 @@ class Dice {
 
 	diceRoll() {
 		//数字だけだった場合はダイスロールしない。
-		if (this.resArray.length != 0) {
+		if (this.resArray.length !== 0) {
 			return;
 		}
 		for (let i = 0; i < this.diceNum; i++) {
@@ -137,6 +141,7 @@ function compareBorder(dice) {
 	let normalSum = 0;
 	Log.prints('compareBorder() dice.resArray : ' + dice.resArray);
 	for (let i = 0; i < dice.resArray.length; i++) {
+		// eslint-disable-next-line no-eval
 		if (eval(parseInt(dice.resArray[i]) + dice.option + dice.border)) {
 			normalSum++;
 		}
@@ -154,6 +159,7 @@ function compareBorder(dice) {
 		for (let k = 0; k < app.length; k++) {
 			let appSum = 0;
 			for (let t = 0; t < dice.resArray.length; t++) {
+				// eslint-disable-next-line no-eval
 				if (eval(parseInt(dice.resArray[t]) + app[k].option + app[k].border)) {
 					appSum = appSum + app[k].bairitsu;
 					if (!/\*\*/.test(dice.resStrArray[t])) {
@@ -188,11 +194,11 @@ class Appendix {
 	
 		Log.prints('appendix strArray : 「' + strArray + '」');
 	
-		this.option = (strArray[1] == '=') ? '==' : strArray[1];
+		this.option = (strArray[1] === '=') ? '==' : strArray[1];
 		this.border = Number(strArray[2]);
 		this.bairitsu = (strArray[4] != null && !isNaN(strArray[4])) ? Number(strArray[4]) : 1;
 	
-		if (checkAppendix(this) == false) {
+		if (checkAppendix(this) === false) {
 			throw util.ERROR_FLAG;
 		}
 		this.string = string;	
@@ -205,7 +211,7 @@ function checkAppendix(app) {
 		Log.prints('checkAppendix app null!');
 		return false;
 	}
-	if (/[<>!]=?|=/.test(app.option) == false) {
+	if (/[<>!]=?|=/.test(app.option) === false) {
 		Log.prints('checkAppendix app.option unmatch!');
 		return false;
 	}
@@ -221,7 +227,7 @@ function createAppendix(string) {
 	Log.prints('createAppendix temp : 「' + temp + '」');
 
 	var appendixArray = [];
-	temp.forEach(function (element) {
+	temp.forEach((element) => {
 		element = appTransration(element.toLowerCase());
 		appendixArray.push(new Appendix(element));
 	});

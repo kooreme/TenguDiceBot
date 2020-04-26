@@ -1,10 +1,10 @@
-const DB = require('../db.js');
+const DB = require('../db_wrapper.js');
 const Log = require('../log');
-exports.run = function (message) {
+exports.run = async function (message) {
     let db = DB.db;
 
     //publicの全テーブルと、現チャンネルのプライベートテーブルを取得
-    let table = db.getAllTable(message.channel.id);
+    let table = await db.getAllTable(message.channel.id);
     //メッセージを作成
     let returnString = createTableListString(table);
 
@@ -12,8 +12,8 @@ exports.run = function (message) {
 
 }
 exports.check = function (array) {
-    if (array.length != 1) return '引数の数が不正です。詳細は「/ct help,checkTableList」を確認してください。';
-    return;
+    if (array.length !== 1) return '引数の数が不正です。詳細は「/ct help,checkTableList」を確認してください。';
+    return null;
 }
 exports.adjust = function () {
     const object = {};

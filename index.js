@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-
+const functions = require('firebase-functions');
 const client = new Discord.Client();
 
 const dice = require('./nd_diceroll');
@@ -8,7 +8,6 @@ const dice = require('./nd_diceroll');
 const Log = require('./log.js');
 const Record = require('./record.js');
 const CTCommand = require('./ctcommand');
-require('./db.js');
 
 client.on('ready', () => {
     Log.prints('I am ready!',true);
@@ -23,14 +22,14 @@ const REACT_REGEXP_NINJAFIX = /^\/ndf /;
 const REACT_REGEXP_TENGUBANK = /^\/tb /;
 const REACT_REGEXP_CREATETABLE = /^\/ct /;
 
-client.on('message', message => {
+client.on('message', async message => {
     let content = message.content;
     //NJSLYR用ダイスロール
     if (content.search(REACT_REGEXP_NINJA) !== -1) {
 
         content = content.replace(REACT_REGEXP_NINJA, '');
         const NDDice = new dice.NDDiceRoll(content,message);
-        message.reply(NDDice.receiveDiceRoll());
+        message.reply(await NDDice.receiveDiceRoll());
         Log.prints('content : ' + content);
 
     }
@@ -70,17 +69,16 @@ client.on('message', message => {
         content = content.replace(REACT_REGEXP_TENGUBANK,'');
         Log.printsDir(message);
         Log.prints(message.channel.id);
-        Record.receiveResponce(message,content).then(result => {
-            message.reply(result);
-        });
+        
+        message.reply(await Record.receiveResponce(message,content));
     }
     //専用表作成
     else if (content.search(REACT_REGEXP_CREATETABLE) !== -1) {
         content = content.replace(REACT_REGEXP_CREATETABLE,'');
         
-        const reply = CTCommand.run(message,content);
+        const reply = await CTCommand.run(message,content).then((v) => v);
         //通常はリプライ
-        if(typeof reply == 'string') message.reply(reply);
+        if(typeof reply === 'string') message.reply(reply);
         //文字数が多く、１回で表示しきれない場合は複数回に分け、sendする。
         //checktablelist,checktabledataがこれになりそう。
         else reply.forEach((elm) => message.channel.send(elm));
@@ -92,39 +90,4 @@ client.on('message', message => {
 // THIS  MUST  BE  THIS  WAY
 
 // eslint-disable-next-line no-undef
-client.login(process.env.BOT_TOKEN);//BOT_TOKEN is the Client Secret
-
-//定期実行設定
-const cron = require('node-cron');
-const fs = require('fs');
-
-cron.schedule('45 41 3,15 * * *', () => {
-    fs.copyFile('./.data/db.json', './.data/db.json.bak-' + getSaveTimeFormat(), (err) => {
-        if (err) {
-            console.log(err.stack);
-        }
-        else {
-            console.log('Done.');
-        }
-    });
-    const dirPath = './.data/';
-    fs.readdir(dirPath, function(err, files){
-        if (err) throw err;
-        var fileList = files.filter(function(file){
-            return fs.statSync(dirPath + file).isFile() && /\.bak/.test(file);
-        })
-        console.log(fileList);
-        if (fileList.length > 3) {
-            fs.unlinkSync(dirPath + fileList[0]);
-        }
-    });
-});
-function getSaveTimeFormat() {
-    const date = new Date();
-    return String(date.getFullYear()) +
-    String((date.getMonth()+ 1) >= 10 ? date.getMonth()+1 : '0' + (date.getMonth()+1)) +
-    String(date.getDate() >= 10 ? date.getDate() : '0' + date.getDate()) + 
-    String(date.getHours() >= 10 ? date.getHours() : '0' + date.getHours()) + 
-    String(date.getMinutes() >= 10 ? date.getMinutes() : '0' + date.getMinutes()) + 
-    String(date.getSeconds() >= 10 ? date.getSeconds() : '0' + date.getSeconds());
-}
+client.login(process.env.BOT_TOKEN || functions.config().api.key);//BOT_TOKEN is the Client Secret

@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-eq-null */
 const error = require('./errormessage')
 const util = require('./util.js');
 const Log = require('./log.js');
@@ -17,7 +19,7 @@ class KTDiceRoll extends DiceRoll.DiceRoll {
             return error.replyErrorMessage();
         }
     
-        if (diceinfo.dice.length == 0) {
+        if (diceinfo.dice.length === 0) {
             Log.prints('no dice error');
             return diceinfo.comment;
         }

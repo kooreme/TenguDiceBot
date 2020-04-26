@@ -60,7 +60,7 @@ const errorMessage = [
 ];
 
 exports.replyErrorMessage = function(addStr = ''){
-	return errorMessage[util.getRandomIntInclusive(0,errorMessage.length - 1)] + (addStr != '' ? ('\n' + addStr) : '');
+	return errorMessage[util.getRandomIntInclusive(0,errorMessage.length - 1)] + (addStr !== '' ? ('\n' + addStr) : '');
 }
 
 

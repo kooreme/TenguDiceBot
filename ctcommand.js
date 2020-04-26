@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-eq-null */
 const error = require('./errormessage');
 const Command = {
     'addpermission' : require('./ct_command/addPermission'),
@@ -14,12 +16,13 @@ const Command = {
     'updatedata' : require('./ct_command/updateData'),
     'updatetablename' : require('./ct_command/updateTableName'),
 }
+
 /**
  * コマンドを解釈し、実行する。
  * コマンドを実行できる正しい文字列であるかを
  * チェックし、問題なければ各コマンドを実行する。
  */
-exports.run = function(message,content){
+exports.run = async function(message,content){
     content = content.replace(/\x20/g,"");
     let split = content.split(',');
     const command = Command[split[0].toLowerCase()];
@@ -31,7 +34,7 @@ exports.run = function(message,content){
     if (check != null) return error.replyErrorMessage(check);
 
     //各コマンドごとのデータに整形し、実行。実行結果を返す。
-    const run = command.run(message,command.adjust(split));
-    if (run.result == false) return error.replyErrorMessage(run.message);
+    const run = await command.run(message,command.adjust(split));
+    if (run.result === false) return error.replyErrorMessage(run.message);
     else return run.message;
 }

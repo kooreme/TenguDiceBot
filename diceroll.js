@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-eq-null */
 const error = require('./errormessage');
 const Log = require('./log');
 const util = require('./util.js');
@@ -17,12 +19,10 @@ class DiceRoll {
 		this.string = string.replace(/\s+/g, '');
 	}
 
-	receiveDiceRoll() {
-		return this.normalDiceRoll();
+	async receiveDiceRoll() {
+		return await this.NormalDiceRoll();
 	}
-
-	//サブクラスで実装
-	normalDiceRoll() {
+	diceroll() {
 		let comment = '';
 		//コメントとダイスロール文字列を分離
 		const searchComment = this.string.search(COMMENT);
@@ -39,9 +39,9 @@ class DiceRoll {
 		Log.prints('diceStr : ' + diceStr);
 
 		const dice = [];
-		diceStr.forEach(function (element) {
+		diceStr.forEach((element) => {
 			let newdice = new Dice.Dice(element);
-			if (newdice.result == util.ERROR_FLAG) {
+			if (newdice.result === util.ERROR_FLAG) {
 				Log.prints('Error Dice!');
 				dice.push(null);
 			}
@@ -83,7 +83,7 @@ class DiceRoll {
 		let str = '';
 		let sumall = 0;
 		let diceStr = '';
-		dice.forEach(function (element) {
+		dice.forEach((element) => {
 			if (element.isMinus) {
 				str = str + ' - ' + element.toString();
 				sumall -= parseInt(element.sum, 10);
@@ -142,7 +142,7 @@ function diceRoll(dice) {
 	}
 	var sumDiceMen = [];
 	var sumDiceNum = 0;
-	dice.forEach(function (element) {
+	dice.forEach((element) =>{
 		if (element == null) {
 			Log.prints('Null Element String');
 			throw new Error('Null Element String');
@@ -156,7 +156,7 @@ function diceRoll(dice) {
 		throw new Error('sintaxError');
 	}
 	else {
-		dice.forEach(function (element) {
+		dice.forEach((element) =>{
 			element.diceRoll();
 			Log.prints('diceRoll done.');
 		});
