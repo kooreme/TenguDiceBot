@@ -14,7 +14,6 @@ const DiceRoll = require('./diceroll');
 const Log = require('./log');
 const util = require('./util');
 const error = require('./errormessage');
-const DB = require('./db_wrapper');
 
 const STRING_WASSHOI = 'wasshoi';
 
@@ -237,13 +236,6 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 	
 	}
 
-	async _getTableData(tableName) {
-		//default -> private -> publicで検索。
-		let checkDataTable = this.datatable.dataTable[tableName];
-		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(this.message.channel.id, tableName);
-		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(null, tableName);
-		return checkDataTable;
-	}
 }
 
 module.exports.NDDiceRoll = NDDiceRoll;

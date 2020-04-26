@@ -67,12 +67,12 @@ class DiceRoll {
 		return string;
 	}
 
-	receiveFixedMessage() {
+	async receiveFixedMessage() {
 		const stringArray = this.string.split('#');
 
 		stringArray[0] = this.spellCheck(stringArray[0]);
 		Log.prints(stringArray);
-		return FixedOutputMessage(stringArray, this.message);
+		return await this.FixedOutputMessage(stringArray);
 	}
 
 	spellCheck(string) {
@@ -110,26 +110,31 @@ class DiceRoll {
 		return str;
 
 	}
+	async _getTableData(tableName) {
+		//default -> private -> publicで検索。
+		let checkDataTable = this.datatable.dataTable[tableName];
+		if (!checkDataTable) checkDataTable = await DB.DB.getUserTable(this.message.channel.id, tableName);
+		if (!checkDataTable) checkDataTable = await DB.DB.getUserTable(null, tableName);
+		return checkDataTable;
+	}
+	
+	async FixedOutputMessage(array) {
+		let returnString = '';
+		//データベースからの取得。private -> public -> defaultの順で検索。
+		let checkDataTable = await this._getTableData(array[0]);
+		if (checkDataTable && array[1] != null && (!isNaN(array[1])) && checkDataTable.data[array[1]] != null) {
+			returnString = '\n\n' + checkDataTable.data[array[1]];
+		}
+		else {
+			returnString = error.replyErrorMessage();
+		}
+		return returnString;
+	}
 }
 
 module.exports.DiceRoll = DiceRoll;
 
-function FixedOutputMessage(array, message) {
-	let returnString = '';
-	//データベースからの取得。private -> public -> defaultの順で検索。
-	let checkDataTable = DB.db.getUserTable(message.channel.id, array[0].toLowerCase());
-	if (!checkDataTable) checkDataTable = DB.db.getUserTable(null, array[0].toLowerCase());
-	if (!checkDataTable) checkDataTable = DB.db.getDefaultTable(DB.db.ND_DATATABLE, array[0].toLowerCase());
 
-
-	if (checkDataTable && array[1] != null && (!isNaN(array[1])) && checkDataTable.data[array[1]] != null) {
-		returnString = '\n\n' + checkDataTable.data[array[1]];
-	}
-	else {
-		returnString = error.replyErrorMessage();
-	}
-	return returnString;
-}
 
 /**
  * diceRoll

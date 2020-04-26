@@ -38,7 +38,7 @@ client.on('message', async message => {
 
         content = content.replace(REACT_REGEXP_NINJAFIX, '');
         const NDDice = new dice.NDDiceRoll(content,message);
-        message.reply(NDDice.receiveFixedMessage());
+        message.reply(await NDDice.receiveFixedMessage());
         Log.prints('content : ' + content);
 
     }
