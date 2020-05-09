@@ -15,3 +15,16 @@ exports.checkFlagString = function(str) {
 exports.isT = function(str) {
     return /^[tT]$/.test(str);
 }
+
+exports.checkDataRange = function(userTable) {
+    //データ未登録なら巨大数をセットしておく。
+    if (!userTable.data || userTable.data.size === 0) return {"max" : Number.MAX_SAFE_INTEGER, "min" : Number.MIN_SAFE_INTEGER};
+    const keys = userTable.data.keys();
+    let range = userTable.datarange ? userTable.datarange : {"max" : Number.MAX_SAFE_INTEGER, "min" : Number.MIN_SAFE_INTEGER};
+    for (let key of keys) {
+        range.max = range.max === Number.MAX_SAFE_INTEGER ? key : Math.max(key,Number(range.max));
+        range.min = range.min === Number.MIN_SAFE_INTEGER ? key : Math.min(key,Number(range.min));
+    }
+
+    return range;
+}

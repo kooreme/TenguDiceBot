@@ -48,7 +48,12 @@ class DataTable {
                     KOOREME_USER_ID,
                     guild_owner_id,
                     author_id
-                ]
+                ],
+                'datarange' : {
+                    'isUse' : false,
+                    'max' : Number.MAX_SAFE_INTEGER,
+                    'min' : Number.MIN_SAFE_INTEGER
+                }
             }
         };
         return await this._createTable(channelID,dataObject);
@@ -68,6 +73,19 @@ class DataTable {
 
     async updateData(channelID = null,tableName,dataIndex,dataString) {
         return await this._updateTableNode(channelID,tableName,"data",dataIndex,dataString);
+    }
+
+    async updateAddition(channelID = null,tableName,isUseFlag,max = Number.MAX_SAFE_INTEGER,min = Number.MIN_SAFE_INTEGER) {
+        const dataObject = {
+            [tableName] : {
+                "datarange" : {
+                    "isUse" : isUseFlag,
+                    "max" : max,
+                    "min" : min
+                }
+            }
+        }
+        return await this.db.setData(channelID ? PRIVATE_DB : PUBLIC_DB,channelID ? channelID : PUBLIC_CH_ID, dataObject);
     }
 
     async _updateTableNode(channelID = null,tableName,tableNode,key,value) {

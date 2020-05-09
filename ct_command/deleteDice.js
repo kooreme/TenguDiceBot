@@ -14,6 +14,17 @@ exports.run = async function(message,data) {
     Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
     if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
 
+    //削除するダイス以外に可変数を使用するダイスが残っていないかをチェックする。残ってたらtrue
+    let existAdditionDice = isExistOtherAdditionDice(userTable.dice,data.diceName);
+
+    //既にデータレンジの使用フラグをonにしていて、かつ可変数ダイスが残っていなければ、フラグをoffにして今後更新されないようにする。
+    if (userTable.datarange && userTable.datarange.isUse && !existAdditionDice) {
+        const updateAddition = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,false);
+        if (!updateAddition) {
+            return {result : false, message : 'ダイスの消去に失敗しました。'};
+        }
+    }
+
     //ダイスをアップデート
     const deleteDice = await db.deleteDice(data.flag ? null : message.channel.id,data.tableName,data.diceName);
     if (!deleteDice) {
@@ -39,4 +50,19 @@ exports.adjust = function(array) {
     object.diceName = array[2].toLowerCase();
     object.flag = array[3] ? util.isT(array[3]) : false;
     return object;
+}
+
+//削除対象のダイス以外に可変数を使用しているダイスショートカットが存在するかどうかを調査。
+function isExistOtherAdditionDice(dice,checkExclusion) {
+    let result = false;
+
+    for (let [key,value] of dice.entries()) {
+        if (key === checkExclusion) continue;
+        if (/\+x/.test(value)) {
+            result = true;
+            break;
+        }
+    }
+
+    return result;
 }

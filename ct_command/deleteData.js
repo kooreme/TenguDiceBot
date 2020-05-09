@@ -14,6 +14,20 @@ exports.run = async function(message,data) {
     Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
     if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
 
+    //可変数を使用するダイスが残っていないかをチェックする。残ってたらtrue
+    let existAdditionDice = isExistAdditionDice(userTable.dice);
+
+    //可変数ダイスがある場合は再度レンジチェック。比較後に違いがある場合のみ、アップデート。
+    if (existAdditionDice) {
+        const dataRange = util.checkDataRange(userTable);
+        if (dataRange.max !== userTable.datarange.max || dataRange.min !== userTable.datarange.min) {
+            const updateAddition = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,userTable.datarange.isUse,dataRange.max,dataRange.min);
+            if (!updateAddition) {
+                return {result : false, message : 'ダイスの消去に失敗しました。'};
+            }
+        }
+    }
+
     //ダイスをアップデート
     const deleteData = await db.deleteData(data.flag ? null : message.channel.id,data.tableName,data.dataIndex);
     if (!deleteData) {
@@ -38,4 +52,17 @@ exports.adjust = function(array) {
     object.dataIndex = String(array[2]);
     object.flag = array[3] ? util.isT(array[3]) : false;
     return object;
+}
+
+function isExistAdditionDice(dice) {
+    let result = false;
+
+    for (let value of dice.values()) {
+        if (/\+x/.test(value)) {
+            result = true;
+            break;
+        }
+    }
+
+    return result;
 }

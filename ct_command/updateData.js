@@ -17,7 +17,20 @@ exports.run = async function(message,data) {
     //データをアップデート
     const updateData = await db.updateData(data.flag ? null : message.channel.id,data.tableName,data.dataIndex,data.dataString);
     if (!updateData) {
-        return {result : false, message : 'ダイスの更新に失敗しました。'};
+        return {result : false, message : 'データの更新に失敗しました。'};
+    }
+    if (userTable.datarange && userTable.datarange.isUse) {
+        //現在のデータレンジの最大・最小をチェック
+        const dataRange = util.checkDataRange(userTable);
+        Log.prints('dataRange.max = '+ dataRange.max + ', dataRange.min = ' + dataRange.min);
+        //書き込むデータのキー値とも比較する。
+        dataRange.max = dataRange.max === Number.MAX_SAFE_INTEGER ? data.dataIndex : Math.max(data.dataIndex,dataRange.max);
+        dataRange.min = dataRange.min === Number.MIN_SAFE_INTEGER ? data.dataIndex : Math.min(data.dataIndex,dataRange.min);
+
+        const updateAdditionValue = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,true,dataRange.max,dataRange.min);
+        if (!updateAdditionValue) {
+            return {result : false, message : 'データの更新に失敗しました。'};
+        }
     }
 
     return { result: true, message : '**' + data.tableName +'**のデータを更新しました。' };

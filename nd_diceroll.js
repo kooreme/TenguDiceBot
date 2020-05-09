@@ -18,8 +18,8 @@ const error = require('./errormessage');
 const STRING_WASSHOI = 'wasshoi';
 
 class NDDiceRoll extends DiceRoll.DiceRoll {
-	constructor(string,message) {
-		super(string, datatable,message);
+	constructor(string, message) {
+		super(string, datatable, message);
 	}
 
 	/**
@@ -89,7 +89,13 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 				diceinfo.dice.forEach(element => {
 					sum += Number(element.sum);
 				});
-				tableString = checkDataTable.data[sum];
+				if (this.isTableAdditionValue) {
+					//可変値を使うテーブルで可変値のダイスロールを行い、結果がデータのレンジ外だった場合は、レンジ内の最も近い値を結果として使用する。
+					if (checkDataTable.datarange.max < sum) tableString = checkDataTable.data[checkDataTable.datarange.max];
+					else if (checkDataTable.datarange.min > sum) tableString = checkDataTable.data[checkDataTable.datarange.min];
+					else tableString = checkDataTable.data[sum];
+				}
+				else tableString = checkDataTable.data[sum];
 			}
 		}
 		Log.prints('addTableOutput tableString :' + tableString);
@@ -201,13 +207,15 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		let returnString = '';
 		let diceKind = '';
 		let tempString = string;
+		let additionValue;
 		Log.prints("before spellCheck : " + tempString);
 		tempString = this.spellCheck(tempString);
 		Log.prints("after spellCheck : " + tempString);
 		if (/,/.test(tempString)) {
-			let temp = tempString.split(',');	
-			diceKind = temp[1];
+			let temp = tempString.split(',');
+			diceKind = temp[1] ? temp[1] : 'a';
 			tempString = temp[0];
+			additionValue = temp[2];
 		}
 		let checkDataTable;
 		//テーブル名は半角英数禁止のため、最初の文字が半角英数ならテーブル検索は不要。
@@ -215,17 +223,25 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		if (!/^[a-zA-Z\d]/.test(tempString)) {
 			checkDataTable = await this._getTableData(tempString);
 		}
-		Log.prints('checkDataTable =' + checkDataTable);	
-	
+		Log.prints('checkDataTable =' + checkDataTable);
+
 		if (checkDataTable) {
-			if (diceKind) {
-				returnString = checkDataTable.dice[diceKind.toLowerCase()] + '#' + tempString;
+			let diceStr = checkDataTable.dice[diceKind.toLowerCase()];
+			//可変数（+x）が表のダイス表記に存在する場合
+			if (/\+x/.test(diceStr)) {
+				//入力値に可変数が存在する場合（不正値の検出も行う）
+				if (additionValue && !Number.isNaN(Number(additionValue))){
+					if (Number(additionValue) >= 0) diceStr = diceStr.replace('+x','+' + Math.floor(Number(additionValue)));
+					else diceStr = diceStr.replace('+x', Math.floor(Number(additionValue)));
+				}
+				//入力値に可変数が存在しない、または数字ではない値を与えられた場合は無視する。
+				else {
+					diceStr = diceStr.replace('+x','');
+				}
+				//参照したデータテーブルに可変数が用いられたことを知らせる。
+				this.isTableAdditionValue = true;
 			}
-			else {
-				let returnDice = checkDataTable.dice;
-				if(typeof returnDice === 'string') returnString = returnDice + '#' + tempString;
-				else returnString = returnDice['a'] + '#' + tempString;
-			}
+			returnString = diceStr + '#' + tempString;
 			//ここでデータテーブルを記録し、後の処理で使用する。
 			this.tableData = checkDataTable;
 		}
@@ -233,7 +249,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 			returnString = string;
 		}
 		return returnString;
-	
+
 	}
 
 }
