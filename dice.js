@@ -221,8 +221,10 @@ function checkAppendix(app) {
 }
 
 function createAppendix(string) {
+	//文字列[s][j][s5] -> s,j,s5へ変換。 [s,j,s5] -> s,j,s5になる。どちらも等価として扱えるようになる。
 	string = string.substring(1, string.length - 1).replace(/\]\[/g, ',');
 
+	//分割し、Appendixインスタンスを作成する。
 	var temp = string.split(',');
 	Log.prints('createAppendix temp : 「' + temp + '」');
 

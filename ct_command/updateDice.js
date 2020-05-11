@@ -10,7 +10,7 @@ exports.run = async function(message,data) {
     const userTable = await db.getUserTable(data.flag ? null : message.channel.id,data.tableName);
     if (!userTable) return {result:false, message : 'テーブルがありません。'};
     //パーミッションチェック
-    let permission = userTable.permission;
+    const permission = userTable.permission;
     Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
     if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
 
@@ -19,20 +19,34 @@ exports.run = async function(message,data) {
     if (!updateDice) {
         return {result : false, message : 'ダイスの更新に失敗しました。'};
     }
+
     //ダイス名に可変数が含まれていたら可変数フラグをtrueにして保存する。
     if (/\+x/.test(data.diceString)) {
         //現在のデータレンジの最大・最小をチェック
         const dataRange = util.checkDataRange(userTable);
         Log.prints('dataRange.max = '+ dataRange.max + ', dataRange.min = ' + dataRange.min);
-        const updateAdditionValue = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,true,dataRange.max,dataRange.min);
-        if (!updateAdditionValue) {
-            return {result : false, message : 'ダイスの更新に失敗しました。'};
+        //isUseがfalseだったときだけ、アップデートする。
+        if (userTable.datarange && !userTable.datarange.isUse) {
+            const updateAdditionValue = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,true,dataRange.max,dataRange.min);
+            if (!updateAdditionValue) {
+                return {result : false, message : 'ダイスの更新に失敗しました。'};
+            }
+        }
+    }
+    //ダイス名に可変数が含まれていない場合は、他のdiceに可変数があるかを調査。
+    //もしほかのdiceがない、または他の全てのdiceに可変数がない場合は、可変数フラグをfalseにして保存する。
+    else {
+        if (!isExistOtherAdditionDice(userTable.dice,data.diceName)) {
+            const updateAdditionValue = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,false,Number.MAX_SAFE_INTEGER,Number.MIN_SAFE_INTEGER);
+            if (!updateAdditionValue) {
+                return {result : false, message : 'ダイスの更新に失敗しました。'};
+            }    
         }
     }
 
     return { result: true, message : '**' + data.tableName +'**のダイスを更新しました。' };
-
 }
+
 exports.check = function(array) {
     if (array.length < 4 || array.length > 5) return '引数の数が不正です。詳細は「/ct help,updateDice」を確認してください。';
     if (!array[1]) return 'テーブル名が空です。テーブル名を指定してください。'
@@ -51,4 +65,19 @@ exports.adjust = function(array) {
     object.diceString = array[3].toLowerCase();
     object.flag = array[4] ? util.isT(array[4]) : false;
     return object;
+}
+
+//削除対象のダイス以外に可変数を使用しているダイスショートカットが存在するかどうかを調査。
+function isExistOtherAdditionDice(dice,checkExclusion) {
+    let result = false;
+
+    for (let [key,value] of Object.entries(dice)) {
+        if (key === checkExclusion) continue;
+        if (/\+x/.test(value)) {
+            result = true;
+            break;
+        }
+    }
+
+    return result;
 }

@@ -205,7 +205,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 
 	async checkTable(string) {
 		let returnString = '';
-		let diceKind = '';
+		let diceKind = 'a';
 		let tempString = string;
 		let additionValue;
 		Log.prints("before spellCheck : " + tempString);
@@ -223,7 +223,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		if (!/^[a-zA-Z\d]/.test(tempString)) {
 			checkDataTable = await this._getTableData(tempString);
 		}
-		Log.prints('checkDataTable =' + checkDataTable);
+		//Log.prints('checkDataTable =' + JSON.stringify(checkDataTable));
 
 		if (checkDataTable) {
 			let diceStr = checkDataTable.dice[diceKind.toLowerCase()];

@@ -23,8 +23,9 @@ const Command = {
  * チェックし、問題なければ各コマンドを実行する。
  */
 exports.run = async function(message,content){
-    content = content.replace(/\x20/g,"");
-    let split = content.split(',');
+    content = content.replace(/(?<!\\)\x20/g,"");
+    let split = content.split(/(?<!\\),/);
+
     const command = Command[split[0].toLowerCase()];
     //コマンドチェック
     if (command == null)  return error.replyErrorMessage('コマンドが見つかりませんでした。');

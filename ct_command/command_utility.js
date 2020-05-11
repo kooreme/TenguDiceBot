@@ -1,3 +1,5 @@
+const Log = require('../log');
+
 exports.checkInvalidChar = function(str) {
     const test = /[0-9a-zA-Z#[\]()'`",.\\/\b\f\n\r\t\x20\u3000]/.test(str);
     if (test || str.length < 4) return true;
@@ -17,14 +19,19 @@ exports.isT = function(str) {
 }
 
 exports.checkDataRange = function(userTable) {
-    //データ未登録なら巨大数をセットしておく。
-    if (!userTable.data || userTable.data.size === 0) return {"max" : Number.MAX_SAFE_INTEGER, "min" : Number.MIN_SAFE_INTEGER};
-    const keys = userTable.data.keys();
-    let range = userTable.datarange ? userTable.datarange : {"max" : Number.MAX_SAFE_INTEGER, "min" : Number.MIN_SAFE_INTEGER};
+    const range = {"max" : Number.MAX_SAFE_INTEGER, "min" : Number.MIN_SAFE_INTEGER};
+    if (!userTable.data) return range;
+
+    const keys = Object.keys(userTable.data);
+    const dataSize = keys.length;
+
+    if (dataSize === 0) return range;
     for (let key of keys) {
-        range.max = range.max === Number.MAX_SAFE_INTEGER ? key : Math.max(key,Number(range.max));
-        range.min = range.min === Number.MIN_SAFE_INTEGER ? key : Math.min(key,Number(range.min));
+        const keyNum = Number(key);
+        range.max = range.max === Number.MAX_SAFE_INTEGER ? keyNum : Math.max(keyNum,Number(range.max));
+        range.min = range.min === Number.MIN_SAFE_INTEGER ? keyNum : Math.min(keyNum,Number(range.min));
     }
 
+    Log.prints('range = ' + JSON.stringify(range))
     return range;
 }

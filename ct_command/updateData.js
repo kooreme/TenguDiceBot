@@ -10,7 +10,7 @@ exports.run = async function(message,data) {
     const userTable = await db.getUserTable(data.flag ? null : message.channel.id,data.tableName);
     if (!userTable) return {result:false, message : 'テーブルがありません。'};
     //パーミッションチェック
-    let permission = userTable.permission;
+    const permission = userTable.permission;
     Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
     if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
  
@@ -24,8 +24,8 @@ exports.run = async function(message,data) {
         const dataRange = util.checkDataRange(userTable);
         Log.prints('dataRange.max = '+ dataRange.max + ', dataRange.min = ' + dataRange.min);
         //書き込むデータのキー値とも比較する。
-        dataRange.max = dataRange.max === Number.MAX_SAFE_INTEGER ? data.dataIndex : Math.max(data.dataIndex,dataRange.max);
-        dataRange.min = dataRange.min === Number.MIN_SAFE_INTEGER ? data.dataIndex : Math.min(data.dataIndex,dataRange.min);
+        dataRange.max = dataRange.max === Number.MAX_SAFE_INTEGER ? Number(data.dataIndex) : Math.max(Number(data.dataIndex),dataRange.max);
+        dataRange.min = dataRange.min === Number.MIN_SAFE_INTEGER ? Number(data.dataIndex) : Math.min(Number(data.dataIndex),dataRange.min);
 
         const updateAdditionValue = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,true,dataRange.max,dataRange.min);
         if (!updateAdditionValue) {
@@ -50,7 +50,7 @@ exports.adjust = function(array) {
     const object = {};
     object.tableName = spell.spellCheck(array[1]);
     object.dataIndex = String(array[2]);
-    object.dataString = array[3];
+    object.dataString = array[3].replace(/\\/g,'');
     object.flag = array[4] ? util.isT(array[4]) : false;
     return object;
 }

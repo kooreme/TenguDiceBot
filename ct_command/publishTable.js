@@ -14,9 +14,11 @@ exports.run = async function(message,data) {
     if (defaultTable) return {result: false, message : '公式で使用される表と同じ名前をつけることはできません。'};
     const publicTable = await db.getUserTable(null,data.tableName);
     if (publicTable) return {result: false, message : '同名のテーブルがpublicに公開されています。テーブル名を変更してください。'};
-    //データの整合性チェック
-    const dataVerify = dataVerification(table,data.tableName);
-    if (dataVerify != null) return {result : false, message : dataVerify};
+    //データの整合性チェック（ただし、可変数を使用するダイスが含まれる場合はスキップ）
+    if (!table.datarange || !table.datarange.isUse) {
+        const dataVerify = dataVerification(table,data.tableName);
+        if (dataVerify != null) return {result : false, message : dataVerify};
+    }
     //テーブル作成
     let pub_table = {[data.tableName] : table};
     const publishTable = await db.publishTable(pub_table);
@@ -43,10 +45,10 @@ exports.adjust = function(array) {
 function dataVerification(table,tableName) {
     //登録されたダイスの値の範囲をチェック
     let range = {"min" : null, "max" : null};
-    // eslint-disable-next-line no-unused-vars
-    for (let [key, value] of Object.entries(table.dice)) {
+
+    for (let value of Object.values(table.dice)) {
         //引き算をチェック
-        value = value.replace('-','+-');
+        value = value.replace(/-/g ,'+-');
         let dice_split = value.split('+');
         
         let dice_min = 0;

@@ -14,17 +14,21 @@ exports.run = async function(message,data) {
     Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
     if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
 
+    //削除データの存在チェック（存在しなければ削除済みとしてtrueで返却する）
+    if (!userTable.data[data.dataIndex]) return {result:true, message : '入力した番号のデータは存在しません。'};
+
     //可変数を使用するダイスが残っていないかをチェックする。残ってたらtrue
     let existAdditionDice = isExistAdditionDice(userTable.dice);
 
     //可変数ダイスがある場合は再度レンジチェック。比較後に違いがある場合のみ、アップデート。
     if (existAdditionDice) {
-        const dataRange = util.checkDataRange(userTable);
-        if (dataRange.max !== userTable.datarange.max || dataRange.min !== userTable.datarange.min) {
+        if (userTable.datarange && (userTable.datarange.max == data.dataIndex || userTable.datarange.min == data.dataIndex)) {
+            delete userTable.data[data.dataIndex];
+            const dataRange = util.checkDataRange(userTable);
             const updateAddition = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,userTable.datarange.isUse,dataRange.max,dataRange.min);
             if (!updateAddition) {
                 return {result : false, message : 'ダイスの消去に失敗しました。'};
-            }
+            }    
         }
     }
 
@@ -35,8 +39,8 @@ exports.run = async function(message,data) {
     }
 
     return { result: true, message : '**' + data.tableName + '：' + data.dataIndex +'**のデータを消去しました。' };
-
 }
+
 exports.check = function(array) {
     if (array.length < 3 || array.length > 4) return '引数の数が不正です。詳細は「/ct help,deleteDice」を確認してください。';
     if (!array[1]) return 'テーブル名が空です。テーブル名を指定してください。'
@@ -46,6 +50,7 @@ exports.check = function(array) {
     if (array[3] && !util.checkFlagString(array[3])) return 'フラグに使用できない文字があります。t または f を指定するか、何も指定しないでください。'
   return null;
 }
+
 exports.adjust = function(array) {
     const object = {};
     object.tableName = spell.spellCheck(array[1]);
@@ -57,7 +62,7 @@ exports.adjust = function(array) {
 function isExistAdditionDice(dice) {
     let result = false;
 
-    for (let value of dice.values()) {
+    for (let value of Object.values(dice)) {
         if (/\+x/.test(value)) {
             result = true;
             break;
