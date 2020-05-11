@@ -17,6 +17,7 @@ class DiceRoll {
 		this.datatable = datatable;
 		this.message = message;
 		this.string = string.replace(/\s+/g, '');
+		this.sumall = 0;
 	}
 
 	async receiveDiceRoll() {
@@ -81,26 +82,25 @@ class DiceRoll {
 
 	createOutput(dice, comment) {
 		let str = '';
-		let sumall = 0;
 		let diceStr = '';
 		dice.forEach((element) => {
 			if (element.isMinus) {
 				str = str + ' - ' + element.toString();
-				sumall -= parseInt(element.sum, 10);
+				this.sumall -= parseInt(element.sum, 10);
 				diceStr = diceStr + '-' + element.trancedString;
 			} else {
 				str = str + ' + ' + element.toString();
-				sumall += parseInt(element.sum, 10);
+				this.sumall += parseInt(element.sum, 10);
 				diceStr = diceStr + '+' + element.trancedString;
 			}
 			Log.prints('element.sum : ' + element.sum);
-			Log.prints('sumall : ' + sumall);
+			Log.prints('sumall : ' + this.sumall);
 		});
 
 		//先頭3文字（' + '）を除去
 		str = str.substring(SPACE_PLUS_SPACE.length, str.length);
 		diceStr = diceStr.substring('+'.length, diceStr.length);
-		str = comment + '：`' + diceStr + '` = ' + str + ' = ' + sumall;
+		str = comment + '：`' + diceStr + '` = ' + str + ' = ' + this.sumall;
 
 		if (str.length >= 2000) {
 			Log.prints('文字数制限オーバー（2000字）');

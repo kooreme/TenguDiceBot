@@ -85,17 +85,13 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 				tableString = checkDataTable.data[d66];
 			}
 			else {
-				let sum = 0;
-				diceinfo.dice.forEach(element => {
-					sum += Number(element.sum);
-				});
 				if (this.isTableAdditionValue) {
 					//可変値を使うテーブルで可変値のダイスロールを行い、結果がデータのレンジ外だった場合は、レンジ内の最も近い値を結果として使用する。
-					if (checkDataTable.datarange.max < sum) tableString = checkDataTable.data[checkDataTable.datarange.max];
-					else if (checkDataTable.datarange.min > sum) tableString = checkDataTable.data[checkDataTable.datarange.min];
-					else tableString = checkDataTable.data[sum];
+					if (checkDataTable.datarange.max < this.sumall) tableString = checkDataTable.data[checkDataTable.datarange.max];
+					else if (checkDataTable.datarange.min > this.sumall) tableString = checkDataTable.data[checkDataTable.datarange.min];
+					else tableString = checkDataTable.data[this.sumall];
 				}
-				else tableString = checkDataTable.data[sum];
+				else tableString = checkDataTable.data[this.sumall];
 			}
 		}
 		Log.prints('addTableOutput tableString :' + tableString);
