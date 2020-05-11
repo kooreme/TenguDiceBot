@@ -30,9 +30,9 @@ class DB {
         .doc(channelID)
         .get()
         .then((snapshot) => {
-            console.log("db.collection.doc.get.then() called");
+            //console.log("db.collection.doc.get.then() called");
             if(snapshot.empty) throw new Error('チャンネルIDなし')
-            console.log("fieldPath = " + fieldPath);
+            //console.log("fieldPath = " + fieldPath);
             if(fieldPath == null || fieldPath == "") return snapshot.data();
             return snapshot.get(fieldPath);
             
