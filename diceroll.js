@@ -112,7 +112,7 @@ class DiceRoll {
 	}
 	async _getTableData(tableName) {
 		//default -> private -> publicで検索。
-		let checkDataTable = this.datatable.dataTable[tableName];
+		let checkDataTable = this.datatable.dataTable[tableName.toLowerCase()];
 		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(this.message.channel.id, tableName);
 		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(null, tableName);
 		return checkDataTable;
