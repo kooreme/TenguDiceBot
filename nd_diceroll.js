@@ -5,6 +5,7 @@ const COMMENT = /#/;
 const MINUS = /-/g;
 const SHORT_CUT_COMMAND = /^[kenhu]\d+(?:,\d+)*/i;
 const WASSHOI = /^wasshoi\d+$/i;
+const SEISEN = /^seisen\d+$/i
 const HELP = /^help$/;
 
 const Help = require('./help.js');
@@ -16,6 +17,7 @@ const util = require('./util');
 const error = require('./errormessage');
 
 const STRING_WASSHOI = 'wasshoi';
+const STRING_SEISEN = 'seisen';
 
 class NDDiceRoll extends DiceRoll.DiceRoll {
 	constructor(string, message) {
@@ -35,6 +37,10 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		if (WASSHOI.test(this.string)) {
 			return wasshoi.wasshoiDiceRoll(this.string.substring(STRING_WASSHOI.length));
 		}
+		if (SEISEN.test(this.string)) {
+			return wasshoi.wasshoiDiceRoll(this.string.substring(STRING_SEISEN.length), '893'); //獣の数字が合言葉
+		}
+
 		//通常ダイスロール
 		return await this.NormalDiceRoll();
 	}
