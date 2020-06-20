@@ -92,7 +92,7 @@ async function getRecordResult(message) {
     const result = await TB.TB.getRecord(message.channel.id);
     if (!result) return 'このチャンネル内の記録が見つかりません。'; 
     
-    if (result.money_record) result.money_record = result.money_record.replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');
+    if (result.money_record) result.money_record = String(result.money_record).replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');
 
     let returnString = '結果…… 現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record +'**' : 'なし');
     if(result.money_record) returnString += '\n' + '入出金記録：**' + result.money_record + ' = ' + change893(result.sum_money) + '**';
@@ -107,8 +107,8 @@ async function getRecordResult(message) {
 async function getRecord(message) {
     const result = await TB.TB.getRecord(message.channel.id);
     if (!result) return 'このチャンネル内の記録が見つかりません。'; 
-    
-    if (result.money_record) result.money_record = result.money_record.replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');
+    console.log(result.money_record);
+    if (result.money_record) result.money_record = String(result.money_record).replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');
 
     let returnString = '現在の状況…… 現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record + '**' : 'なし');
     if(result.money_record) returnString += '\n' + '入出金記録：**' + result.money_record + ' = ' + change893(result.sum_money) + '**';
