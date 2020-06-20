@@ -37,7 +37,10 @@ class DB {
             return snapshot.get(fieldPath);
             
         })
-        .catch((err) => console.error(err));
+        .catch((err) => {
+            console.error(err);
+            return null;
+        });
 
         data = await promise;
         return data;

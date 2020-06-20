@@ -14,8 +14,8 @@ class TenguBankDataTable {
       const dataObject = {
         "user_id" : user_id,
         "sum_money" : money,
-        "money_record" : money,
-        "item_record" : item ? item : ""
+        "money_record" : String(money),
+        "item_record" : item ? String(item) : ""
       }
       let setData = await DB.DB.setData(COLLECTION_TB,channel_id,dataObject);
       return setData ? dataObject : null;
@@ -24,21 +24,21 @@ class TenguBankDataTable {
       data.sum_money += money;//合計金額
       if (money != 0)  {  //金額履歴
        if (data.money_record) data.money_record += SEPARATOR + money;
-       else data.money_record = money;
+       else data.money_record = String(money);
       }
       if (isItemAdd) { //アイテム追加
         if(item != null) data.item_record += SEPARATOR + item;
       }
       else { //アイテム削除
         let rec_split;
-        if (data.item_record) rec_split = data.item_record.split(SEPARATOR);
+        if (data.item_record) rec_split = String(data.item_record).split(SEPARATOR);
         if (!rec_split || checkRecSplit(rec_split, item) == false) {
           return null;
         }
-        data.item_record = data.item_record.replace(item, '');
+        data.item_record = String(data.item_record).replace(item, '');
       }
       //アイテムレコードの先頭が','だったら消去
-      if (data.item_record.substring(0, 1) == SEPARATOR) {
+      if (data.item_record && String(data.item_record).substring(0, 1) == SEPARATOR) {
         data.item_record = data.item_record.substring(1);
       }
       //アイテムレコード文字列中にセパレータが連続していたら一つにまとめる
