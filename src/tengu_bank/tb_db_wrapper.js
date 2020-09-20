@@ -1,4 +1,4 @@
-const DB = require('./db');
+const DB = require('../DB/db');
 
 const SEPARATOR = '、';
 const COLLECTION_TB = 'tengu-bank'

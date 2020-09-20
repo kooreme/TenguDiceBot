@@ -8,13 +8,13 @@ const WASSHOI = /^wasshoi\d+$/i;
 const SEISEN = /^seisen\d+$/i
 const HELP = /^help$/;
 
-const Help = require('./help.js');
+const Help = require('./help');
 const datatable = require('./nd_datatable');
-const wasshoi = require('./wasshoi.js');
-const DiceRoll = require('./diceroll');
-const Log = require('./log');
-const util = require('./util');
-const error = require('./errormessage');
+const wasshoi = require('./wasshoi');
+const DiceRoll = require('../classes/diceroll');
+const Log = require('../util/log');
+const util = require('../util/util');
+const error = require('../util/errormessage');
 
 const STRING_WASSHOI = 'wasshoi';
 const STRING_SEISEN = 'seisen';

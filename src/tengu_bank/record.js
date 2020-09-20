@@ -1,8 +1,8 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eq-null */
-const error = require('./errormessage.js');
-const Log = require('./log.js');
-const TB = require('./tb_db_wrapper.js');
+const error = require('../util/errormessage');
+const Log = require('../util/log');
+const TB = require('./tb_db_wrapper');
 
 const SEPARATOR = /、/g;
 

@@ -1,5 +1,5 @@
-const DB = require('../db_wrapper.js');
-const Log = require('../log');
+const DB = require('../DB/db_wrapper');
+const Log = require('../util/log');
 exports.run = async function (message) {
     let db = DB.db;
 

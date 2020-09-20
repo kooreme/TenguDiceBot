@@ -1,6 +1,6 @@
-const DB = require('../db_wrapper.js');
+const DB = require('../DB/db_wrapper.js');
 const util = require('./command_utility');
-const spell = require('../util');
+const spell = require('../util/util');
 exports.run = async function (message, data) {
     let db = DB.db;
 

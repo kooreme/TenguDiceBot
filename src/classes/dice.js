@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eq-null */
-const util = require('./util.js');
-const Log = require('./log.js');
+const util = require('../util/util');
+const Log = require('../util/log');
 
 const DICE_ROLL = /^\d+[dD]\d+(?:(?:[<>!]{1}=?|=){1}\d+)?$/;
 const NUMBER_ONLY = /^\d+?$/;

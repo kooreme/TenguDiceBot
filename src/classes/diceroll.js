@@ -1,10 +1,10 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eq-null */
-const error = require('./errormessage');
-const Log = require('./log');
-const util = require('./util.js');
-const Dice = require('./dice.js');
-const DB = require('./db_wrapper');
+const error = require('../util/errormessage');
+const Log = require('../util/log');
+const util = require('../util/util');
+const Dice = require('./dice');
+const DB = require('../DB/db_wrapper');
 
 const SPACE_PLUS_SPACE = ' + ';
 const DICE_DIVIDE = /\+/g;

@@ -1,10 +1,10 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eq-null */
-const error = require('./errormessage')
-const util = require('./util.js');
-const Log = require('./log.js');
+const error = require('../util/errormessage')
+const util = require('../util.js');
+const Log = require('../log.js');
 const datatable = require('./kt_datatable');
-const DiceRoll = require('./diceroll');
+const DiceRoll = require('../classes/diceroll');
 
 class KTDiceRoll extends DiceRoll.DiceRoll {
     constructor(string){

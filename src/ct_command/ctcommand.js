@@ -1,20 +1,20 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eq-null */
-const error = require('./errormessage');
+const error = require('../util/errormessage');
 const Command = {
-    'addpermission' : require('./ct_command/addPermission'),
-    'checktabledata' : require('./ct_command/checkTableData'),
-    'checktablelist' : require('./ct_command/checkTableList'),
-    'createtable' : require('./ct_command/createTable'),
-    'deletedice' : require('./ct_command/deleteDice'),
-    'deletedata' : require('./ct_command/deleteData'),
-    'deletepermission' : require('./ct_command/deletePermission'),
-    'deletetable' : require('./ct_command/deleteTable'),
-    'help' : require('./ct_command/help'),
-    'publishtable' : require('./ct_command/publishTable'),
-    'updatedice' : require('./ct_command/updateDice'),
-    'updatedata' : require('./ct_command/updateData'),
-    'updatetablename' : require('./ct_command/updateTableName'),
+    'addpermission' : require('./addPermission'),
+    'checktabledata' : require('./checkTableData'),
+    'checktablelist' : require('./checkTableList'),
+    'createtable' : require('./createTable'),
+    'deletedice' : require('./deleteDice'),
+    'deletedata' : require('./deleteData'),
+    'deletepermission' : require('./deletePermission'),
+    'deletetable' : require('./deleteTable'),
+    'help' : require('./help'),
+    'publishtable' : require('./publishTable'),
+    'updatedice' : require('./updateDice'),
+    'updatedata' : require('./updateData'),
+    'updatetablename' : require('./updateTableName'),
 }
 
 /**

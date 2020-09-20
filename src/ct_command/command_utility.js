@@ -1,4 +1,4 @@
-const Log = require('../log');
+const Log = require('../util/log');
 
 exports.checkInvalidChar = function(str) {
     const test = /[0-9a-zA-Z#[\]()'`",.\\/\b\f\n\r\t\x20\u3000]/.test(str);

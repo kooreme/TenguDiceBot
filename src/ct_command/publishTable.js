@@ -1,7 +1,7 @@
-const DB = require('../db_wrapper.js');
+const DB = require('../DB/db_wrapper.js');
 const util = require('./command_utility');
-const spell = require('../util');
-const datatable = require('../nd_datatable');
+const spell = require('../util/util');
+const datatable = require('../tengu_dice/nd_datatable');
 exports.run = async function(message,data) {
     const db = DB.db;
 

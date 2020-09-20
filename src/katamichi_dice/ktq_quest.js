@@ -1,6 +1,6 @@
 //const Log = require('./log.js');
 const datatable = require('./kt_datatable');
-const error = require('./errormessage.js');
+const error = require('../util/errormessage.js');
 
 exports.receiveQuest = function(string) {
     const returnString = (string in datatable.tableQuest) ? outputQuest(datatable.tableQuest[string]) : error.replyErrorMessage();

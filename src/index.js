@@ -1,12 +1,12 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const dice = require('./nd_diceroll');
-//const kt_dice = require('./kt_diceroll');
-//const kt_quest = require('./ktq_quest');
-const Log = require('./log.js');
-const Record = require('./record.js');
-const CTCommand = require('./ctcommand');
+const dice = require('./tengu_dice/nd_diceroll');
+//const kt_dice = require('./katamichi_dice/kt_diceroll');
+//const kt_quest = require('./katamichi_dice/ktq_quest');
+const Log = require('./util/log');
+const Record = require('./tengu_bank/record');
+const CTCommand = require('./ct_command/ctcommand');
 
 client.on('ready', () => {
     Log.prints('I am ready!',true);
