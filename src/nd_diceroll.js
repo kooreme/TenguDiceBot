@@ -38,7 +38,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 			return wasshoi.wasshoiDiceRoll(this.string.substring(STRING_WASSHOI.length));
 		}
 		if (SEISEN.test(this.string)) {
-			return wasshoi.wasshoiDiceRoll(this.string.substring(STRING_SEISEN.length), '893'); //獣の数字が合言葉
+			return wasshoi.seisenDiceRoll(this.string.substring(STRING_SEISEN.length));
 		}
 
 		//通常ダイスロール
