@@ -48,7 +48,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 	async NormalDiceRoll() {
 		let returnString = '';
 		//コマンド表が無いか確認する。
-		this.string = await this.checkTable(this.string, this.message);
+		this.string = await this.checkTable(this.string);
 		//ショートカットコマンドを翻訳する
 		let diceinfo = {};
 		Log.prints(this.string);
@@ -73,6 +73,10 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 
 		return returnString;
 
+	}
+
+	createOutput(dice, comment) {
+		return super.createOutput(dice,comment);
 	}
 
 	addTableOutput(diceinfo) {
@@ -211,7 +215,7 @@ class NDDiceRoll extends DiceRoll.DiceRoll {
 		let tempString = string;
 		let additionValue;
 		Log.prints("before spellCheck : " + tempString);
-		tempString = this.spellCheck(tempString);
+		tempString = util.spellCheck(tempString);
 		Log.prints("after spellCheck : " + tempString);
 		if (/,/.test(tempString)) {
 			let temp = tempString.split(',');

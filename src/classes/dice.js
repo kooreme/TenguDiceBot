@@ -7,6 +7,11 @@ const DICE_ROLL = /^\d+[dD]\d+(?:(?:[<>!]{1}=?|=){1}\d+)?$/;
 const NUMBER_ONLY = /^\d+?$/;
 const CHECK_APPENDIX_SINTAX = /(?:<=|<|=|>|>=|!=)\d+\[.+\]$/;
 
+/**
+ * @member rawString <string> : 入力直後の文字列
+ * @member result <> : ダイスの結果
+ * @member 
+ */
 class Dice {
 	constructor(string) {
 		this.rawString = string;

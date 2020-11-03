@@ -71,13 +71,9 @@ class DiceRoll {
 	async receiveFixedMessage() {
 		const stringArray = this.string.split('#');
 
-		stringArray[0] = this.spellCheck(stringArray[0]);
+		stringArray[0] = util.spellCheck(stringArray[0]);
 		Log.prints(stringArray);
 		return await this.FixedOutputMessage(stringArray);
-	}
-
-	spellCheck(string) {
-		return util.spellCheck(string);
 	}
 
 	createOutput(dice, comment) {
