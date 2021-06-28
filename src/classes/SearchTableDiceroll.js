@@ -39,9 +39,9 @@ class SearchTableDiceRoll extends DiceRoll {
 		
 		let checkDataTable;
 		//テーブル名は半角英数禁止のため、最初の文字が半角英数ならテーブル検索は不要。
-		//ただし、wasshoiの文字が最初にある場合は検索する。（wasshoiエントリー）
+		//ただし、wasshoiまたはnrsの文字が最初にある場合は検索する。（wasshoiエントリー、NRS発狂）
 		//検索スキップにより、パフォーマンスを向上させる。
-		if (!/^[a-zA-Z\d]/.test(tableName) || /^wasshoi/i.test(tableName)) {
+		if (!/^[a-zA-Z\d]/.test(tableName) || /^wasshoi/i.test(tableName) || /^nrs/i.test(tableName)) {
 			checkDataTable = await this.getTableData(tableName);
 		}
 
