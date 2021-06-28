@@ -27,7 +27,10 @@ class DataTable {
             v.public = values[0];
             v.private = values[1];
             return v;
-        }).catch((err) => console.log(err));
+        }).catch((err) => {
+            console.log(err);
+            throw err;
+        });
 
         let returnData = await promise;       
         return returnData;

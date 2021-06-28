@@ -1,7 +1,8 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const dice = require('./tengu_dice/nd_diceroll');
+const ND_DiceRollHandler = require('./tengu_dice/nd_diceRollHandler');
+const NJDiscordReply = require('./tengu_dice/NJDiscordReply');
 //const kt_dice = require('./katamichi_dice/kt_diceroll');
 //const kt_quest = require('./katamichi_dice/ktq_quest');
 const Log = require('./util/log');
@@ -27,8 +28,13 @@ client.on('message', async message => {
     if (content.search(REACT_REGEXP_NINJA) !== -1) {
 
         content = content.replace(REACT_REGEXP_NINJA, '');
-        const NDDice = new dice.NDDiceRoll(content,message);
-        message.reply(await NDDice.receiveDiceRoll());
+        const NDDice = ND_DiceRollHandler(content,message);
+        message.reply(
+                await NJDiscordReply.createMessage(
+                    await NDDice.receiveDiceRoll()
+                    .catch((e) => {return e.discordMessage;})
+                )
+        );
         Log.prints('content : ' + content);
 
     }
@@ -36,10 +42,12 @@ client.on('message', async message => {
     else if (content.search(REACT_REGEXP_NINJAFIX) !== -1) {
 
         content = content.replace(REACT_REGEXP_NINJAFIX, '');
-        const NDDice = new dice.NDDiceRoll(content,message);
-        message.reply(await NDDice.receiveFixedMessage());
+        const NDDice = ND_DiceRollHandler(content,message);
+        message.reply(
+            await NJDiscordReply.createFixedDiceMessage(NDDice)
+            .catch((e) => {return e.discordMessage;})
+        );
         Log.prints('content : ' + content);
-
     }
     //片道用ダイスロール
 /*    else if (content.search(REACT_REGEXP_KATAMICHI) !== -1) {

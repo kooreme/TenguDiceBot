@@ -4,7 +4,8 @@
   "description": "It is the dicebot for NinjaSlayer TRPG",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "firebase-start" : "firebase emulators:start --import=firebase --export-on-exit"
   },
   "dependencies": {
     "async": "^3.1.1",

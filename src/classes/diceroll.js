@@ -1,34 +1,32 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eq-null */
-const error = require('../util/errormessage');
 const Log = require('../util/log');
 const util = require('../util/util');
 const Dice = require('./dice');
-const DB = require('../DB/db_wrapper');
 
-const SPACE_PLUS_SPACE = ' + ';
+
 const DICE_DIVIDE = /\+/g;
 const COMMENT = /#/;
 const MINUS = /-/g;
 
 class DiceRoll {
-	constructor(string, datatable, message) {
+	constructor(string) {
 		this.rawString = string;
-		this.datatable = datatable;
-		this.message = message;
 		this.string = string.replace(/\s+/g, '');
 		this.sumall = 0;
+		this.comment;
+		this.dice = [];
 	}
 
-	async receiveDiceRoll() {
-		return await this.NormalDiceRoll();
+	receiveDiceRoll() {
+		return this.diceroll();
 	}
+
 	diceroll() {
-		let comment = '';
 		//コメントとダイスロール文字列を分離
 		const searchComment = this.string.search(COMMENT);
 		if (searchComment > 0) {
-			comment = this.string.substring(searchComment + 1);
+			this.comment = this.string.substring(searchComment + 1);
 			this.string = this.string.substring(0, searchComment);
 		}
 		const diceStrArray = this.string.split(COMMENT);
@@ -39,122 +37,47 @@ class DiceRoll {
 		const diceStr = calcDiceStr.split(DICE_DIVIDE);
 		Log.prints('diceStr : ' + diceStr);
 
-		const dice = [];
 		diceStr.forEach((element) => {
-			let newdice = new Dice.Dice(element);
-			if (newdice.result === util.ERROR_FLAG) {
-				Log.prints('Error Dice!');
-				dice.push(null);
-			}
-			else {
-				dice.push(newdice);
-			}
+			let newdice = new Dice(element);
+			this.dice.push(newdice);
 		});
-		Log.printsDir(dice);
+		Log.printsDir(this.dice);
 
-		//ダイスロール
-		try {
-			diceRoll(dice);
-			return { dice: dice, comment: comment };
+		_diceRoll(this.dice);
+		for(const element of this.dice) {
+			this.sumall += element.isMinus ? Number(element.sum) * -1 : Number(element.sum);
 		}
-		catch (e) {
-			return null;
-		}
+		return this;
 	}
 
-
-	//サブクラスで必要に応じて実装
-	shortcutTransration(string) {
-		return string;
-	}
-
-	async receiveFixedMessage() {
-		const stringArray = this.string.split('#');
-
-		stringArray[0] = util.spellCheck(stringArray[0]);
-		Log.prints(stringArray);
-		return await this.FixedOutputMessage(stringArray);
-	}
-
-	createOutput(dice, comment) {
-		let str = '';
-		let diceStr = '';
-		dice.forEach((element) => {
-			if (element.isMinus) {
-				str = str + ' - ' + element.toString();
-				this.sumall -= parseInt(element.sum, 10);
-				diceStr = diceStr + '-' + element.trancedString;
-			} else {
-				str = str + ' + ' + element.toString();
-				this.sumall += parseInt(element.sum, 10);
-				diceStr = diceStr + '+' + element.trancedString;
-			}
-			Log.prints('element.sum : ' + element.sum);
-			Log.prints('sumall : ' + this.sumall);
-		});
-
-		//先頭3文字（' + '）を除去
-		str = str.substring(SPACE_PLUS_SPACE.length, str.length);
-		diceStr = diceStr.substring('+'.length, diceStr.length);
-		str = comment + '：`' + diceStr + '` = ' + str + ' = ' + this.sumall;
-
-		if (str.length >= 2000) {
-			Log.prints('文字数制限オーバー（2000字）');
-			str = error.replyErrorMessage() + '\n（2000文字制限オーバーです。分割してください）';
-		}
-
-		return str;
-
-	}
-	async _getTableData(tableName) {
-		//default -> private -> publicで検索。
-		let checkDataTable = this.datatable.dataTable[tableName.toLowerCase()];
-		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(this.message.channel.id, tableName);
-		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(null, tableName);
-		return checkDataTable;
-	}
-	
-	async FixedOutputMessage(array) {
-		let returnString = '';
-		//データベースからの取得。private -> public -> defaultの順で検索。
-		let checkDataTable = await this._getTableData(array[0]);
-		if (checkDataTable && array[1] != null && (!isNaN(array[1])) && checkDataTable.data[array[1]] != null) {
-			returnString = '\n\n' + checkDataTable.data[array[1]];
-		}
-		else {
-			returnString = error.replyErrorMessage();
-		}
-		return returnString;
-	}
 }
 
-module.exports.DiceRoll = DiceRoll;
+module.exports = DiceRoll;
 
 
 
 /**
- * diceRoll
+ * _diceRoll
  * 全ダイスの数、面をチェックし、問題なければ全ダイスロールを行う。
  * */
-function diceRoll(dice) {
+function _diceRoll(dice) {
 	if (dice == null) {
 		Log.prints('Null Dice String');
-		throw new Error('Null Dice String');
+		throw new Error('DiceRoll : Null Dice String');
 	}
-	var sumDiceMen = [];
-	var sumDiceNum = 0;
+	let sumDiceMen = [];
+	let sumDiceNum = 0;
 	dice.forEach((element) =>{
-		if (element == null) {
-			Log.prints('Null Element String');
-			throw new Error('Null Element String');
-		}
+		if (element == null) throw new Error('DiceRoll : Null Element String');
+
 		sumDiceMen.push((element.diceMen == null) ? 0 : Number(element.diceMen));
 		sumDiceNum += (element.diceNum == null) ? 0 : Number(element.diceNum);
 	});
+
 	Log.prints('sumDiceMen = ' + sumDiceMen + 'sumDiceMen.max = ' + Math.max.apply(null, sumDiceMen) + ', sumDiceNum = ' + sumDiceNum);
+	//DiceRollクラス全体で制限を超えていないかチェック
 	if (!util.checkSintax(sumDiceNum, Math.max.apply(null, sumDiceMen))) {
-		Log.prints('sintaxError');
-		throw new Error('sintaxError');
+		throw new Error('DiceRoll : sintaxError');
 	}
 	else {
 		dice.forEach((element) =>{

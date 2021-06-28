@@ -13,7 +13,8 @@ if (global.process.env.FIREBASE_PKEY) {
 else {
     admin.initializeApp({
         credential: admin.credential.applicationDefault(),
-        databaseURL: "https://tengu-dicebot.firebaseio.com"
+        databaseURL: "https://tengu-dicebot.firebaseio.com",
+        projectId : global.process.env.FIREBASE_PROJECT_ID
     });
 }
 
@@ -31,14 +32,14 @@ class DB {
         .get()
         .then((snapshot) => {
             //console.log("db.collection.doc.get.then() called");
-            if(snapshot.empty) throw new Error('チャンネルIDなし')
+            if(snapshot.empty) throw new Error('DB : チャンネルIDなし')
             //console.log("fieldPath = " + fieldPath);
             if(fieldPath == null || fieldPath == "") return snapshot.data();
             return snapshot.get(fieldPath);
             
         })
-        .catch((err) => {
-            console.error(err);
+        .catch(() => {
+            console.error('DB : snapshot cannot get');
             return null;
         });
 
@@ -51,9 +52,9 @@ class DB {
         .doc(channelID)
         .set(data,{merge : true})
         .then(() => true)
-        .catch((err) => {
-            console.error(err);
-            return false;
+        .catch(() => {
+            console.error('DB : Failure setData');
+            return null;
         });
         let result = await promise;
         return result;
@@ -64,9 +65,9 @@ class DB {
         .doc(channelID)
         .delete()
         .then(()=> true)
-        .catch((err) => {
-            console.error(err);
-            return false;
+        .catch(() => {
+            console.error('DB : Failure DeleteChannel');
+            return null;
         });
         let result = await promise;
 

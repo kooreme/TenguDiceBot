@@ -3,6 +3,8 @@
 const util = require('../util/util');
 const Log = require('../util/log');
 
+const Appendix = require('./Appendix');
+
 const DICE_ROLL = /^\d+[dD]\d+(?:(?:[<>!]{1}=?|=){1}\d+)?$/;
 const NUMBER_ONLY = /^\d+?$/;
 const CHECK_APPENDIX_SINTAX = /(?:<=|<|=|>|>=|!=)\d+\[.+\]$/;
@@ -20,20 +22,13 @@ class Dice {
 		if (util.EVERY_APPENDIX.test(string)) {
 			Log.prints('Appendix exists.');
 			if (!CHECK_APPENDIX_SINTAX.test(string)) {
-				Log.prints('Dice : Appendix sintax error!');
-				this.result = util.ERROR_FLAG;
-				return;
+				throw new Error('Dice : Appendix sintax error!');
 			}
 			else {
-				var strArray = string.split(util.EVERY_APPENDIX);
+				let strArray = string.split(util.EVERY_APPENDIX);
 				string = strArray[0];
 				Log.prints('Dice.strArray : 「' + strArray + '」');
-				try {
-					this.appendixArray = createAppendix(strArray[1]);
-				} catch (e) {
-					this.result = util.ERROR_FLAG;
-					return;
-				}
+				this.appendixArray = createAppendix(strArray[1]);
 			}
 		}
 		else {
@@ -55,9 +50,6 @@ class Dice {
 			string = string.replace('d', 'd6');
 		}
 
-		//解釈済みの文字列はここで決定
-		Log.prints('Dice.appendixArray : 「' + this.appendixArray + '」************************');
-
 		this.trancedString = string;
 		if (this.appendixArray != null) {
 			this.appendixArray.forEach(function (element) {
@@ -76,153 +68,115 @@ class Dice {
 
 		//文字列がndm(>=k)でない場合はエラーコードを返却。
 		if (!DICE_ROLL.test(string)) {
-			this.result = util.ERROR_FLAG;
-			return;
+			throw new Error('Dice : not nDm ( >= k )');
 		}
 		this.splits = string.split(/([dD]|>=|<=|!=|=|<|>)/);
 		Log.prints('splits = 「' + this.splits + '」');
 
 		this.diceNum = this.splits[0];
 		this.diceMen = this.splits[2];
-		this.option = (this.splits[3] != null) ? this.splits[3] : '';
-		this.border = (this.splits[4] != null) ? this.splits[4] : '';
+		this.option = (this.splits[3] != null) ? this.splits[3] : undefined;
+		this.border = (this.splits[4] != null) ? this.splits[4] : undefined;
 
-
-		if (!util.checkSintax(this.diceNum, this.diceMen) || isNaN(this.border)) {
-			this.result = util.ERROR_FLAG;
-			return;
+		//ダイス数・ダイス面が規定範囲かどうか
+		if (!util.checkSintax(this.diceNum, this.diceMen)) {
+			throw new Error('Dice : Invalid Dice');
 		}
-		this.result = '';
-		this.resArray = [];
+		//オプションが有る場合には境界の数が数値かどうか
+		if (this.option) {
+			if(isNaN(this.border)) {
+				throw new Error('Dice : Invalid Border');
+			}
+		}
+		this.result = '';		//表示用文字列
+		this.resArray = [];		//ダイスの結果配列
 	}
 
 	toString() {
-		if (this.result === util.ERROR_FLAG) {
-			return util.ERROR_FLAG;
-		}
-
-		switch (this.option) {
-
-			//不等号オプションが入っていたら、成功数などをカウントする。
-			case '=':
-				this.option = '==';
-			// eslint-disable-next-line no-fallthrough
-			case '>=':
-			case '>':
-			case '<':
-			case '<=':
-			case '!=':
-				compareBorder(this);
-				break;
-
-			default:
-				this.result = '(' + this.resArray.join('+') + ')';
-				break;
-		}
-		Log.prints('result = ' + this.result);
 		return this.result;
-
 	}
 
 	diceRoll() {
-		//数字だけだった場合はダイスロールしない。
+		//数字だけだった場合は結果文字列の作成だけして終了
 		if (this.resArray.length !== 0) {
+			this.result = '(' + this.sum + ')';
 			return;
 		}
 		for (let i = 0; i < this.diceNum; i++) {
 			this.resArray.push(util.getRandomIntInclusive(1, this.diceMen));
 		}
-		this.sum = util.sum(this.resArray);
+		if (!this.option) {
+			this.result = '(' + this.resArray.join('+') + ')';
+			this.sum = util.sum(this.resArray);
+		}
+		else {
+			switch (this.option) {
+				//不等号オプションが入っていたら、成功数などをカウントする。
+				case '=':
+					this.option = '==';
+				// eslint-disable-next-line no-fallthrough
+				case '>=':
+				case '>':
+				case '<':
+				case '<=':
+				case '!=':
+					this._compareBorder();
+					break;
 
+				default:
+					break;
+			}
+		}
 		//結果と文字列用を分離して管理。
-		this.resStrArray = this.resArray.slice();
 		Log.prints('sum : ' + this.sum);
 	}
-}
 
-function compareBorder(dice) {
-	Log.prints('case:' + dice.option);
-	dice.sum = 0;
-	let normalSum = 0;
-	Log.prints('compareBorder() dice.resArray : ' + dice.resArray);
-	for (let i = 0; i < dice.resArray.length; i++) {
-		// eslint-disable-next-line no-eval
-		if (eval(parseInt(dice.resArray[i]) + dice.option + dice.border)) {
-			normalSum++;
+	_compareBorder() {
+		Log.prints('case:' + this.option);
+		this.sum = 0;
+		let normalSum = 0;
+		let resStrArray = [];
+		Log.prints('compareBorder() dice.resArray : ' + this.resArray);
+		for (let i = 0; i < this.resArray.length; i++) {
+			// eslint-disable-next-line no-eval
+			if (eval(parseInt(this.resArray[i]) + this.option + this.border)) {
+				resStrArray[i] = this.resArray[i];
+				normalSum++;
+			}
+			else {
+				resStrArray[i] = '~~' + this.resArray[i] + '~~';
+			}
 		}
-		else {
-			dice.resStrArray[i] = '~~' + dice.resStrArray[i] + '~~';
-		}
-	}
-	dice.sum += normalSum;
-
-	let appResult = ''
-	if (dice.appendixArray != null) {
-		let app = dice.appendixArray;
-		Log.prints('compareBorder appendix!');
-
-		for (let k = 0; k < app.length; k++) {
-			let appSum = 0;
-			for (let t = 0; t < dice.resArray.length; t++) {
-				// eslint-disable-next-line no-eval
-				if (eval(parseInt(dice.resArray[t]) + app[k].option + app[k].border)) {
-					appSum = appSum + app[k].bairitsu;
-					if (!/\*\*/.test(dice.resStrArray[t])) {
-						dice.resStrArray[t] = '**' + dice.resStrArray[t] + '**';
+		this.sum += normalSum;
+	
+		let appResult = ''
+		if (this.appendixArray != null) {
+			let app = this.appendixArray;
+			Log.prints('compareBorder appendix!');
+	
+			for (let k = 0; k < app.length; k++) {
+				let appSum = 0;
+				for (let t = 0; t < this.resArray.length; t++) {
+					// eslint-disable-next-line no-eval
+					if (eval(parseInt(this.resArray[t]) + app[k].option + app[k].border)) {
+						appSum += app[k].bairitsu;
+						if (!/\*\*/.test(resStrArray[t])) {
+							resStrArray[t] = '**' + resStrArray[t] + '**';
+						}
 					}
 				}
+				appResult += ' , ' + app[k].comment + '[' + app[k].option + app[k].border + ']：' + appSum;
+				Log.prints('compareBorder Appendix sum =' + appSum);
+				this.sum += appSum;
+				Log.prints('compareBorder Appendix dice.sum =' + this.sum);
 			}
-			appResult += ' , ' + app[k].comment + '[' + app[k].option + app[k].border + ']：' + appSum;
-			Log.prints('compareBorder Appendix sum =' + appSum);
-			dice.sum += appSum;
-			Log.prints('compareBorder Appendix dice.sum =' + dice.sum);
-		}
-
-	}
-	Log.prints('compareBorder dice.sum =' + dice.sum);
-
-	dice.result = '(' + dice.resStrArray.join(',') + ' ：成功数：' + normalSum + appResult + ')';
-	dice.result = dice.result.replace(/==/g, '=');
-}
-
-class Appendix {
-	constructor(string){
-		const searchComment = string.search(/\//);
-		if (searchComment > 0) {
-			this.comment = string.substring(searchComment + 1);
-			string = string.substring(0, searchComment);
-		}
-		else {
-			this.comment = '追加カウント';
-		}
-		var strArray = string.split(/([<>!]=?|=|\*)/);
 	
-		Log.prints('appendix strArray : 「' + strArray + '」');
-	
-		this.option = (strArray[1] === '=') ? '==' : strArray[1];
-		this.border = Number(strArray[2]);
-		this.bairitsu = (strArray[4] != null && !isNaN(strArray[4])) ? Number(strArray[4]) : 1;
-	
-		if (checkAppendix(this) === false) {
-			throw util.ERROR_FLAG;
 		}
-		this.string = string;	
+		Log.prints('compareBorder dice.sum =' + this.sum);
+	
+		this.result = '(' + resStrArray.join(',') + ' ：成功数：' + normalSum + appResult + ')';
+		this.result = this.result.replace(/==/g, '=');
 	}
-}
-
-function checkAppendix(app) {
-
-	if (app.option == null || app.border == null || isNaN(app.border)) {
-		Log.prints('checkAppendix app null!');
-		return false;
-	}
-	if (/[<>!]=?|=/.test(app.option) === false) {
-		Log.prints('checkAppendix app.option unmatch!');
-		return false;
-	}
-	Log.prints('checkAppendix app.option MATCH!');
-	return true;
-
 }
 
 function createAppendix(string) {
@@ -235,7 +189,6 @@ function createAppendix(string) {
 
 	var appendixArray = [];
 	temp.forEach((element) => {
-		element = appTransration(element.toLowerCase());
 		appendixArray.push(new Appendix(element));
 	});
 	Log.prints('createAppendix appendixArray : 「' + appendixArray + '」');
@@ -244,29 +197,5 @@ function createAppendix(string) {
 
 }
 
-function appTransration(string) {
-	switch (string) {
-		case 'j':
-			string = '=1/ジツ暴走';
-			break;
-		case 's5':
-			string = '>=5/サツバツ！';
-			break;
-		case 's':
-		case 's6':
-			string = '=6/サツバツ！';
-			break;
-		case 'c':
-			string = '=4/コッポ判定';
-			break;
-		case 'l':
-			string = '=6/LAN直結出目6数'
-			break;
-		default:
-			break;
 
-	}
-	return string;
-
-}
-module.exports.Dice = Dice;
+module.exports = Dice;

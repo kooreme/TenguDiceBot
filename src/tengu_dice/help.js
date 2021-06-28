@@ -1,4 +1,5 @@
-exports.help =
+const DiceRoll = require('../classes/diceroll');
+const help =
 "\n◆「天狗ダイス」ヘルプ◆\n" +
 "\n" +
 "◆計算式◆\n" +
@@ -35,3 +36,15 @@ exports.help =
 "https://note.mu/kooreme/n/ncec59ad4ca8d\n" +
 "\n" +
 "◆天狗 is Watching You...";
+
+class Help extends DiceRoll {
+    constructor(string) {
+        super(string);
+    }
+
+    async receiveDiceRoll() {
+        return help;
+    }
+}
+
+module.exports = Help;

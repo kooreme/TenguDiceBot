@@ -50,10 +50,6 @@ exports.checkSintax = function (diceNum,diceMen) {
 };
 
 exports.spellCheck = function(string) {
-	if (/#/.test(string)) {
-		return string.replace(/[！!表・](?=.*?#)/g, '');
-	}
-	else {
-		return string.replace(/[！!表・]/g, '');
-	}
+	if (/#/.test(string)) return string.replace(/[！!表・](?=.*?#)/g, '');
+	else return string.replace(/[！!表・]/g, '');
 }

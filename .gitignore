@@ -6,4 +6,9 @@
 /package-lock.json
 /.vscode
 
+
 test.txt
+firebase*
+firestore*
+.firebaserc
+ui-debug.log
