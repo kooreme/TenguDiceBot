@@ -12,7 +12,7 @@ const MINUS = /-/g;
 class DiceRoll {
 	constructor(string) {
 		this.rawString = string;
-		this.string = string.replace(/\s+/g, '');
+		this.string = string ? string.replace(/\s+/g, '') : undefined;
 		this.sumall = 0;
 		this.comment;
 		this.dice = [];
