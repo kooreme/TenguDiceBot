@@ -16,7 +16,7 @@ diceRollHandler
 
 function diceRollHandler(string,message) {
 
-    if (HELP.test(string)) return new Help;
+    if (HELP.test(string)) return new Help();
     if (WASSHOI.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.WASSHOI);
     if (SEISEN.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.SEISEN);
     else return new NDDiceRoll(string,message);
