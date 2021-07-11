@@ -41,7 +41,7 @@ class WasshoiDiceRoll extends DiceRoll {
 		dice.diceRoll();
 		let returnString = this.kind.judgeName + '!' + ' = ' + dice.toString() + ' = ' + dice.sum + '<=' + this.dkk + '  判定';
 		returnString += (dice.sum <= Number(this.dkk))
-		? '成功！' + this.kinde.successMessage
+		? '成功！' + this.kind.successMessage
 		: '失敗';
 	
 		return returnString;		
