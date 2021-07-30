@@ -8,6 +8,7 @@ const NJDiscordReply = require('./tengu_dice/NJDiscordReply');
 const Log = require('./util/log');
 const Record = require('./tengu_bank/record');
 const CTCommand = require('./ct_command/ctcommand');
+const sleep = require('./util/sleep');
 
 client.on('ready', () => {
     Log.prints('I am ready!',true);
@@ -26,15 +27,25 @@ client.on('message', async message => {
     let content = message.content;
     //NJSLYR用ダイスロール
     if (content.search(REACT_REGEXP_NINJA) !== -1) {
-
+        let isSleep = true;
+        setTimeout(() => isSleep = false, 200);
         content = content.replace(REACT_REGEXP_NINJA, '');
         const NDDice = ND_DiceRollHandler(content,message);
-        message.reply(
-                await NJDiscordReply.createMessage(
-                    await NDDice.receiveDiceRoll()
-                    .catch((e) => {return e.discordMessage;})
-                )
-        );
+        let test = await NJDiscordReply.createMessage(
+            await NDDice.receiveDiceRoll()
+            .catch((e) => {return e.discordMessage;})
+        )
+        // eslint-disable-next-line no-constant-condition
+        while(true) {
+            if (!isSleep) {
+                message.reply(test);
+                break;
+            }
+            else {
+                await sleep(50);
+            }
+            
+        }
         Log.prints('content : ' + content);
 
     }
