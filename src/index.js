@@ -23,22 +23,24 @@ const REACT_REGEXP_NINJAFIX = /^\/ndf /;
 const REACT_REGEXP_TENGUBANK = /^\/tb /;
 const REACT_REGEXP_CREATETABLE = /^\/ct /;
 
+const SLEEP_TIME = 200;
+
 client.on('message', async message => {
     let content = message.content;
     //NJSLYR用ダイスロール
     if (content.search(REACT_REGEXP_NINJA) !== -1) {
         let isSleep = true;
-        setTimeout(() => isSleep = false, 200);
+        setTimeout(() => isSleep = false, SLEEP_TIME);
         content = content.replace(REACT_REGEXP_NINJA, '');
         const NDDice = ND_DiceRollHandler(content,message);
-        let test = await NJDiscordReply.createMessage(
+        let reply = await NJDiscordReply.createMessage(
             await NDDice.receiveDiceRoll()
             .catch((e) => {return e.discordMessage;})
         )
         // eslint-disable-next-line no-constant-condition
         while(true) {
             if (!isSleep) {
-                message.reply(test);
+                message.reply(reply);
                 break;
             }
             else {
@@ -51,13 +53,24 @@ client.on('message', async message => {
     }
     //NJSLYRの表参照
     else if (content.search(REACT_REGEXP_NINJAFIX) !== -1) {
-
         content = content.replace(REACT_REGEXP_NINJAFIX, '');
+        let isSleep = true;
+        setTimeout(() => isSleep = false, SLEEP_TIME);
+
         const NDDice = ND_DiceRollHandler(content,message);
-        message.reply(
+        let reply = 
             await NJDiscordReply.createFixedDiceMessage(NDDice)
             .catch((e) => {return e.discordMessage;})
-        );
+        // eslint-disable-next-line no-constant-condition
+        while(true) {
+            if (!isSleep) {
+                message.reply(reply);
+                break;
+            }
+            else {
+                await sleep(50);
+            }
+        }
         Log.prints('content : ' + content);
     }
     //片道用ダイスロール
@@ -85,10 +98,22 @@ client.on('message', async message => {
     //天狗銀行
     else if (content.search(REACT_REGEXP_TENGUBANK) !== -1) {
         content = content.replace(REACT_REGEXP_TENGUBANK,'');
+        let isSleep = true;
+        setTimeout(() => isSleep = false, SLEEP_TIME);
+
         Log.printsDir(message);
         Log.prints(message.channel.id);
-        
-        message.reply(await Record.receiveResponce(message,content));
+        let reply = await Record.receiveResponce(message,content);
+        // eslint-disable-next-line no-constant-condition
+        while(true) {
+            if (!isSleep) {
+                message.reply(reply);
+                break;
+            }
+            else {
+                await sleep(50);
+            }
+        }
     }
     //専用表作成
     else if (content.search(REACT_REGEXP_CREATETABLE) !== -1) {
