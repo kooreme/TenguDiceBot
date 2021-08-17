@@ -24,7 +24,7 @@ const REACT_REGEXP_TENGUBANK = /^\/tb /;
 const REACT_REGEXP_CREATETABLE = /^\/ct /;
 
 const SLEEP_TIME = 200;
-
+//
 client.on('message', async message => {
     let content = message.content;
     //NJSLYR用ダイスロール
