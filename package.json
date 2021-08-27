@@ -3,20 +3,24 @@
   "version": "3.2.0",
   "description": "It is the dicebot for NinjaSlayer TRPG",
   "main": "src/index.js",
+  "engines" : {
+    "node" : "16.x",
+    "npm" : "7.x"
+  },
   "scripts": {
     "start": "node src/index.js",
     "firebase-start": "firebase emulators:start --import=firebase --export-on-exit"
   },
   "dependencies": {
-    "async": "^3.1.1",
-    "discord.js": "^12.5.3",
+    "async": "^3.2.1",
+    "discord.js": "^13.1.0",
     "extensible-custom-error": "0.0.7",
-    "firebase-admin": "^9.10.0",
+    "firebase-admin": "^9.11.1",
     "fs": "0.0.1-security"
   },
   "devDependencies": {
-    "eslint": "^5.12.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "firebase-functions-test": "^0.2.0"
+    "eslint": "^7.32.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "firebase-functions-test": "^0.3.2"
   }
 }

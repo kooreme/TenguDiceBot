@@ -42,12 +42,12 @@ class Dice {
 		}
 
 		//最初の文字がdから始まった場合は1dmへ変更する。
-		if (string.slice(0, 1) === 'd') {
+		if (/[dD]/.test(string.slice(0, 1)) === true) {
 			string = '1' + string;
 		}
 		//dの後ろに数字がついていない場合は６面ダイスとする。
 		if (/^\d+[dD]\d/.test(string) === false) {
-			string = string.replace('d', 'd6');
+			string = string.replace(/([dD])/, '$1' + '6');
 		}
 
 		this.trancedString = string;

@@ -13,7 +13,7 @@ exports.run = async function(message,data) {
     if (privateTable) return {result: false, message : '同名のテーブルがこのチャンネルに存在します。'};
 
     //テーブル作成
-    const createTable = await db.createTable(data.tableName, message.channel.id, message.guild.owner.id, message.author.id);
+    const createTable = await db.createTable(data.tableName, message.channel.id, message.guild.ownerId, message.author.id);
     if (!createTable) return {result: false, message : 'テーブルの作成に失敗しました。'};
     else mes += 'このチャンネルにテーブル：「**' + data.tableName + '**」を作成しました。';
 

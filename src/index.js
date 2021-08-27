@@ -1,5 +1,4 @@
-const Discord = require('discord.js');
-const client = new Discord.Client();
+const { Intents, Client } = require('discord.js');
 
 const ND_DiceRollHandler = require('./tengu_dice/nd_diceRollHandler');
 const NJDiscordReply = require('./tengu_dice/NJDiscordReply');
@@ -8,7 +7,12 @@ const NJDiscordReply = require('./tengu_dice/NJDiscordReply');
 const Log = require('./util/log');
 const Record = require('./tengu_bank/record');
 const CTCommand = require('./ct_command/ctcommand');
-const sleep = require('./util/sleep');
+const { setTimeout : wait } = require("timers/promises");
+
+const options = {
+    intents: ["GUILDS","GUILD_MESSAGES",]
+}
+const client = new Client(options);
 
 client.on('ready', () => {
     Log.prints('I am ready!',true);
@@ -23,54 +27,35 @@ const REACT_REGEXP_NINJAFIX = /^\/ndf /;
 const REACT_REGEXP_TENGUBANK = /^\/tb /;
 const REACT_REGEXP_CREATETABLE = /^\/ct /;
 
-const SLEEP_TIME = 200;
-//
-client.on('message', async message => {
+client.on('messageCreate', async message => {
     let content = message.content;
     //NJSLYR用ダイスロール
     if (content.search(REACT_REGEXP_NINJA) !== -1) {
-        let isSleep = true;
-        setTimeout(() => isSleep = false, SLEEP_TIME);
+
         content = content.replace(REACT_REGEXP_NINJA, '');
         const NDDice = ND_DiceRollHandler(content,message);
         let reply = await NJDiscordReply.createMessage(
             await NDDice.receiveDiceRoll()
             .catch((e) => {return e.discordMessage;})
-        )
-        // eslint-disable-next-line no-constant-condition
-        while(true) {
-            if (!isSleep) {
-                message.reply(reply);
-                break;
-            }
-            else {
-                await sleep(50);
-            }
-            
-        }
+        );
+
+        await wait(50);
+        message.reply(reply);
+
         Log.prints('content : ' + content);
 
     }
     //NJSLYRの表参照
     else if (content.search(REACT_REGEXP_NINJAFIX) !== -1) {
         content = content.replace(REACT_REGEXP_NINJAFIX, '');
-        let isSleep = true;
-        setTimeout(() => isSleep = false, SLEEP_TIME);
 
         const NDDice = ND_DiceRollHandler(content,message);
-        let reply = 
-            await NJDiscordReply.createFixedDiceMessage(NDDice)
-            .catch((e) => {return e.discordMessage;})
-        // eslint-disable-next-line no-constant-condition
-        while(true) {
-            if (!isSleep) {
-                message.reply(reply);
-                break;
-            }
-            else {
-                await sleep(50);
-            }
-        }
+        let reply = await NJDiscordReply.createFixedDiceMessage(NDDice)
+        .catch((e) => {return e.discordMessage;});
+        
+        await wait(50);
+        message.reply(reply);
+
         Log.prints('content : ' + content);
     }
     //片道用ダイスロール
@@ -98,28 +83,23 @@ client.on('message', async message => {
     //天狗銀行
     else if (content.search(REACT_REGEXP_TENGUBANK) !== -1) {
         content = content.replace(REACT_REGEXP_TENGUBANK,'');
-        let isSleep = true;
-        setTimeout(() => isSleep = false, SLEEP_TIME);
 
         Log.printsDir(message);
         Log.prints(message.channel.id);
-        let reply = await Record.receiveResponce(message,content);
-        // eslint-disable-next-line no-constant-condition
-        while(true) {
-            if (!isSleep) {
-                message.reply(reply);
-                break;
-            }
-            else {
-                await sleep(50);
-            }
-        }
+        let reply = await Record.receiveResponce(message,content)
+        .catch(() => "予期せぬエラーが発生しました。Bot管理者へ連絡してください。");
+        
+        await wait(50);
+        message.reply(reply);
+
     }
     //専用表作成
     else if (content.search(REACT_REGEXP_CREATETABLE) !== -1) {
         content = content.replace(REACT_REGEXP_CREATETABLE,'');
         
-        const reply = await CTCommand.run(message,content).then((v) => v);
+        const reply = await CTCommand.run(message,content)
+        .then((v) => v)
+        .catch((e) => "予期せぬエラーが発生しました。Bot管理者へ連絡してください。" + e) ;
         //通常はリプライ
         if(typeof reply === 'string') message.reply(reply);
         //文字数が多く、１回で表示しきれない場合は複数回に分け、sendする。
