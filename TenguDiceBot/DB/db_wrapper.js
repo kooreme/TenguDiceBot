@@ -3,7 +3,7 @@ const DB = require('./db');
 const PUBLIC_CH_ID = '99';
 const PUBLIC_DB = 'public_db';
 const PRIVATE_DB = 'private_db';
-const KOOREME_USER_ID = "452131837884628992";
+const KOOREME_USER_ID = process.env.KOOREME_USER_ID;
 
 class DataTable {
     constructor() {
