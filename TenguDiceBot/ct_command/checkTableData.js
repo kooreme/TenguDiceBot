@@ -2,11 +2,11 @@ const DB = require('../DB/db_wrapper');
 const util = require('./command_utility');
 const spell = require('../util/util');
 const Log = require('../util/log');
-exports.run = async function (message, data) {
+exports.run = async function (ids, data) {
     let db = DB.db;
 
     //テーブル検索
-    let table = await db.getUserTable(data.flag ? null : message.channel.id, data.tableName);
+    let table = await db.getUserTable(data.flag ? null : ids.channelId, data.tableName);
     if (!table) return { result: false, message: 'テーブルがありません。' };
 
     //テーブルデータ表示

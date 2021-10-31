@@ -3,30 +3,30 @@ const util = require('./command_utility');
 const Log = require('../util/log');
 const spell = require('../util/util');
 
-exports.run = async function(message,data) {
+exports.run = async function(ids,data) {
     let db = DB.db;
 
     //テーブル検索
-    const userTable = await db.getUserTable(data.flag ? null : message.channel.id,data.tableName);
+    const userTable = await db.getUserTable(data.flag ? null : ids.channelId,data.tableName);
     if (!userTable) return {result:false, message : 'テーブルがありません。'};
     //パーミッションチェック
     const permission = userTable.permission;
-    Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
-    if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
+    Log.prints('updateDice:permission =' + permission.find(elem => {return elem === ids.authorId;}));
+    if (!permission.find(elem => {return elem === ids.authorId})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
 
     //削除するダイス以外に可変数を使用するダイスが残っていないかをチェックする。残ってたらtrue
     const existAdditionDice = isExistOtherAdditionDice(userTable.dice,data.diceName);
 
     //既にデータレンジの使用フラグをonにしていて、かつ可変数ダイスが残っていなければ、フラグをoffにして今後更新されないようにする。
     if (userTable.datarange && userTable.datarange.isUse && !existAdditionDice) {
-        const updateAddition = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,false);
+        const updateAddition = await db.updateAddition(data.flag ? null : ids.channelId,data.tableName,false);
         if (!updateAddition) {
             return {result : false, message : 'ダイスの消去に失敗しました。'};
         }
     }
 
     //ダイスをアップデート
-    const deleteDice = await db.deleteDice(data.flag ? null : message.channel.id,data.tableName,data.diceName);
+    const deleteDice = await db.deleteDice(data.flag ? null : ids.channelId,data.tableName,data.diceName);
     if (!deleteDice) {
         return {result : false, message : 'ダイスの消去に失敗しました。'};
     }

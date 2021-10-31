@@ -22,7 +22,7 @@ const Command = {
  * コマンドを実行できる正しい文字列であるかを
  * チェックし、問題なければ各コマンドを実行する。
  */
-exports.run = async function(message,content){
+exports.run = async function(content,ids){
     content = content.replace(/(?<!\\)\x20/g,"");
     let split = content.split(/(?<!\\),/);
 
@@ -35,7 +35,7 @@ exports.run = async function(message,content){
     if (check != null) return error.replyErrorMessage(check);
 
     //各コマンドごとのデータに整形し、実行。実行結果を返す。
-    const run = await command.run(message,command.adjust(split));
+    const run = await command.run(ids,command.adjust(split));
     if (run.result === false) return error.replyErrorMessage(run.message);
     else return run.message;
 }

@@ -3,16 +3,16 @@ const util = require('./command_utility');
 const Log = require('../util/log');
 const spell = require('../util/util');
 
-exports.run = async function(message,data) {
+exports.run = async function(ids,data) {
     let db = DB.db;
 
     //テーブル検索
-    const userTable = await db.getUserTable(data.flag ? null : message.channel.id,data.tableName);
+    const userTable = await db.getUserTable(data.flag ? null : ids.channelId,data.tableName);
     if (!userTable) return {result:false, message : 'テーブルがありません。'};
     //パーミッションチェック
     let permission = userTable.permission;
-    Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
-    if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
+    Log.prints('updateDice:permission =' + permission.find(elem => {return elem === ids.authorId;}));
+    if (!permission.find(elem => {return elem === ids.authorId})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
 
     //削除データの存在チェック（存在しなければ削除済みとしてtrueで返却する）
     if (!userTable.data[data.dataIndex]) return {result:true, message : '入力した番号のデータは存在しません。'};
@@ -25,7 +25,7 @@ exports.run = async function(message,data) {
         if (userTable.datarange && (userTable.datarange.max == data.dataIndex || userTable.datarange.min == data.dataIndex)) {
             delete userTable.data[data.dataIndex];
             const dataRange = util.checkDataRange(userTable);
-            const updateAddition = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,userTable.datarange.isUse,dataRange.max,dataRange.min);
+            const updateAddition = await db.updateAddition(data.flag ? null : ids.channelId,data.tableName,userTable.datarange.isUse,dataRange.max,dataRange.min);
             if (!updateAddition) {
                 return {result : false, message : 'ダイスの消去に失敗しました。'};
             }    
@@ -33,7 +33,7 @@ exports.run = async function(message,data) {
     }
 
     //ダイスをアップデート
-    const deleteData = await db.deleteData(data.flag ? null : message.channel.id,data.tableName,data.dataIndex);
+    const deleteData = await db.deleteData(data.flag ? null : ids.channelId,data.tableName,data.dataIndex);
     if (!deleteData) {
         return {result : false, message : 'データの消去に失敗しました。'};
     }

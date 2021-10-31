@@ -7,8 +7,8 @@ const error = require('./nd_errormessage');
 const ShortcutTranslator = require('./NJShortcutTranslator');
 
 class NDDiceRoll extends SearchTableDiceRoll {
-	constructor(string, message) {
-		super(string, datatable, message);
+	constructor(string, channelID) {
+		super(string, datatable, channelID);
 	}
 
 	async receiveDiceRoll() {

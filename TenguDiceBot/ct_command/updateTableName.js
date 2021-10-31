@@ -1,18 +1,18 @@
 const DB = require('../DB/db_wrapper.js');
 const util = require('./command_utility');
 const spell = require('../util/util');
-exports.run = async function (message, data) {
+exports.run = async function (ids, data) {
     let db = DB.db;
 
     //テーブル検索
-    const old_userTable = await db.getUserTable(data.flag ? null : message.channel.id,data.oldTableName);
+    const old_userTable = await db.getUserTable(data.flag ? null : ids.channelId,data.oldTableName);
     if (!old_userTable) return {result:false, message : 'テーブルがありません。'};
     //新テーブル検索
-    let new_userTable = await db.getUserTable(data.flag ? null : message.channel.id, data.newTableName);
+    let new_userTable = await db.getUserTable(data.flag ? null : ids.channelId, data.newTableName);
     if (new_userTable) return { result: false, message: '新テーブル名のデータは既に存在します。' };
     //パーミッションチェック（０～２番の人のみ許可）
     let permission = old_userTable.permission;
-    if (permission[0] !== message.author.id && permission[1] !== message.author.id && permission[2] !== message.author.id) {
+    if (permission[0] !== ids.authorId && permission[1] !== ids.authorId && permission[2] !== ids.authorId) {
         return { result : false, message : 'この操作は許可されていません。この操作はサーバ管理者またはテーブル作成者のみ可能です。'};
     }
 
@@ -20,13 +20,13 @@ exports.run = async function (message, data) {
     new_userTable = { [data.newTableName] : old_userTable };
 
     //新テーブルを登録
-    const updateTableName = await db.updateTableName(data.flag ? null : message.channel.id, new_userTable)
+    const updateTableName = await db.updateTableName(data.flag ? null : ids.channelId, new_userTable)
     if (!updateTableName) {
         return { result: false, message: '新テーブルの作成に失敗しました。bot管理者に連絡してください。' };
     }
 
     //旧テーブルを削除
-    const deleteTable = await db.deleteTable(data.flag ? null : message.channel.id, data.oldTableName);
+    const deleteTable = await db.deleteTable(data.flag ? null : ids.channelId, data.oldTableName);
     if (!deleteTable) {
         return { result: false, message: '旧テーブルの作成に失敗しました。bot管理者に連絡してください。' };
     }

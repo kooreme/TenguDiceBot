@@ -2,18 +2,18 @@ const DB = require('../DB/db_wrapper');
 const util = require('./command_utility');
 const spell = require('../util/util');
 const datatable = require('../tengu_dice/nd_datatable')
-exports.run = async function(message,data) {
+exports.run = async function(ids,data) {
     let mes = '';
     const db = DB.db;
 
     //テーブルを検索し、重複したらエラー
     const defaultTable = datatable.dataTable[data.tableName];
     if (defaultTable) return {result: false, message : '公式で使用される表と同じ名前をつけることはできません。'};
-    const privateTable = await db.getUserTable(message.channel.id, data.tableName);
+    const privateTable = await db.getUserTable(ids.channelId, data.tableName);
     if (privateTable) return {result: false, message : '同名のテーブルがこのチャンネルに存在します。'};
 
     //テーブル作成
-    const createTable = await db.createTable(data.tableName, message.channel.id, message.guild.ownerId, message.author.id);
+    const createTable = await db.createTable(data.tableName, ids.channelId, ids.guildOwnerId, ids.authorId);
     if (!createTable) return {result: false, message : 'テーブルの作成に失敗しました。'};
     else mes += 'このチャンネルにテーブル：「**' + data.tableName + '**」を作成しました。';
 

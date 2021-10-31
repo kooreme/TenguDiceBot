@@ -2,15 +2,15 @@ const DB = require('../DB/db_wrapper.js');
 const util = require('./command_utility');
 const spell = require('../util/util');
 
-exports.run = async function(message,data) {
+exports.run = async function(ids,data) {
     let db = DB.db;
 
     //テーブル検索
-    const userTable = await db.getUserTable(data.flag ? null : message.channel.id,data.tableName);
+    const userTable = await db.getUserTable(data.flag ? null : ids.channelId,data.tableName);
     if (!userTable) return {result:false, message : 'テーブルがありません。'};
     //パーミッションチェック（０～２番の人のみ許可）
     let permission = userTable.permission;
-    if (permission[0] !== message.author.id && permission[1] !== message.author.id && permission[2] !== message.author.id) {
+    if (permission[0] !== ids.authorId && permission[1] !== ids.authorId && permission[2] !== ids.authorId) {
         return { result : false, message : 'この操作は許可されていません。この操作はサーバ管理者またはテーブル作成者のみ可能です。'};
     }
     //重複チェック
@@ -19,7 +19,7 @@ exports.run = async function(message,data) {
 
     //パーミッションをアップデート
     permission.push(data.userID);
-    const addPermission = await db.updatePermission(data.flag ? null : message.channel.id,data.tableName,permission);
+    const addPermission = await db.updatePermission(data.flag ? null : ids.channelId,data.tableName,permission);
     if (!addPermission) {
         return {result : false, message : 'パーミッションの更新に失敗しました。'};
     }

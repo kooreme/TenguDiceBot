@@ -7,16 +7,16 @@ const Log = require('../util/log');
 
 class SearchTableDiceRoll extends DiceRoll {
     
-    constructor(string, datatable, message) {
+    constructor(string, datatable, channelID) {
         super(string);
         this.datatable = datatable;
-		this.message = message;
+		this.channelID = channelID;
     }
 
     async getTableData(tableName) {
 		//default -> private -> publicで検索。
 		let checkDataTable = this.datatable.dataTable[tableName.toLowerCase()];
-		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(this.message.channel.id, tableName);
+		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(this.channelID, tableName);
 		if (!checkDataTable) checkDataTable = await DB.db.getUserTable(null, tableName);
 		return checkDataTable;
 	}

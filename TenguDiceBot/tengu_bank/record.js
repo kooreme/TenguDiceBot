@@ -11,7 +11,7 @@ const M_MINUSNUMBER = /^m-\d+$/;
 const I_PLUSITEM = /^i\+.+$/;
 const I_MINUSITEM = /^i-.+$/;
 
-exports.receiveResponce = async function (message, content) {
+exports.receiveResponce = async function (content,channelID) {
     content = content.replace(/\s+/g, '');
     const splitRequestArray = splitRequest(content);
     Log.printsDir(splitRequestArray,true);
@@ -19,21 +19,21 @@ exports.receiveResponce = async function (message, content) {
     let returnString = '';
     switch(splitRequestArray[0]) {
         case 'm' :
-            returnString = await recordMoney(message,splitRequestArray);
+            returnString = await recordMoney(channelID,splitRequestArray);
             break;
         case 'i' :
-            returnString = await recordItem(message,splitRequestArray);
+            returnString = await recordItem(channelID,splitRequestArray);
             break;
         case 'reset':
         case 'delete':
-            returnString = await deleteRecord(message);
+            returnString = await deleteRecord(channelID);
             break;
         case 'result' :
         case 'end' :
-            returnString = await getRecordResult(message);
+            returnString = await getRecordResult(channelID);
             break;
         case 'check' :
-            returnString = await getRecord(message);
+            returnString = await getRecord(channelID);
             break;
         default :
             returnString = error.replyErrorMessage();
@@ -67,29 +67,29 @@ function splitRequest(content) {
     return splitArray;
 }
 
-async function recordMoney(message,array) {
+async function recordMoney(channelID,array) {
     if (!array[1]) return error.replyErrorMessage();
-    const result = await TB.TB.saveRecord({channel_id : message.channel.id, money : array[1]}).catch(() => {return null});
+    const result = await TB.TB.saveRecord({channel_id : channelID, money : array[1]}).catch(() => {return null});
     return result == null ? error.replyErrorMessage() :
     '万札を更新しました。現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record + '**' : 'なし');
 }
 
-async function recordItem(message,array) {
+async function recordItem(channelID,array) {
     if (!array[1]) return error.replyErrorMessage();
-    const result = await TB.TB.saveRecord({channel_id : message.channel.id, item : array[1], isItemAdd : array[2]}).catch(() => {return null});
+    const result = await TB.TB.saveRecord({channel_id : channelID, item : array[1], isItemAdd : array[2]}).catch(() => {return null});
     if (!result) return 'そのアイテムの記録はありません。';
     
     return result == null ? error.replyErrorMessage() :
     'アイテムを更新しました。現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record + '**' : 'なし');
 }
 
-async function deleteRecord(message) {
-    const result = await TB.TB.delete(message.channel.id);
+async function deleteRecord(channelID) {
+    const result = await TB.TB.delete(channelID);
     return result;
 }
 
-async function getRecordResult(message) {
-    const result = await TB.TB.getRecord(message.channel.id).catch(() => {return null});
+async function getRecordResult(channelID) {
+    const result = await TB.TB.getRecord(channelID).catch(() => {return null});
     if (!result) return 'このチャンネル内の記録が見つかりません。'; 
     
     if (result.money_record) result.money_record = String(result.money_record).replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');
@@ -97,15 +97,15 @@ async function getRecordResult(message) {
     let returnString = '結果…… 現万札：**' + change893(result.sum_money) + '**  アイテム：' + (result.item_record ? '**' + result.item_record +'**' : 'なし');
     if(result.money_record) returnString += '\n' + '入出金記録：**' + result.money_record + ' = ' + change893(result.sum_money) + '**';
 
-    const deleted = await TB.TB.delete(message.channel.id).catch(() => {return null});
+    const deleted = await TB.TB.delete(channelID).catch(() => {return null});
     if (!deleted) returnString = error.replyErrorMessage();
     else returnString += '\n\n' + deleted;
 
     return returnString;
 }
 
-async function getRecord(message) {
-    const result = await TB.TB.getRecord(message.channel.id).catch(() => {return null});
+async function getRecord(channelID) {
+    const result = await TB.TB.getRecord(channelID).catch(() => {return null});
     if (!result) return 'このチャンネル内の記録が見つかりません。'; 
     Log.prints(result.money_record);
     if (result.money_record) result.money_record = String(result.money_record).replace(SEPARATOR, ' + ').replace(/\s\+\s-/g,' - ');

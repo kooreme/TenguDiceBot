@@ -251,7 +251,7 @@ n=2+(現在の階数/5)(端数切り上げ)\`
 
 }
 
-exports.run = function(message,data) {
+exports.run = function(ids,data) {
     let help = HelpMessage[data.help];
     if (!help) help = HelpMessage['all'] + '\n\n（指定したコマンドはありません。上記から再度見たいコマンドを探してください。）'
     const result = { result: true, message : help };

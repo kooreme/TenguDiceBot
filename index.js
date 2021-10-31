@@ -1,1 +1,1 @@
-require("./TenguDiceBot/index");
+require("./TenguDiceBot/index2");

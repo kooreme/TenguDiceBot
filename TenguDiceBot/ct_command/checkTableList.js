@@ -1,10 +1,10 @@
 const DB = require('../DB/db_wrapper');
 const Log = require('../util/log');
-exports.run = async function (message) {
+exports.run = async function (ids) {
     let db = DB.db;
 
     //publicの全テーブルと、現チャンネルのプライベートテーブルを取得
-    let table = await db.getAllTable(message.channel.id);
+    let table = await db.getAllTable(ids.channelId);
     //メッセージを作成
     let returnString = createTableListString(table);
 
@@ -56,6 +56,6 @@ function createTableMessage(startMessage, object) {
         message += "（なし）\n\n";
     }
     message += '-----------------------------------------------------------';
-    Log.prints(message);
+    
     return message;
 }

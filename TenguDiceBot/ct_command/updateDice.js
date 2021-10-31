@@ -3,19 +3,19 @@ const util = require('./command_utility');
 const Log = require('../util/log');
 const spell = require('../util/util');
 
-exports.run = async function(message,data) {
+exports.run = async function(ids,data) {
     let db = DB.db;
 
     //テーブル検索
-    const userTable = await db.getUserTable(data.flag ? null : message.channel.id,data.tableName);
+    const userTable = await db.getUserTable(data.flag ? null : ids.channelId,data.tableName);
     if (!userTable) return {result:false, message : 'テーブルがありません。'};
     //パーミッションチェック
     const permission = userTable.permission;
-    Log.prints('updateDice:permission =' + permission.find(elem => {return elem === message.author.id;}));
-    if (!permission.find(elem => {return elem === message.author.id})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
+    Log.prints('updateDice:permission =' + permission.find(elem => {return elem === ids.authorId;}));
+    if (!permission.find(elem => {return elem === ids.authorId})) return {result:false, message : 'このテーブルを操作する権限がありません。'};
 
     //ダイスをアップデート
-    const updateDice = await db.updateDice(data.flag ? null : message.channel.id,data.tableName,data.diceName,data.diceString);
+    const updateDice = await db.updateDice(data.flag ? null : ids.channelId,data.tableName,data.diceName,data.diceString);
     if (!updateDice) {
         return {result : false, message : 'ダイスの更新に失敗しました。'};
     }
@@ -27,7 +27,7 @@ exports.run = async function(message,data) {
         Log.prints('dataRange.max = '+ dataRange.max + ', dataRange.min = ' + dataRange.min);
         //isUseがfalseだったときだけ、アップデートする。
         if (userTable.datarange && !userTable.datarange.isUse) {
-            const updateAdditionValue = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,true,dataRange.max,dataRange.min);
+            const updateAdditionValue = await db.updateAddition(data.flag ? null : ids.channelId,data.tableName,true,dataRange.max,dataRange.min);
             if (!updateAdditionValue) {
                 return {result : false, message : 'ダイスの更新に失敗しました。'};
             }
@@ -37,7 +37,7 @@ exports.run = async function(message,data) {
     //もしほかのdiceがない、または他の全てのdiceに可変数がない場合は、可変数フラグをfalseにして保存する。
     else {
         if (!isExistOtherAdditionDice(userTable.dice,data.diceName)) {
-            const updateAdditionValue = await db.updateAddition(data.flag ? null : message.channel.id,data.tableName,false,Number.MAX_SAFE_INTEGER,Number.MIN_SAFE_INTEGER);
+            const updateAdditionValue = await db.updateAddition(data.flag ? null : ids.channelId,data.tableName,false,Number.MAX_SAFE_INTEGER,Number.MIN_SAFE_INTEGER);
             if (!updateAdditionValue) {
                 return {result : false, message : 'ダイスの更新に失敗しました。'};
             }    

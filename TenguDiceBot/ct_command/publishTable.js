@@ -2,11 +2,11 @@ const DB = require('../DB/db_wrapper.js');
 const util = require('./command_utility');
 const spell = require('../util/util');
 const datatable = require('../tengu_dice/nd_datatable');
-exports.run = async function(message,data) {
+exports.run = async function(ids,data) {
     const db = DB.db;
 
     //テーブル検索
-    let table = await db.getUserTable(message.channel.id, data.tableName);
+    let table = await db.getUserTable(ids.channelId, data.tableName);
     if (!table) return { result: false, message: 'テーブルがありません。' };
 
     //テーブルを検索し、重複したらエラー
@@ -23,7 +23,7 @@ exports.run = async function(message,data) {
     let pub_table = {[data.tableName] : table};
     const publishTable = await db.publishTable(pub_table);
     if (!publishTable) return {result: false, message : 'テーブルの作成に失敗しました。bot管理者に連絡してください。'};
-    const deleteTable = await db.deleteTable(message.channel.id,data.tableName);
+    const deleteTable = await db.deleteTable(ids.channelId,data.tableName);
     if (!deleteTable) return {result: false, message : 'テーブルの削除に失敗しました。bot管理者に連絡してください。'};
 
     return { result: true, message : '「**' + data.tableName + '**」を全サーバーに公開しました。' };    

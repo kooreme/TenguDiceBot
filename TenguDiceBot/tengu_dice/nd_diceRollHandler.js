@@ -9,17 +9,17 @@ const HELP = /^help$/;
 /**
 diceRollHandler
 引数：String string ※メッセージ反応部はあらかじめ取り除くこと。
-      message message Discordのmessageオブジェクト
+      channelID 発言されたチャンネルのID
 戻り値：DiceRoll
 作成するべきDiceRollオブジェクトを決定する。
 */
 
-function diceRollHandler(string,message) {
+function diceRollHandler(string,channelID) {
 
     if (HELP.test(string)) return new Help();
     if (WASSHOI.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.WASSHOI);
     if (SEISEN.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.SEISEN);
-    else return new NDDiceRoll(string,message);
+    else return new NDDiceRoll(string,channelID);
 }
 
 module.exports = diceRollHandler;
