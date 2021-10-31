@@ -15,7 +15,7 @@ exports.run = async function(ids,data) {
     }
     //重複チェック
     //管理者範囲のチェック。該当したら消去禁止。
-    let permission_admin = permission.slice(0,2);
+    let permission_admin = permission.slice(0,3);
     let isAdmin = permission_admin.find((elem) => {return elem === data.userID});
     if (isAdmin) return {result : false, message : 'このユーザIDは削除を許可されていません。'};
     
@@ -27,6 +27,7 @@ exports.run = async function(ids,data) {
     //削除
     permission_user.splice(permission_user.findIndex((elem) => {return elem === data.userID}),1);
     permission = permission_admin.concat(permission_user);
+
 
     //パーミッションをアップデート
     const deletePermission = await db.updatePermission(data.flag ? null : ids.channelId,data.tableName,permission);

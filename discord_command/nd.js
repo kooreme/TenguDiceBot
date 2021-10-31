@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const ND_DiceRollHandler = require("../TenguDiceBot/tengu_dice/nd_diceRollHandler");
 const NJDiscordReply = require("../TenguDiceBot/tengu_dice/NJDiscordReply");
 const { setTimeout : wait } = require("timers/promises");
@@ -8,7 +7,7 @@ const OPTION_NAME = ["sentence"];
 const nd = {
     command : {
         name : "nd",
-        description : "天狗ダイスでダイスロールします",
+        description : "天狗ダイスでダイスロールします。",
         options : [
             {
                 type : "STRING",
@@ -20,7 +19,7 @@ const nd = {
     },
     /**
     * 
-    * @param {Discord.CommandInteraction} interaction 
+    * @param {import("discord.js").CommandInteraction} interaction 
     * @returns 
     */
      execute : async function(interaction) {

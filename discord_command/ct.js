@@ -1,6 +1,4 @@
-const Discord = require("discord.js");
 const CTCommand = require('../TenguDiceBot/ct_command/ctcommand');
-
 
 const OPTION_NAME = ["commands"]
 const ct = {
@@ -18,7 +16,7 @@ const ct = {
     },
     /**
     * 
-    * @param {Discord.CommandInteraction} interaction 
+    * @param {import("discord.js").CommandInteraction} interaction 
     * @returns 
     */
     execute : async function(interaction) {
@@ -34,18 +32,19 @@ const ct = {
             guildOwnerId : guild.ownerId,
         }
         //await interaction.editReply("テスト中");
+        const replacedCommand = String(interaction.options.get(OPTION_NAME[0])?.value).replace(/\<br\>/g,"\n");
         
-        const reply = await CTCommand.run(interaction.options.get(OPTION_NAME[0])?.value,ids)
+        const reply = await CTCommand.run(replacedCommand,ids)
         .catch((e) => "予期せぬエラーが発生しました。Bot管理者へ連絡してください。\n" + e) ;
         //通常はリプライ
         if(typeof reply === 'string') interaction.editReply(reply);
         //文字数が多く、１回で表示しきれない場合は複数回に分け、sendする。
         //checktablelist,checktabledataがこれになりそう。
         else {
-            reply.forEach((elm, i) => {
-                if (i === 0) interaction.editReply(elm);
-                else interaction.followUp(elm);
-            });
+            for (let i = 0; i < reply.length; i++) {
+                if (i === 0) await interaction.editReply(reply[i]);
+                else await interaction.followUp(reply[i]);
+            }
         }
         
     }

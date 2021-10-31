@@ -27,7 +27,6 @@ function createTableListString(table) {
 用例：
 **テーブル名**
 \`ショートカット名 : ダイス, [... ショートカット名 : ダイス]\`
------------------------------------------------------------
 `
     );
     message.push(createTableMessage('__**公開テーブル**__\n\n', table.public));
@@ -55,7 +54,6 @@ function createTableMessage(startMessage, object) {
     else {
         message += "（なし）\n\n";
     }
-    message += '-----------------------------------------------------------';
     
     return message;
 }

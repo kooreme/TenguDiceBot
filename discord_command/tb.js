@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const Record = require("../TenguDiceBot/tengu_bank/record");
 const { setTimeout : wait } = require("timers/promises");
 
@@ -19,7 +18,7 @@ const tb = {
     },
     /**
     * 
-    * @param {Discord.CommandInteraction} interaction 
+    * @param {import("discord.js").CommandInteraction} interaction 
     * @returns 
     */
      execute : async function(interaction) {

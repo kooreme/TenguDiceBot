@@ -1,13 +1,12 @@
-const Discord = require("discord.js");
 const ND_DiceRollHandler = require("../TenguDiceBot/tengu_dice/nd_diceRollHandler");
 const NJDiscordReply = require("../TenguDiceBot/tengu_dice/NJDiscordReply");
 const { setTimeout : wait } = require("timers/promises");
 
 const OPTION_NAME = ["table"];
 
-const ndf = {
+const fnd = {
     command : {
-        name : "ndf",
+        name : "fnd",
         description : "登録されている効果表から任意の出目で文言を引き出します。",
         options : [
             {
@@ -20,7 +19,7 @@ const ndf = {
     },
     /**
     * 
-    * @param {Discord.CommandInteraction} interaction 
+    * @param {import("discord.js").CommandInteraction} interaction 
     * @returns 
     */
      execute : async function(interaction) {
@@ -36,4 +35,4 @@ const ndf = {
     }
 };
 
-module.exports = ndf;
+module.exports = fnd;

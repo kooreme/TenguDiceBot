@@ -21,7 +21,7 @@ const client = new Client({
   intents: 0,
 });
 
-client.token = process.env.BOT_TOKEN_2 ?? process.env.BOT_TOKEN;
+client.token = process.env.BOT_TOKEN;
 async function main() {
   client.application = new ClientApplication(client, {});
   await client.application.fetch();
