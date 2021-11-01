@@ -24,12 +24,13 @@ const tb = {
      execute : async function(interaction) {
         if (!interaction.isCommand()) return;
         await interaction.deferReply();
-
-        let reply = await Record.receiveResponce(interaction.options.get(OPTION_NAME[0])?.value, interaction.channelId)
+        const {commandName} = interaction;
+        const option = interaction.options.get(OPTION_NAME[0])?.value;
+        let reply = await Record.receiveResponce(option, interaction.channelId)
         .catch(() => "予期せぬエラーが発生しました。Bot管理者へ連絡してください。");
         
         await wait(50);
-        await interaction.editReply(reply);
+        await interaction.editReply("`/" + commandName + " " + option + "`\n" + reply);
     }
 };
 

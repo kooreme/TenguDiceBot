@@ -31,18 +31,20 @@ const ct = {
             authorId : interaction.user.id,
             guildOwnerId : guild.ownerId,
         }
-        //await interaction.editReply("テスト中");
-        const replacedCommand = String(interaction.options.get(OPTION_NAME[0])?.value).replace(/\<br\>/g,"\n");
+        const {commandName} = interaction;
+        const option = interaction.options.get(OPTION_NAME[0])?.value;
+
+        const replacedCommand = String(option).replace(/\<br\>/g,"\n");
         
         const reply = await CTCommand.run(replacedCommand,ids)
         .catch((e) => "予期せぬエラーが発生しました。Bot管理者へ連絡してください。\n" + e) ;
         //通常はリプライ
-        if(typeof reply === 'string') interaction.editReply(reply);
+        if(typeof reply === 'string') await interaction.editReply("`/" + commandName + " " + option + "`\n" + reply);
         //文字数が多く、１回で表示しきれない場合は複数回に分け、sendする。
         //checktablelist,checktabledataがこれになりそう。
         else {
             for (let i = 0; i < reply.length; i++) {
-                if (i === 0) await interaction.editReply(reply[i]);
+                if (i === 0) await interaction.editReply("`/" + commandName + " " + option + "`\n" + reply[i]);
                 else await interaction.followUp(reply[i]);
             }
         }

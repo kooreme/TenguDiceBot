@@ -25,8 +25,9 @@ const nd = {
      execute : async function(interaction) {
         if (!interaction.isCommand()) return;
         await interaction.deferReply();
-
-        const NDDice = ND_DiceRollHandler(interaction.options.get(OPTION_NAME[0])?.value, interaction.channelId);
+        const {commandName} = interaction;
+        const option = interaction.options.get(OPTION_NAME[0])?.value;
+        const NDDice = ND_DiceRollHandler(option, interaction.channelId);
         
         let reply = await NJDiscordReply.createMessage(
             await NDDice.receiveDiceRoll()
@@ -34,7 +35,7 @@ const nd = {
         );
 
         await wait(50);
-        await interaction.editReply(reply);
+        await interaction.editReply("`/" + commandName + " " + option + "`\n" + reply);
         
         
     }
