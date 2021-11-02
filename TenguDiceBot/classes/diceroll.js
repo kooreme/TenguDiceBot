@@ -11,6 +11,7 @@ const MINUS = /-/g;
 
 class DiceRoll extends ReceiveDiceRollInterface {
 	constructor(string) {
+		super(string);
 		this.rawString = string;
 		this.string = string ? string.replace(/\s+/g, '') : undefined;
 		this.sumall = 0;
