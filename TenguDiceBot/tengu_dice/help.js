@@ -1,4 +1,4 @@
-const DiceRoll = require('../classes/diceroll');
+const Help = require('../classes/help');
 const help =
 "\n◆「天狗ダイス」ヘルプ◆\n" +
 "\n" +
@@ -28,6 +28,9 @@ const help =
 "/nd n4,3,3	難易度NORMALで4d6、3d6、3d6を評価します。難易度指定は k,e,n,h,u の５種類\n" +
 "/nd n4,3[s]	比較式 Appendixも対応。各ダイスロールに対してAppendixを付与して評価します。\n" +
 "\n" +
+"◆組み込みテーブル◆\n" +
+"\`/nd tablehelp\` で確認できます。\n" +
+"\n"+
 "◆その他◆\n" +
 "/nd wasshoi9	DKK9でWasshoi!判定。「wasshoi」の後ろに評価で使うDKK値をつけてください。\n" +
 "/nd n5,6[s5]#ヘンゲ連続攻撃	「#」の後ろにコメントを付けることもできます。\n" +
@@ -37,14 +40,5 @@ const help =
 "\n" +
 "◆天狗 is Watching You...";
 
-class Help extends DiceRoll {
-    constructor(string) {
-        super(string);
-    }
 
-    async receiveDiceRoll() {
-        return help;
-    }
-}
-
-module.exports = Help;
+module.exports = new Help(help);

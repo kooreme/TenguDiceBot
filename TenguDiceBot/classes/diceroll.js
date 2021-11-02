@@ -3,13 +3,13 @@
 const Log = require('../util/log');
 const util = require('../util/util');
 const Dice = require('./dice');
-
+const ReceiveDiceRollInterface = require("./receiveDiceRollInterface");
 
 const DICE_DIVIDE = /\+/g;
 const COMMENT = /#/;
 const MINUS = /-/g;
 
-class DiceRoll {
+class DiceRoll extends ReceiveDiceRollInterface {
 	constructor(string) {
 		this.rawString = string;
 		this.string = string ? string.replace(/\s+/g, '') : undefined;
