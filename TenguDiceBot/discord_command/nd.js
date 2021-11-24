@@ -1,5 +1,5 @@
-const ND_DiceRollHandler = require("../TenguDiceBot/tengu_dice/nd_diceRollHandler");
-const NJDiscordReply = require("../TenguDiceBot/tengu_dice/NJDiscordReply");
+const ND_DiceRollHandler = require("../tengu_dice/nd_diceRollHandler");
+const NJDiscordReply = require("../tengu_dice/NJDiscordReply");
 const { setTimeout : wait } = require("timers/promises");
 
 const OPTION_NAME = ["sentence"];
@@ -36,8 +36,7 @@ const nd = {
 
         await wait(50);
         await interaction.editReply("`/" + commandName + " " + option + "`\n" + reply);
-        
-        
+                
     }
 };
 

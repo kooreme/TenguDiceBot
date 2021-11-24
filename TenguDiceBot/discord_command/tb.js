@@ -1,4 +1,4 @@
-const Record = require("../TenguDiceBot/tengu_bank/record");
+const Record = require("../tengu_bank/record");
 const { setTimeout : wait } = require("timers/promises");
 
 const OPTION_NAME = ["command"];

@@ -1,4 +1,4 @@
-const CTCommand = require('../TenguDiceBot/ct_command/ctcommand');
+const CTCommand = require('../ct_command/ctcommand');
 
 const OPTION_NAME = ["commands"]
 const ct = {
