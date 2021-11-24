@@ -12,3 +12,4 @@ firebase*
 firestore*
 .firebaserc
 ui-debug.log
+*key.json
