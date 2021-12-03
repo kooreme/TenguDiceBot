@@ -31,26 +31,29 @@ class DB {
     return this._query(q);
   }
 
-  async updateToChannelLanguage(from,to,to_lang) {
+  //
+  async updateToChannelLanguage(from,to,from_lang,to_lang) {
     const q = {
       name : "update-channel-language",
-      text : "UPDATE channels SET language = $3 WHERE from_channel = $1 AND to_channel = $2;",
-      values : [from,to,to_lang],
+      text : "UPDATE channels SET from_language = $3, to_language = $4 WHERE from_channel = $1 AND to_channel = $2;",
+      values : [from, to, from_lang, to_lang],
     }
     //Promiseを返却
     return this._query(q);
   }
 
+  //チャンネルペアを１つ削除する。
   async deleteChannelPair(from,to) {
     const q = {
       name : "delete-channel-pair",
       text : "DELETE FROM channels WHERE from_channel = $1 AND to_channel = $2;",
-      values : [from,to],
+      values : [from, to],
     }
     //Promiseを返却
     return this._query(q);
   }
 
+  //このチャンネルと連携する全ペアを解除する。
   async deleteAllChannelPair(from) {
     const q = {
       name : "delete-all-channel-pair",
@@ -61,12 +64,33 @@ class DB {
     return this._query(q);
   }
 
+  //ギルド内の全ペアを削除する。
+  async deleteAllChannelPairInGuild(guildId) {
+    const q = {
+      name : "delete-all-pair-in-guild",
+      text : "DELETE FROM channels WHERE guild_id = $1;",
+      values : [guildId],
+    }
+    //Promiseを返却
+    return this._query(q);
+  }
+
+  //連携しているチャンネルのリストを取得する
+  async getChannelPairList(from) {
+    const q = {
+      name : "get-channel-pair-list",
+      text : "SELECT to_channel, from_language, to_language FROM channels WHERE from_channel = $1;",
+      values : [from],
+    }
+    return this._query(q).then(r => r.rows);
+  }
+
   //ChannelPairが存在していたらtrueを返す。存在しなかったらfalseを返す。
   async isExistChannelPair(from,to) {
     const q = {
       name : "delete-all-channel-pair",
       text : "SELECT COUNT(*) FROM channels WHERE from_channel = $1 AND to_channel = $2;",
-      values : [from,to],
+      values : [from, to],
     }
     
     return this._query(q).then(r => !!(r.rows[0].count > 0));

@@ -16,13 +16,6 @@ async function register(client, commands, guildID) {
   return guild.commands.set(commands);
 }
 
-const commands = getCommands();
-const client = new Client({
-  intents: 0,
-});
-
-client.token = process.env.BOT_TOKEN_2;
-
 function getCommands() {
   const array = [];
   for (let s in slashCommands) {
@@ -30,6 +23,10 @@ function getCommands() {
   }
   return array;
 }
+
+const commands = getCommands();
+const client = new Client({ intents: 0 });
+client.token = process.env.BOT_TOKEN_2;
 
 (async function() {
   client.application = new ClientApplication(client, {});

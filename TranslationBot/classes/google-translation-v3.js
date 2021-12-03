@@ -37,8 +37,7 @@ class TransWrapper {
     gTrans = gTrans.map(el => el.translatedText);
     trans = trans.map(el => el.translatedText);
 
-    console.log("glossaryTranslations : ", gTrans);
-    console.log("Translations : ", trans);
+    console.log(gTrans,trans);
 
     //Discordに2000字制限があるため、バッファ10文字を取って弾く
     if (!(gTrans.every(el => el?.length < 1990))) {
@@ -75,7 +74,8 @@ class TransWrapper {
     }
     const exist = await this.translate.getSupportedLanguages(request)
       .then(response => {
-        return response[0].languages.map(el => el.languageCode).includes(target)})
+        return response[0].languages.map(el => el.languageCode).includes(target)
+      })
       .catch((e) => {
         console.log(e);
         return false;
