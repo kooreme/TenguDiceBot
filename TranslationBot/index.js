@@ -40,7 +40,7 @@ async function onMessageCreate(message) {
     const id = t.to_channel;
     toChannel = await message.client.channels.fetch(id);
     for (content of translatedContent) {
-      await toChannel.send(`**${message.author.username}** :\n${content}\n  ${message.content}`).catch(e => console.error(e));
+      await toChannel.send(`**${message.member.nickname}** :\n${content}\n  ${message.content}`).catch(e => console.error(e));
 //      await toChannel.send(`||${message.url}||\n${message.author.username} :\n${content}`).catch(e => console.error(e));
     }
   }
