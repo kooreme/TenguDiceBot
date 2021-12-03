@@ -35,12 +35,13 @@ async function onMessageCreate(message) {
   //翻訳先チャンネルがないなら弾く
   if (test.length === 0) return;
 
+  const nickname = message.member.nickname ?? message.author.username;
   for (const t of test) {
     const translatedContent = await tw.translateText(message.content,t.from_language, t.to_language)
     const id = t.to_channel;
     toChannel = await message.client.channels.fetch(id);
     for (content of translatedContent) {
-      await toChannel.send(`**${message.member.nickname}** :\n${content}\n  ${message.content}`).catch(e => console.error(e));
+      await toChannel.send(`**${nickname}** :\n${content}\n  ${message.content}`).catch(e => console.error(e));
 //      await toChannel.send(`||${message.url}||\n${message.author.username} :\n${content}`).catch(e => console.error(e));
     }
   }
