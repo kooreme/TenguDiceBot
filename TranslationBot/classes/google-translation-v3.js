@@ -45,7 +45,7 @@ class TransWrapper {
       [gTrans] = await this._translate(ERROR.overMaxLength, target);
       gTrans = gTrans.translations.map(el => el.translatedText);
     }
-    //translations = translations.map(t => t.replaceAll(/(<).*?([@#]{1}).*?(!{0,1}).*?(\d*?>)/g, "$1$2$3$4 "))
+    gTrans = gTrans.map(t => t.replaceAll(/(<).*?([@#!]{1,2}).*?(\d*?>)/g, "$1$2$3 "));
     return gTrans;
   }
 
