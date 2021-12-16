@@ -27,6 +27,13 @@ client.login(process.env.BOT_TOKEN_2).catch(err => {
  * @param {import("discord.js").Message} message 
  */
 async function onMessageCreate(message) {
+
+  //message.contentが空なら中身を再度fetch。それでも空なら弾く。
+  if(message.content === "")  {
+    message = await message.fetch(true);
+    console.log("Message fetched");
+    if (message.content === "") return;
+  }
   console.log(message);
   //自分自身を弾く
   if(NG_ID.includes(message.author.id)) return;
