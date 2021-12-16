@@ -61,9 +61,10 @@ class TransWrapper {
         glossary: `projects/${projectId}/locations/${location}/glossaries/${glossaryId}`,
       },
     };
+    console.log(request);
     const [test] = await this.translate.translateText(request).catch(e => {
       console.error(e);
-      return ERROR.APIError;
+      return {glossaryTranslations : ERROR.APIError};
     });
     return [test.glossaryTranslations, test.translations]; 
   }
