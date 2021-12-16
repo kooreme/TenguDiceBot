@@ -35,7 +35,7 @@ class TransWrapper {
 
     let [gTrans,trans] = await this._translate(text, from, target);
     gTrans = gTrans.map(el => el.translatedText);
-    trans = trans.map(el => el.translatedText);
+    trans = trans?.map(el => el.translatedText);
 
     console.log(gTrans,trans);
 

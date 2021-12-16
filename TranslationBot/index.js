@@ -27,6 +27,7 @@ client.login(process.env.BOT_TOKEN_2).catch(err => {
  * @param {import("discord.js").Message} message 
  */
 async function onMessageCreate(message) {
+  console.log(message);
   //自分自身を弾く
   if(NG_ID.includes(message.author.id)) return;
   //許可したbot以外を弾く
