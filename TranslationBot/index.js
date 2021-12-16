@@ -32,9 +32,10 @@ async function onMessageCreate(message) {
   if(message.content === "")  {
     message = await message.fetch(true);
     console.log("Message fetched");
+    console.log(message);
     if (message.content === "") return;
   }
-  console.log(message);
+
   //自分自身を弾く
   if(NG_ID.includes(message.author.id)) return;
   //許可したbot以外を弾く
