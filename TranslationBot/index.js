@@ -17,6 +17,8 @@ client.on("interactionCreate", interaction => onInteraction(interaction).catch(e
 
 client.on("messageCreate", message => onMessageCreate(message).catch(err => console.error(err)));
 
+client.on("messageUpdate", (oldMessage,newMessage) => onMessageUpdate(oldMessage,newMessage).catch(err => console.error(err)));
+
 client.login(process.env.BOT_TOKEN_2).catch(err => {
   console.error(err);
   process.exit(-1);
@@ -28,18 +30,31 @@ client.login(process.env.BOT_TOKEN_2).catch(err => {
  */
 async function onMessageCreate(message) {
 
-  //message.contentが空なら中身を再度fetch。それでも空なら弾く。
-  if(message.content === "")  {
-    message = await message.fetch(true);
-    console.log("Message fetched");
-    console.log(message);
-    if (message.content === "") return;
-  }
-
+  //message.contentが空なら弾く。（deferReply->editReplyについてはmessageUpdateでケアする。）
+  if(message.content === "") return;
   //自分自身を弾く
   if(NG_ID.includes(message.author.id)) return;
   //許可したbot以外を弾く
   if(message.author.bot && !(PERMIT_BOT_ID.includes(message.author.id))) return;
+
+  console.log("onMessageCreate -> sendTranslatedText");
+  sendTranslatedText(message);
+}
+
+async function onMessageUpdate(oldMessage,newMessage) {
+  //許可したbotで、oldMessage.contentが空で、newMessage.contentが空でない場合のみ許可する。
+  if(newMessage.author.bot &&
+    PERMIT_BOT_ID.includes(newMessage.author.id) &&
+    oldMessage.content === "" &&
+    newMessage.content !== "") 
+  {
+    console.log("onMessageUpdate -> sendTranslatedText");
+    sendTranslatedText(newMessage);    
+  }
+}
+
+async function sendTranslatedText(message) {
+
   const test = await DB.fetchChannels(message.channelId);
   //翻訳先チャンネルがないなら弾く
   if (test.length === 0) return;
