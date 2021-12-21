@@ -8,8 +8,10 @@ const NG_ID = ["902543000176050176"];
 const PERMIT_BOT_ID = ["547091962277396490","546661972498841601","470521294119501845"];
 
 const client = new Discord.Client({
-  intents: ["GUILDS", "GUILD_MESSAGES"],
+  intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_WEBHOOKS"],
 });
+
+const cacheWebhooks = new Map();
 
 client.on("ready", () => console.log("翻訳bot ready!"));
 
@@ -55,20 +57,43 @@ async function onMessageUpdate(oldMessage,newMessage) {
 
 async function sendTranslatedText(message) {
 
-  const test = await DB.fetchChannels(message.channelId);
+  const toPostChannels = await DB.fetchChannels(message.channelId);
   //翻訳先チャンネルがないなら弾く
-  if (test.length === 0) return;
+  if (!toPostChannels || toPostChannels.length === 0) return;
 
   const nickname = message.member.nickname ?? message.author.username;
-  for (const t of test) {
+  const avatarURL = message.author.avatarURL({dynamic : true});
+  for (const t of toPostChannels) {
     const translatedContent = await tw.translateText(message.content,t.from_language, t.to_language)
     const id = t.to_channel;
     toChannel = await message.client.channels.fetch(id);
+    const webhook = await getWebhookInChannel(toChannel);
+    console.log(webhook);
+
     for (content of translatedContent) {
-      await toChannel.send(`**${nickname}** :\n${content}\n  ${message.content}`).catch(e => console.error(e));
+      webhook.send({
+        content : `${content}\n${message.content}`,
+        username : `${nickname}(translate)`,
+        avatarURL : avatarURL,
+      }).catch(e => console.error(e));
+      
+          
+//      await toChannel.send(`**${nickname}** :\n${content}\n  ${message.content}`).catch(e => console.error(e));
 //      await toChannel.send(`||${message.url}||\n${message.author.username} :\n${content}`).catch(e => console.error(e));
     }
   }
+}
+
+async function getWebhookInChannel(channel) {
+    const webhook = cacheWebhooks.get(channel.id) ?? await getWebhook(channel)
+    return webhook;
+}
+
+async function getWebhook(channel) {
+  const webhooks = await channel.fetchWebhooks();
+  const webhook = webhooks?.find((v) => v.token) ?? await channel.createWebhook("Translation bot Jake");
+  if (webhook) cacheWebhooks.set(channel.id, webhook);
+  return webhook;
 }
 
 async function onInteraction(interaction) {
