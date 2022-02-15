@@ -4,8 +4,6 @@ const { TranslationServiceClient: Translate } = require('@google-cloud/translate
 
 const keyDir = process.cwd();
 const keyJson = keyDir + "/key.json";
-//console.log(process.env.TRANSLATION_KEY_1);
-//console.log(process.env.TRANSLATION_KEY_2);
 const key = process.env.TRANSLATION_KEY_1 + process.env.TRANSLATION_KEY_2;
 const projectId = process.env.TRANSLATION_PROJECT_ID;
 const location = process.env.TRANSLATION_LOCATION;
@@ -15,10 +13,9 @@ const glossaryPrefix = process.env.TRANSLATION_GLOSSARY_ID_NJ_PREFIX;
 try {
   if (!fs.existsSync(keyJson)) {
     fs.writeFileSync(keyJson, key);
-    console.log('write end');
   }
 } catch (e) {
-  console.log(e);
+  console.error(e);
 }
 
 const ERROR = {
@@ -37,7 +34,6 @@ class TransWrapper {
     gTrans = gTrans.map(el => el.translatedText);
     trans = trans?.map(el => el.translatedText);
 
-    console.log(gTrans,trans);
 
     //Discordに2000字制限があるため、バッファ10文字を取って弾く
     if (!(gTrans.every(el => el?.length < 1990))) {
@@ -61,7 +57,6 @@ class TransWrapper {
         glossary: `projects/${projectId}/locations/${location}/glossaries/${glossaryId}`,
       },
     };
-    console.log(request);
     const [test] = await this.translate.translateText(request).catch(e => {
       console.error(e);
       return {glossaryTranslations : ERROR.APIError};
@@ -78,7 +73,7 @@ class TransWrapper {
         return response[0].languages.map(el => el.languageCode).includes(target)
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
         return false;
       });
     return exist;
