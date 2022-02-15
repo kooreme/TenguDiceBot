@@ -39,7 +39,6 @@ async function onMessageCreate(message) {
   //許可したbot以外を弾く
   if(message.author.bot && !(PERMIT_BOT_ID.includes(message.author.id))) return;
 
-  console.log("onMessageCreate -> sendTranslatedText");
   sendTranslatedText(message);
 }
 
@@ -50,7 +49,6 @@ async function onMessageUpdate(oldMessage,newMessage) {
     oldMessage.content === "" &&
     newMessage.content !== "") 
   {
-    console.log("onMessageUpdate -> sendTranslatedText");
     sendTranslatedText(newMessage);    
   }
 }
@@ -68,18 +66,13 @@ async function sendTranslatedText(message) {
     const id = t.to_channel;
     toChannel = await message.client.channels.fetch(id);
     const webhook = await getWebhookInChannel(toChannel);
-    console.log(webhook);
 
     for (content of translatedContent) {
       webhook.send({
         content : `${content}\n${message.content}`,
         username : `${nickname}(translate)`,
         avatarURL : avatarURL,
-      }).catch(e => console.error(e));
-      
-          
-//      await toChannel.send(`**${nickname}** :\n${content}\n  ${message.content}`).catch(e => console.error(e));
-//      await toChannel.send(`||${message.url}||\n${message.author.username} :\n${content}`).catch(e => console.error(e));
+      }).catch(e => console.error(e));     
     }
   }
 }
