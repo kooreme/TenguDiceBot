@@ -1,2 +1,2 @@
-require("./TenguDiceBot/register");
-require("./TranslationBot/register");
+//require("./TenguDiceBot/register");
+//require("./TranslationBot/register");
