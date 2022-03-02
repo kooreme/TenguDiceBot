@@ -50,4 +50,7 @@ C…D6+1でダイスロール。
 \`/ct checktablelist\`
 `;
 
+/**
+ * @exports ReceiveDiceRollInterface Helpクラス
+ */
 module.exports = new Help(help);

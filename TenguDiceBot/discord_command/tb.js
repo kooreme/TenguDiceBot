@@ -34,4 +34,7 @@ const tb = {
     }
 };
 
+/**
+ * @exports TenguSlashCommand
+ */
 module.exports = tb;

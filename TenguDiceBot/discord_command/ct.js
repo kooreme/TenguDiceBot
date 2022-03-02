@@ -1,6 +1,8 @@
+
 const CTCommand = require('../ct_command/ctcommand');
 
 const OPTION_NAME = ["commands"]
+
 const ct = {
     command : {
         name : "ct",
@@ -26,6 +28,12 @@ const ct = {
 
         const guild = await interaction.client.guilds.fetch({ guild: interaction.guildId , force: true});
 
+        /**
+         * @typedef {Object} DiscordIdEnum
+         * @property {string} channelId
+         * @property {string} authorId
+         * @property {string} guildOwnerId
+         */
         const ids = {
             channelId : interaction.channelId,
             authorId : interaction.user.id,
@@ -52,5 +60,7 @@ const ct = {
     }
         
 };
-
+/**
+ *  @exports TenguSlashCommand
+ */
 module.exports = ct;

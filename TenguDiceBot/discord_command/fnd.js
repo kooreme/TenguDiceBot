@@ -37,4 +37,7 @@ const fnd = {
     }
 };
 
+/**
+ * @exports TenguSlashCommand
+ */
 module.exports = fnd;

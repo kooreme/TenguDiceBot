@@ -22,7 +22,6 @@ class NDDiceRoll extends SearchTableDiceRoll {
 	}
 
 	async _NormalDiceRoll() {
-		//	let returnString = '';
 		//コマンド表が無いか確認する。
 		this.string = await this.checkTable(this.string);
 		//ショートカットコマンドを翻訳する

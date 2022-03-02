@@ -2,6 +2,7 @@ const NDDiceRoll = require("./nd_diceroll");
 const WasshoiDiceRoll = require('./wasshoi');
 const help = require("./help");
 const tableHelp = require("./tablehelp");
+const Help = require("../classes/help");
 
 const WASSHOI = /^wasshoi\d+$/i;
 const SEISEN = /^seisen\d+$/i
@@ -9,11 +10,11 @@ const HELP = /^help$/i;
 const TABLEHELP = /^tablehelp$/i;
 
 /**
-diceRollHandler
-引数：String string ※メッセージ反応部はあらかじめ取り除くこと。
-      channelID 発言されたチャンネルのID
-戻り値：DiceRoll
-作成するべきDiceRollオブジェクトを決定する。
+ * 作成するべきDiceRollオブジェクトを決定する。
+ * @exports
+ * @param {string} string ※メッセージ反応部はあらかじめ取り除くこと。
+ * @param {import("discord.js").Snowflake} channelID
+ * @returns {NDDiceRoll|Help} NDDiceRollクラス、または説明用インターフェースを実装したクラス
 */
 
 function diceRollHandler(string,channelID) {

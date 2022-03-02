@@ -1,6 +1,11 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-eq-null */
 const error = require('../util/errormessage');
+/**
+ * @typedef {Object} CtCommandManager
+ * @method run
+ */
+/** @ */
 const Command = {
     'addpermission' : require('./addPermission'),
     'checktabledata' : require('./checkTableData'),
@@ -21,6 +26,8 @@ const Command = {
  * コマンドを解釈し、実行する。
  * コマンドを実行できる正しい文字列であるかを
  * チェックし、問題なければ各コマンドを実行する。
+ * @param {string} content
+ * @param {DiscortIdEnum} ids
  */
 exports.run = async function(content,ids){
     content = content.replace(/(?<!\\)\x20/g,"");

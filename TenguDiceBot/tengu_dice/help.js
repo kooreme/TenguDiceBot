@@ -40,5 +40,7 @@ const help =
 "\n" +
 "◆天狗 is Watching You...";
 
-
+/**
+ * @exports ReceiveDiceRollInterface Helpクラス
+ */
 module.exports = new Help(help);

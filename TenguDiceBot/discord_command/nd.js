@@ -20,7 +20,7 @@ const nd = {
     /**
     * 
     * @param {import("discord.js").CommandInteraction} interaction 
-    * @returns 
+    * @returns {void}
     */
      execute : async function(interaction) {
         if (!interaction.isCommand()) return;
@@ -40,4 +40,7 @@ const nd = {
     }
 };
 
+/**
+ * @exports TenguSlashCommand
+ */
 module.exports = nd;
