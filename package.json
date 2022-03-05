@@ -9,8 +9,7 @@
   },
   "scripts": {
     "start": "node register.js && node index.js",
-    "firebase-start": "firebase emulators:start --import=firebase --export-on-exit",
-    "pg-open" : "heroku pg:psql postgresql-infinite-18423 --app intense-falls-31533"
+    "firebase-start": "firebase emulators:start --import=firebase --export-on-exit"
   },
   "dependencies": {
     "@google-cloud/translate": "^6.3.1",
