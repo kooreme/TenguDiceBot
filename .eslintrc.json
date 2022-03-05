@@ -1,8 +1,12 @@
 {
+    "extends": [
+        "eslint:recommended",
+        "prettier"
+    ],
     "env": {
-        "browser": true,
+        "node": true,
         "commonjs": true,
-        "es2021": true
+        "es2022": true
     },
     "parserOptions": {
         "ecmaVersion": "latest"
