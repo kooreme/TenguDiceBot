@@ -9,7 +9,9 @@
   },
   "scripts": {
     "start": "node register.js && node index.js",
-    "firebase-start": "firebase emulators:start --import=firebase --export-on-exit"
+    "firebase-start": "firebase emulators:start --import=firebase --export-on-exit",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
   },
   "dependencies": {
     "@google-cloud/translate": "^6.3.1",
@@ -26,6 +28,8 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-promise": "^5.1.0",
     "firebase-functions-test": "^0.3.2",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.4",
     "prettier": "^2.5.1"
   }
 }
