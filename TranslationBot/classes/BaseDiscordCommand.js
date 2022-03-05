@@ -1,3 +1,6 @@
+/**
+ * コマンド定義を行うクラスの継承元です．
+ */
 class BaseDiscordCommand {
     command;
     constructor() {}
