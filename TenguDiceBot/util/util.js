@@ -1,4 +1,5 @@
 const Log = require('./log.js');
+const error = require("./errormessage");
 
 exports.ERROR_FLAG = 'Error';
 exports.EVERY_APPENDIX = /(\[.*\]$)/;
@@ -52,4 +53,13 @@ exports.checkSintax = function (diceNum,diceMen) {
 exports.spellCheck = function(string) {
 	if (/#/.test(string)) return string.replace(/[！!表・](?=.*?#)/g, '');
 	else return string.replace(/[！!表・]/g, '');
+}
+
+exports.isSendableMessage = function(string, err = error) {
+	let str = string;
+    if (str.length >= 2000) {
+        Log.prints('文字数制限オーバー（2000字）');
+        str = err.replyErrorMessage() + '\n（文字数制限をオーバーしました。振るダイスの発言を分割してください）';
+    }
+	return str;
 }

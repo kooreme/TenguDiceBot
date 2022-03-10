@@ -60,20 +60,14 @@ function createOutput(dice, comment) {
     let diceStr = "";
     let sumall = 0;
     for (const d of dice) {
-        diceStr += (d.isMinus ? "－" : "＋") + "\n`" + d.trancedString + "` = " + d + "\n";
+        diceStr += (diceStr ? (d.isMinus ? "`－" : "`＋") : "`") + d.trancedString + "` = " + d + "\n";
         sumall += (d.isMinus ? -1 : 1) * Number(d.sum);
     }
-    diceStr = diceStr.substring(2);
+    //diceStr = diceStr.substring(2);
 
     str += diceStr + "合計値：" + sumall;
 
-    if (str.length >= 2000) {
-        Log.prints('文字数制限オーバー（2000字）');
-        str = error.replyErrorMessage() + '\n（文字数制限をオーバーしました。振るダイスの発言を分割してください）';
-    }
-
-    return str;
-
+    return util.isSendableMessage(str, error);
 }
 
 

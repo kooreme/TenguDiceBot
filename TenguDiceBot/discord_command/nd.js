@@ -1,6 +1,8 @@
 const ND_DiceRollHandler = require("../tengu_dice/nd_diceRollHandler");
 const NJDiscordReply = require("../tengu_dice/NJDiscordReply");
 const { setTimeout : wait } = require("timers/promises");
+const {isSendableMessage} = require("../util/util");
+const error = require("../tengu_dice/nd_errormessage");
 
 const OPTION_NAME = ["sentence"];
 
@@ -35,7 +37,7 @@ const nd = {
         );
 
         await wait(50);
-        await interaction.editReply("`/" + commandName + " " + option + "`\n" + reply);
+        await interaction.editReply(isSendableMessage("`/" + commandName + " " + option + "`\n" + reply, error));
                 
     }
 };
