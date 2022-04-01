@@ -24,9 +24,9 @@
     "require-dir": "^1.2.0"
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
+    "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-promise": "^6.0.0",
     "firebase-functions-test": "^0.3.2",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.4",
