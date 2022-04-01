@@ -4,8 +4,6 @@ const help = require("./help");
 const tableHelp = require("./tablehelp");
 const Help = require("../classes/help");
 
-const WASSHOI = /^wasshoi\d+$/i;
-const SEISEN = /^seisen\d+$/i
 const HELP = /^help$/i;
 const TABLEHELP = /^tablehelp$/i;
 
@@ -21,8 +19,8 @@ function diceRollHandler(string,channelID) {
 
     if (HELP.test(string)) return help;
     if (TABLEHELP.test(string)) return tableHelp;
-    if (WASSHOI.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.WASSHOI);
-    if (SEISEN.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.SEISEN);
+    if (WasshoiDiceRoll.KIND.WASSHOI.kindRegExp.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.WASSHOI);
+    if (WasshoiDiceRoll.KIND.SEISEN.kindRegExp.test(string)) return new WasshoiDiceRoll(string, WasshoiDiceRoll.KIND.SEISEN);
     else return new NDDiceRoll(string,channelID);
 }
 

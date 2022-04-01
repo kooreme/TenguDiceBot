@@ -31,6 +31,8 @@ NJDiscordReply.createFixedDiceMessage = async (diceroll) => {
 }
 
 function createOutput(dice, comment) {
+
+    /*
     let str = '';
     let diceStr = '';
     let sumall = 0;
@@ -51,16 +53,24 @@ function createOutput(dice, comment) {
     //先頭3文字（' + '）を除去
     str = str.substring(SPACE_PLUS_SPACE.length, str.length);
     diceStr = diceStr.substring('+'.length, diceStr.length);
-    str = comment + '：`' + diceStr + '` = ' + str + ' = ' + sumall;
+    str = comment + '：\n`' + diceStr + '` = ' + str + ' = ' + sumall;
+    */
 
-    if (str.length >= 2000) {
-        Log.prints('文字数制限オーバー（2000字）');
-        str = error.replyErrorMessage() + '\n（文字数制限をオーバーしました。振るダイスの発言を分割してください）';
+    let str = "" + comment + "：\n";
+    let diceStr = "";
+    let sumall = 0;
+    for (const d of dice) {
+        diceStr += (diceStr ? (d.isMinus ? "`－" : "`＋") : "`") + d.trancedString + "` = " + d + "\n";
+        sumall += (d.isMinus ? -1 : 1) * Number(d.sum);
     }
+    //diceStr = diceStr.substring(2);
 
-    return str;
+    str += diceStr + "合計値：" + sumall;
 
+    return util.isSendableMessage(str, error);
 }
+
+
 
 function addTableOutput(diceroll) {
     let returnString = '';

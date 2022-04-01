@@ -32,7 +32,7 @@ class WasshoiDiceRoll extends DiceRoll {
 		super(string);
 		if (kind == null) throw new Error('WasshoiDiceRoll : Invalid KIND');
 		this.kind = kind;
-		this.dkk = Number(this.string.substring(kind.kindString.length));
+		this.dkk = Number(this.string.replace(kind.kindRegExp, "$1"));
 		if (isNaN(this.dkk)) throw new Error('WasshoiDiceRoll : Invalid DKK');
 	}
 
@@ -50,12 +50,12 @@ class WasshoiDiceRoll extends DiceRoll {
 
 WasshoiDiceRoll.KIND = {
 	WASSHOI : {
-		kindString : 'wasshoi',
+		kindRegExp : /^wasshoi[!！]?(\d+)$/i,
 		judgeName : 'Wasshoi!判定',
 		successMessage : '\n\n:japanese_goblin: 「今だ、ニンジャスレイヤー＝サン！」\n\n**「Wasshoi!」**',
 	},
 	SEISEN : {
-		kindString : 'seisen',
+		kindRegExp : /^seisen(\d+)$/i,
 		judgeName : '聖戦判定',
 		successMessage : '\n\n:japanese_goblin: **「……神々の使者、ヤクザ天狗参上！」** :japanese_goblin:',
 	},
