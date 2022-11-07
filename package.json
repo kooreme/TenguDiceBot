@@ -14,22 +14,22 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
-    "@google-cloud/translate": "^6.3.1",
-    "async": "^3.2.1",
-    "discord.js": "^13.1.0",
+    "@google-cloud/translate": "^7.0.3",
+    "async": "^3.2.4",
+    "discord.js": "^13.12.0",
     "extensible-custom-error": "0.0.7",
-    "firebase-admin": "^9.11.1",
+    "firebase-admin": "^11.2.0",
     "fs": "0.0.1-security",
-    "pg": "^8.7.1",
+    "pg": "^8.8.0",
     "require-dir": "^1.2.0"
   },
   "devDependencies": {
-    "eslint": "^8.10.0",
+    "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "firebase-functions-test": "^0.3.2",
-    "husky": "^7.0.4",
-    "lint-staged": "^12.3.4",
-    "prettier": "^2.5.1"
+    "eslint-plugin-promise": "^6.1.1",
+    "firebase-functions-test": "^3.0.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1"
   }
 }
