@@ -4,7 +4,7 @@
   "description": "It is the dicebot for NinjaSlayer TRPG",
   "main": "src/index.js",
   "engines": {
-    "node": ">=16.x",
+    "node": ">=18.12.x",
     "npm": ">=7.x"
   },
   "scripts": {
