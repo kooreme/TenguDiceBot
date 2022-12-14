@@ -1,8 +1,6 @@
 # TenguDiceBot and TranslationBot
 ## TenguDiceBot
 It is Discord dice bot used by Ninja-Slayer TRPG.
-## TranslationBot
-It is bot to translate Discord's messages in any registed channel.
 
 # Usage
 https://note.com/kooreme/n/ncec59ad4ca8d
