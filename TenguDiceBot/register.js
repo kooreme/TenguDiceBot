@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Client, ClientApplication } = require("discord.js");
 const requireDir = require("require-dir");
 const slashCommands = requireDir("./discord_command");
