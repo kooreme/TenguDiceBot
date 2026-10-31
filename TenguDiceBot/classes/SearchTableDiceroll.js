@@ -27,8 +27,8 @@ class SearchTableDiceRoll extends DiceRoll {
         let tempString = string;
 
         let tableName;
-        let returnString = "";
-        let diceKind = "a";
+        let returnString;
+        let diceKind;
         let additionValue;
         Log.prints("before spellCheck : " + tempString);
         tempString = util.spellCheck(tempString);
