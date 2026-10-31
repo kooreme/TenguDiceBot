@@ -1,11 +1,10 @@
 const DB = require("../DB/db_wrapper");
 exports.run = async function (ids) {
-    let db = DB.db;
-
+    const db = DB.db;
     //publicの全テーブルと、現チャンネルのプライベートテーブルを取得
-    let table = await db.getAllTable(ids.channelId);
+    const table = await db.getAllTable(ids.channelId);
     //メッセージを作成
-    let returnString = createTableListString(table);
+    const returnString = createTableListString(table);
 
     return { result: true, message: returnString };
 };
@@ -20,7 +19,7 @@ exports.adjust = function () {
 };
 
 function createTableListString(table) {
-    let message = [];
+    const message = [];
     message.push(
         `◆テーブル一覧◆
 用例：
@@ -28,31 +27,38 @@ function createTableListString(table) {
 \`ショートカット名 : ダイス, [... ショートカット名 : ダイス]\`
 `
     );
-    message.push(createTableMessage("__**公開テーブル**__\n\n", table.public));
     message.push(
-        createTableMessage("__**チャンネル内テーブル**__\n\n", table.private)
+        ...createTableMessage("__**公開テーブル**__\n\n", table.public)
+    );
+    message.push(
+        ...createTableMessage("__**チャンネル内テーブル**__\n\n", table.private)
     );
 
     return message;
 }
 
 function createTableMessage(startMessage, object) {
+    const messages = [];
     let message = startMessage;
     if (object) {
         Object.keys(object).forEach((key) => {
             message += `**${key}**\n\``;
             let isFirst = true;
-            for (let [name, value] of Object.entries(object[key].dice)) {
+            for (const [name, value] of Object.entries(object[key].dice)) {
                 if (isFirst) {
                     message += `${name} : ${value}`;
                     isFirst = false;
                 } else message += ` , ${name} : ${value}`;
             }
             message += "`\n";
+            if (message.length >= 1900) {
+                messages.push(message);
+                message = "";
+            }
         });
     } else {
         message += "（なし）\n\n";
     }
-
-    return message;
+    messages.push(message);
+    return messages;
 }
