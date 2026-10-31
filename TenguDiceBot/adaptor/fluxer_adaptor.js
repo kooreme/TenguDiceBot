@@ -7,22 +7,6 @@ const PREFIX = "/";
 const commands = getExecuteCommands();
 
 /**
- * @typedef {Object} TenguSlashCommand
- * @property {Object} command
- * @method execute
- */
-
-/**
- * @typedef {Object} TenguSlashCommands
- * @property {TenguSlashCommand} ct
- * @property {TenguSlashCommand} fnd
- * @property {TenguSlashCommand} nd
- * @property {TenguSlashCommand} snd
- * @property {TenguSlashCommand} tb
- */
-
-/**
- * @param {Discord.CommandInteraction} message
  * @returns {void}
  */
 async function onMessage(message) {
@@ -31,15 +15,32 @@ async function onMessage(message) {
     const parsed = parsePrefixCommand(message.content, PREFIX);
     if (!parsed) return;
 
-    const { command, args } = parsed;
+    const { command } = parsed;
+    const args = [parsed.args.join("")];
 
     if (commands[command] && args.length === 1) {
         const commandArgs = {
             commandName: command,
             sentence: args[0],
             channelId: message.channelId,
+            guildOwnerId: message.guild.ownerId,
+            authorId: message.author.id,
         };
-        await message.reply(await commands[command](commandArgs));
+        await respond(message, await commands[command](commandArgs));
+    }
+}
+
+// 返信の仕方はここだけに集約
+async function respond(message, result) {
+    if (!result) return;
+
+    // 文字列でも配列でも、配列に正規化して扱う
+    const chunks = Array.isArray(result) ? result : [result];
+
+    const [first, ...rest] = chunks;
+    await message.reply(first); // 1通目だけ reply
+    for (const chunk of rest) {
+        await message.channel.send(chunk); // 2通目以降は send
     }
 }
 
