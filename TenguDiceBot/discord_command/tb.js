@@ -27,7 +27,7 @@ const tb = {
         await interaction.deferReply();
         const { commandName } = interaction;
         const option = interaction.options.get(OPTION_NAME[0])?.value;
-        let reply = await Record.receiveResponce(
+        let reply = await Record.receiveResponse(
             option,
             interaction.channelId
         ).catch(

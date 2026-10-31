@@ -9,7 +9,7 @@ const M_MINUSNUMBER = /^m-\d+$/;
 const I_PLUSITEM = /^i\+.+$/;
 const I_MINUSITEM = /^i-.+$/;
 
-exports.receiveResponce = async function (content, channelID) {
+exports.receiveResponse = async function (content, channelID) {
     content = content.replace(/\s+/g, "");
     const splitRequestArray = splitRequest(content);
     Log.printsDir(splitRequestArray, true);
