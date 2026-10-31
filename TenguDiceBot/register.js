@@ -10,21 +10,18 @@ const slashCommands = requireDir("./discord_command");
  * @returns {Promise<import("@discordjs/collection").Collection<string,import("discord.js").ApplicationCommand>>}
  */
 async function register(client, commands, guildID) {
-    if (guildID == null) {
-        return client.application.commands.set(commands);
-    }
-    const guild = await client.guilds.fetch(guildID);
-    return guild.commands.set(commands);
+    // 第2引数に guildId を渡せば、guild を fetch せずにギルドコマンドを登録できる
+    return client.application.commands.set(commands, guildID ?? undefined);
 }
 
 const commands = getCommands();
 const client = new Client({
-    intents: 0,
+    intents: [],
 });
 
 const TEST = process.env.TEST_GUILD_ID ?? null;
-client.token = process.env.BOT_TOKEN;
 async function main() {
+    client.rest.setToken(process.env.BOT_TOKEN);
     client.application = new ClientApplication(client, {});
     await client.application.fetch();
     await register(client, commands, TEST);

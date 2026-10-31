@@ -1,37 +1,35 @@
-const DiceRoll = require('../classes/diceroll');
-const Log = require('../util/log');
-const error = require('./nd_errormessage');
-const util = require('../util/util');
-
-const SPACE_PLUS_SPACE = ' + ';
+const DiceRoll = require("../classes/diceroll");
+const Log = require("../util/log");
+const error = require("./nd_errormessage");
+const util = require("../util/util");
 
 class NJDiscordReply {
     //静的クラスとして運用するのでnew禁止。
     constructor() {
-        throw new Error('NJDiscordReplyはコンストラクタを作りません');
+        throw new Error("NJDiscordReplyはコンストラクタを作りません");
     }
 }
 NJDiscordReply.createMessage = (diceroll) => {
-    if (!(diceroll instanceof DiceRoll))  {
+    if (!(diceroll instanceof DiceRoll)) {
         return diceroll;
     }
-    let str = createOutput(diceroll.dice, diceroll.comment ? diceroll.comment : '');
+    let str = createOutput(
+        diceroll.dice,
+        diceroll.comment ? diceroll.comment : ""
+    );
     str += addTableOutput(diceroll);
     return str;
-
-}
+};
 
 NJDiscordReply.createFixedDiceMessage = async (diceroll) => {
-    return await receiveFixedMessage(diceroll)
-    .catch((e) => {
+    return await receiveFixedMessage(diceroll).catch((e) => {
         Log.prints(e.message);
         e.discordMessage = error.replyErrorMessage();
         throw e;
     });
-}
+};
 
 function createOutput(dice, comment) {
-
     /*
     let str = '';
     let diceStr = '';
@@ -60,7 +58,12 @@ function createOutput(dice, comment) {
     let diceStr = "";
     let sumall = 0;
     for (const d of dice) {
-        diceStr += (diceStr ? (d.isMinus ? "`－" : "`＋") : "`") + d.trancedString + "` = " + d + "\n";
+        diceStr +=
+            (diceStr ? (d.isMinus ? "`－" : "`＋") : "`") +
+            d.trancedString +
+            "` = " +
+            d +
+            "\n";
         sumall += (d.isMinus ? -1 : 1) * Number(d.sum);
     }
     //diceStr = diceStr.substring(2);
@@ -70,56 +73,64 @@ function createOutput(dice, comment) {
     return util.isSendableMessage(str, error);
 }
 
-
-
 function addTableOutput(diceroll) {
-    let returnString = '';
+    let returnString = "";
     //前処理でテーブルを取得できていたら、ここで使用する。なければundefinedで進む。
     let checkDataTable = diceroll.tableData;
-    let addString = '';
-    let tableString = '';
+    let addString = "";
+    let tableString = "";
 
     if (checkDataTable) {
         if (checkDataTable.d66Option) {
-            Log.prints('addTableOutput diceinfo.dice[0].resArray[0]&resArray[1] :' + diceroll.dice[0].resArray[0] + ',' + diceroll.dice[0].resArray[1]);
+            Log.prints(
+                "addTableOutput diceinfo.dice[0].resArray[0]&resArray[1] :" +
+                    diceroll.dice[0].resArray[0] +
+                    "," +
+                    diceroll.dice[0].resArray[1]
+            );
             const array = util.sort(diceroll.dice[0].resArray);
             const d66 = Number(String(array[0]) + String(array[1]));
-            Log.prints('addTableOutput d66 :' + d66);
+            Log.prints("addTableOutput d66 :" + d66);
             tableString = checkDataTable.data[d66];
-        }
-        else {
+        } else {
             if (diceroll.isTableAdditionValue) {
                 //可変値を使うテーブルで可変値のダイスロールを行い、結果がデータのレンジ外だった場合は、レンジ内の最も近い値を結果として使用する。
-                if (checkDataTable.datarange.max < diceroll.sumall) tableString = checkDataTable.data[checkDataTable.datarange.max];
-                else if (checkDataTable.datarange.min > diceroll.sumall) tableString = checkDataTable.data[checkDataTable.datarange.min];
+                if (checkDataTable.datarange.max < diceroll.sumall)
+                    tableString =
+                        checkDataTable.data[checkDataTable.datarange.max];
+                else if (checkDataTable.datarange.min > diceroll.sumall)
+                    tableString =
+                        checkDataTable.data[checkDataTable.datarange.min];
                 else tableString = checkDataTable.data[diceroll.sumall];
-            }
-            else tableString = checkDataTable.data[diceroll.sumall];
+            } else tableString = checkDataTable.data[diceroll.sumall];
         }
     }
-    Log.prints('addTableOutput tableString :' + tableString);
-    if (tableString) addString += '\n\n' + tableString;
-    Log.prints('addTableOutput addString :' + addString);
+    Log.prints("addTableOutput tableString :" + tableString);
+    if (tableString) addString += "\n\n" + tableString;
+    Log.prints("addTableOutput addString :" + addString);
 
     return returnString + addString;
 }
 
 async function receiveFixedMessage(diceroll) {
-    const stringArray = diceroll.string.split('#');
+    const stringArray = diceroll.string.split("#");
 
     stringArray[0] = util.spellCheck(stringArray[0]);
     Log.prints(stringArray);
-    let returnString = '';
+    let returnString;
     //データベースからの取得。private -> public -> defaultの順で検索。
     let checkDataTable = await diceroll.getTableData(stringArray[0]);
-    if (checkDataTable && stringArray[1] != null && (!isNaN(stringArray[1])) && checkDataTable.data[stringArray[1]] != null) {
-        returnString = '\n\n' + checkDataTable.data[stringArray[1]];
-    }
-    else {
-        throw new Error('SearchTableDiceroll : Invalid Fixed String');
+    if (
+        checkDataTable &&
+        stringArray[1] != null &&
+        !isNaN(stringArray[1]) &&
+        checkDataTable.data[stringArray[1]] != null
+    ) {
+        returnString = "\n\n" + checkDataTable.data[stringArray[1]];
+    } else {
+        throw new Error("SearchTableDiceroll : Invalid Fixed String");
     }
     return returnString;
 }
-
 
 module.exports = NJDiscordReply;

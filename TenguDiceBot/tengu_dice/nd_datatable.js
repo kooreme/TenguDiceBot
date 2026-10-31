@@ -1,5 +1,3 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable no-eq-null */
 const dataText = require("./nd_datatext");
 exports.dataTable = {
     初期ジツ系統: {

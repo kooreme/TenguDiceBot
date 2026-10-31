@@ -1,5 +1,4 @@
-const DB = require('../DB/db_wrapper');
-const Log = require('../util/log');
+const DB = require("../DB/db_wrapper");
 exports.run = async function (ids) {
     let db = DB.db;
 
@@ -9,16 +8,16 @@ exports.run = async function (ids) {
     let returnString = createTableListString(table);
 
     return { result: true, message: returnString };
-
-}
+};
 exports.check = function (array) {
-    if (array.length !== 1) return '引数の数が不正です。詳細は「/ct help,checkTableList」を確認してください。';
+    if (array.length !== 1)
+        return "引数の数が不正です。詳細は「/ct help,checkTableList」を確認してください。";
     return null;
-}
+};
 exports.adjust = function () {
     const object = {};
     return object;
-}
+};
 
 function createTableListString(table) {
     let message = [];
@@ -29,8 +28,10 @@ function createTableListString(table) {
 \`ショートカット名 : ダイス, [... ショートカット名 : ダイス]\`
 `
     );
-    message.push(createTableMessage('__**公開テーブル**__\n\n', table.public));
-    message.push(createTableMessage('__**チャンネル内テーブル**__\n\n', table.private));
+    message.push(createTableMessage("__**公開テーブル**__\n\n", table.public));
+    message.push(
+        createTableMessage("__**チャンネル内テーブル**__\n\n", table.private)
+    );
 
     return message;
 }
@@ -43,17 +44,15 @@ function createTableMessage(startMessage, object) {
             let isFirst = true;
             for (let [name, value] of Object.entries(object[key].dice)) {
                 if (isFirst) {
-                    message += `${name} : ${value}`
+                    message += `${name} : ${value}`;
                     isFirst = false;
-                }
-                else message += ` , ${name} : ${value}`;
+                } else message += ` , ${name} : ${value}`;
             }
             message += "`\n";
         });
-    }
-    else {
+    } else {
         message += "（なし）\n\n";
     }
-    
+
     return message;
 }

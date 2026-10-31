@@ -3,7 +3,13 @@ const NJDiscordReply = require("../tengu_dice/NJDiscordReply");
 const { setTimeout: wait } = require("timers/promises");
 const { isSendableMessage } = require("../util/util");
 const error = require("../tengu_dice/nd_errormessage");
-const { MessageActionRow, MessageButton } = require("discord.js");
+const {
+    ApplicationCommandOptionType,
+    MessageFlags,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+} = require("discord.js");
 
 const OPTION_NAME = ["sentence"];
 const BUTTON_CUSTOM = {
@@ -18,7 +24,7 @@ const snd = {
             "天狗ダイスでシークレットダイスロールします。結果はあなたにしか見えません。",
         options: [
             {
-                type: "STRING",
+                type: ApplicationCommandOptionType.String,
                 name: OPTION_NAME[0],
                 description:
                     "実施したいダイスロールを入力してください。詳細はnoteを確認してください。",
@@ -33,8 +39,8 @@ const snd = {
      */
     execute: async function (interaction) {
         //ephemeralで表示
-        if (interaction.isCommand()) {
-            await interaction.deferReply({ ephemeral: true });
+        if (interaction.isChatInputCommand()) {
+            await interaction.deferReply({ flags: MessageFlags.Ephemeral });
             const { commandName } = interaction;
             const option = interaction.options.get(OPTION_NAME[0])?.value;
             const NDDice = ND_DiceRollHandler(option, interaction.channelId);
@@ -52,11 +58,11 @@ const snd = {
                     error
                 ),
                 components: [
-                    new MessageActionRow().addComponents(
-                        new MessageButton()
+                    new ActionRowBuilder().addComponents(
+                        new ButtonBuilder()
                             .setCustomId(BUTTON_CUSTOM.id)
                             .setLabel(BUTTON_CUSTOM.label)
-                            .setStyle(1)
+                            .setStyle(ButtonStyle.Primary)
                     ),
                 ],
             });

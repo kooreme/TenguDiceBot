@@ -1,11 +1,9 @@
-const { Client, Intents } = require("discord.js");
+const { Client, GatewayIntentBits, Events } = require("discord.js");
 const requireDir = require("require-dir");
-const slashCommands = requireDir("./discord_command");
-
-const FLAGS = Intents.FLAGS;
+const slashCommands = requireDir("../discord_command");
 
 const client = new Client({
-    intents: [FLAGS.GUILDS, FLAGS.DIRECT_MESSAGES],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages],
 });
 
 /**
@@ -26,23 +24,22 @@ const commands = getExecuteCommands();
  */
 
 /**
- * @param {Discord.CommandInteraction} interaction
+ * @param {import("discord.js").CommandInteraction} interaction
  * @returns {void}
  */
 async function onInteraction(interaction) {
-    if (interaction.isCommand())
+    if (interaction.isChatInputCommand())
         return commands[interaction.commandName](interaction);
     else if (interaction.isButton()) {
         const commandName = interaction.message.interaction.commandName;
         return commands[commandName](interaction);
     }
 }
-client.on("interactionCreate", (interaction) =>
+client.on(Events.InteractionCreate, (interaction) =>
     onInteraction(interaction).catch((err) => console.error(err))
 );
 client.login(process.env.BOT_TOKEN).catch((err) => {
     console.error(err);
-    process.exit(-1);
 });
 
 /**
@@ -53,6 +50,5 @@ function getExecuteCommands() {
     for (let s in slashCommands) {
         commands[s] = slashCommands[s].execute;
     }
-    //console.log(commands);
     return commands;
 }

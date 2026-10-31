@@ -1,5 +1,3 @@
-/* eslint-disable eqeqeq */
-/* eslint-disable no-eq-null */
 const error = require("../util/errormessage");
 const Log = require("../util/log");
 const TB = require("./tb_db_wrapper");
@@ -16,7 +14,7 @@ exports.receiveResponce = async function (content, channelID) {
     const splitRequestArray = splitRequest(content);
     Log.printsDir(splitRequestArray, true);
 
-    let returnString = "";
+    let returnString;
     switch (splitRequestArray[0]) {
         case "m":
             returnString = await recordMoney(channelID, splitRequestArray);
@@ -43,7 +41,7 @@ exports.receiveResponce = async function (content, channelID) {
 };
 
 function splitRequest(content) {
-    let splitArray = "";
+    let splitArray;
 
     if (M_PLUSNUMBER.test(content)) {
         splitArray = content.split("+");
